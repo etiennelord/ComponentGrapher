@@ -1,0 +1,138 @@
+#NEXUS
+
+[ File saved by NDE version 0.5.0, Wed Sep 23 19:17:48 2015 ]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX=22;
+	TAXLABELS
+		Trichomonas
+		Giardia
+		Euglena
+		Trypanosoma
+		Naegleria
+		Acrasis
+		Paramecium
+		Peridinium
+		Plasmodium
+		Phytophtora
+		Navicula
+		Fucus
+		Porphyra
+		Chlamydomonas
+		Arabidopsis
+		Nummulites
+		Chlorarachnion
+		Entamoeba
+		Dictyostelium
+		Agaricus
+		Monosiga
+		Ephydatia
+		;
+ENDBLOCK;
+
+BEGIN CHARACTERS;
+	DIMENSIONS NCHAR=9;
+	FORMAT DATATYPE=STANDARD MISSING=? GAP=- SYMBOLS="012345";
+	CHARLABELS
+		[1] Mitochondria
+		[2] 'Flagella and cilia'
+		[3] 'Life mode'
+		[4] Multicellularity
+		[5] Pseudopodes
+		[6] 'Plast presence / absence and origin'
+		[7] Photosynthesis
+		[8] Chlorophyllls
+		[9] Homeodomain
+		;
+	STATELABELS
+		1
+			absent
+			'reduced to hydrogenosomes'
+			'typical mitochondria with cristae discoid or lamellate'
+			'typical mitochondria with tubular cristae',
+		2
+			absent
+			'a single flagellum '
+			'two equivalent flagella'
+			'Two dissimilar flagella'
+			'More than two flagella'
+			multiciliated,
+		3
+			'Free living'
+			Symbiotic
+			'parasitic / pathogen',
+		4
+			'absent (unicellular state)'
+			'presence of transient multicellular stage in life cycle'
+			'with coenocytic stage'
+			'true multicellularity',
+		5
+			absent
+			present,
+		6
+			'plesiomorphic absence of plast '
+			'plast from primary endosymbiosis '
+			'plast from secondary endosymbiosis'
+			'plast from tertiary endosymbiosis'
+			'apomorphic absence of plast (loss)',
+		7
+			'absent '
+			'present ',
+		8
+			'No chlorophyll '
+			'chlorophyll a only '
+			'chlorophyll a and b'
+			'chlorophyll a and c',
+		9
+			'absent '
+			'present ',
+	;
+	MATRIX
+		Trichomonas         142000001
+		Giardia             042000000
+		Euglena             21000212?
+		Trypanosoma         212004000
+		Naegleria           22201000?
+		Acrasis             20011000?
+		Paramecium          35000400?
+		Peridinium          33000313?
+		Plasmodium          302012000
+		Phytophtora         332204001
+		Navicula            310002131
+		Fucus               33030213?
+		Porphyra            200301111
+		Chlamydomonas       220001121
+		Arabidopsis         200301121
+		Nummulites          32001400?
+		Chlorarachnion      31011212?
+		Entamoeba           302010001
+		Dictyostelium       300110001
+		Agaricus            200300001
+		Monosiga            210010001
+		Ephydatia           210310001
+	;
+ENDBLOCK;
+
+BEGIN ASSUMPTIONS;
+	OPTIONS DEFTYPE=UNORD POLYTCOUNT=MINSTEPS;
+ENDBLOCK;
+
+BEGIN NOTES;
+	[Taxon comments]
+
+	[Character comments]
+	TEXT CHARACTER=2 TEXT='This character scored as present (states 1 to 5) if at least one lifecycle stage possess flagellum(a) or cilia';
+
+	[Character state comments]
+
+	[Attribute comments]
+
+	[Taxon pictures]
+
+	[Character pictures]
+
+	[Character state pictures]
+
+	[Attribute pictures]
+ENDBLOCK;
+

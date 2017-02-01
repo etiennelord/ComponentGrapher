@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<graphml>
+<key id='k2' for='edge' attr.name='type' attr.type='double'/>
+<key id='k1' for='edge' attr.name='total_shared_taxa' attr.type='double'/>
+<key id='k3' for='node' attr.name='fullname' attr.type='string'/>
+<key id='k4' for='node' attr.name='number_of_taxa' attr.type='double'/>
+<key id='k5' for='node' attr.name='partition' attr.type='string'/>
+<key id='k6' for='node' attr.name='total_edges' attr.type='double'/>
+<key id='k61' for='node' attr.name='in_edges' attr.type='double'/>
+<key id='k62' for='node' attr.name='out_edges' attr.type='double'/>
+<key id='k7' for='node' attr.name='associated_character_column' attr.type='double'/>
+<key id='k8' for='node' attr.name='charlabel' attr.type='string'/>
+<key id='k9' for='node' attr.name='statelabel' attr.type='string'/>
+<key id='k10' for='node' attr.name='statematrix' attr.type='string'/>
+<key id='k11' for='node' attr.name='total_taxa' attr.type='double'/>
+<key id='k12' for='node' attr.name='taxa_id' attr.type='string'/>
+<graph edgedefault='undirected' id=''>
+</graph>
+</graphml>

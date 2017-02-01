@@ -1,0 +1,67 @@
+#NEXUS
+
+[ File saved by COMPOSITEGRAPHER version 1.1,2017-01-27 15:37:07]
+
+BEGIN TAXA;
+ 	DIMENSIONS NTAX=10;
+ 	TAXLABELS
+		'TAX1'
+		'TAX2'
+		'TAX3'
+		'TAX4'
+		'TAX5'
+		'TAX6'
+		'TAX7'
+		'TAX8'
+		'TAX9'
+		'TAX10'
+		;
+ENDBLOCK;
+
+BEGIN CHARACTERS;
+	DIMENSIONS NCHAR=4;
+	FORMAT DATATYPE=STANDARD MISSING=? GAP=- SYMBOLS="ABCD";
+	CHARLABELS
+		[1] 'Zero'
+		[2] 'One2'
+		[3] 'Char. 3'
+		[4] 'Char. 4'
+		;
+	STATELABELS
+		1
+			New1
+			New2
+			Nde3
+			4,
+		2
+			A
+			B
+			C
+			D,
+		3
+			A
+			B
+			C
+			D,
+		4
+			A
+			B
+			C
+			D,
+	;
+	MATRIX
+		TAX1           AADD
+		TAX2           BBDD
+		TAX3           BBDD
+		TAX4           BBCC
+		TAX5           CCCC
+		TAX6           CCCC
+		TAX7           DDBB
+		TAX8           DDBB
+		TAX9           DDAA
+		TAX10          DDAA
+	;
+ENDBLOCK;
+BEGIN ASSUMPTIONS;
+	OPTIONS DEFTYPE = unord PolyTcount = MINSTEPS ; 
+END;

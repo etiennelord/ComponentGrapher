@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<graphml>
+<key id='k2' for='edge' attr.name='type' attr.type='double'/>
+<key id='k1' for='edge' attr.name='total_shared_taxa' attr.type='double'/>
+<key id='k3' for='node' attr.name='fullname' attr.type='string'/>
+<key id='k4' for='node' attr.name='number_of_taxa' attr.type='double'/>
+<key id='k5' for='node' attr.name='partition' attr.type='string'/>
+<key id='k6' for='node' attr.name='total_edges' attr.type='double'/>
+<key id='k61' for='node' attr.name='in_edges' attr.type='double'/>
+<key id='k62' for='node' attr.name='out_edges' attr.type='double'/>
+<key id='k7' for='node' attr.name='associated_character_column' attr.type='double'/>
+<key id='k8' for='node' attr.name='charlabel' attr.type='string'/>
+<key id='k9' for='node' attr.name='statelabel' attr.type='string'/>
+<key id='k10' for='node' attr.name='statematrix' attr.type='string'/>
+<key id='k11' for='node' attr.name='total_taxa' attr.type='double'/>
+<key id='k12' for='node' attr.name='taxa_id' attr.type='string'/>
+<graph edgedefault='undirected' id=''>
+<node id='1_A'>
+<data key='k3'>char. 1|A</data>
+<data key='k6'>4</data>
+<data key='k7'>1</data>
+<data key='k8'>char. 1</data>
+<data key='k9'>A</data>
+<data key='k10'>A</data>
+<data key='k61'>0</data>
+<data key='k62'>4</data>
+<data key='k11'>1</data>
+</node>
+<node id='1_B'>
+<data key='k3'>char. 1|B</data>
+<data key='k6'>7</data>
+<data key='k7'>1</data>
+<data key='k8'>char. 1</data>
+<data key='k9'>B</data>
+<data key='k10'>B</data>
+<data key='k61'>0</data>
+<data key='k62'>7</data>
+<data key='k11'>3</data>
+</node>
+<node id='1_C'>
+<data key='k3'>char. 1|C</data>
+<data key='k6'>4</data>
+<data key='k7'>1</data>
+<data key='k8'>char. 1</data>
+<data key='k9'>C</data>
+<data key='k10'>C</data>
+<data key='k61'>0</data>
+<data key='k62'>4</data>
+<data key='k11'>2</data>
+</node>
+<node id='1_D'>
+<data key='k3'>char. 1|D</data>
+<data key='k6'>7</data>
+<data key='k7'>1</data>
+<data key='k8'>char. 1</data>
+<data key='k9'>D</data>
+<data key='k10'>D</data>
+<data key='k61'>5</data>
+<data key='k62'>2</data>
+<data key='k11'>4</data>
+</node>
+<node id='2_A'>
+<data key='k3'>char. 2|A</data>
+<data key='k6'>4</data>
+<data key='k7'>2</data>
+<data key='k8'>char. 2</data>
+<data key='k9'>A</data>
+<data key='k10'>A</data>
+<data key='k61'>1</data>
+<data key='k62'>3</data>
+<data key='k11'>1</data>
+</node>
+<node id='2_B'>
+<data key='k3'>char. 2|B</data>
+<data key='k6'>7</data>
+<data key='k7'>2</data>
+<data key='k8'>char. 2</data>
+<data key='k9'>B</data>
+<data key='k10'>B</data>
+<data key='k61'>1</data>
+<data key='k62'>6</data>
+<data key='k11'>3</data>
+</node>
+<node id='2_C'>
+<data key='k3'>char. 2|C</data>
+<data key='k6'>4</data>
+<data key='k7'>2</data>
+<data key='k8'>char. 2</data>
+<data key='k9'>C</data>
+<data key='k10'>C</data>
+<data key='k61'>1</data>
+<data key='k62'>3</data>
+<data key='k11'>2</data>
+</node>
+<node id='2_D'>
+<data key='k3'>char. 2|D</data>
+<data key='k6'>7</data>
+<data key='k7'>2</data>
+<data key='k8'>char. 2</data>
+<data key='k9'>D</data>
+<data key='k10'>D</data>
+<data key='k61'>6</data>
+<data key='k62'>1</data>
+<data key='k11'>4</data>
+</node>
+<node id='3_D'>
+<data key='k3'>char. 3|D</data>
+<data key='k6'>6</data>
+<data key='k7'>3</data>
+<data key='k8'>char. 3</data>
+<data key='k9'>D</data>
+<data key='k10'>D</data>
+<data key='k61'>4</data>
+<data key='k62'>2</data>
+<data key='k11'>3</data>
+</node>
+<node id='3_C'>
+<data key='k3'>char. 3|C</data>
+<data key='k6'>6</data>
+<data key='k7'>3</data>
+<data key='k8'>char. 3</data>
+<data key='k9'>C</data>
+<data key='k10'>C</data>
+<data key='k61'>4</data>
+<data key='k62'>2</data>
+<data key='k11'>3</data>
+</node>
+<node id='3_B'>
+<data key='k3'>char. 3|B</data>
+<data key='k6'>5</data>
+<data key='k7'>3</data>
+<data key='k8'>char. 3</data>
+<data key='k9'>B</data>
+<data key='k10'>B</data>
+<data key='k61'>0</data>
+<data key='k62'>5</data>
+<data key='k11'>2</data>
+</node>
+<node id='3_A'>
+<data key='k3'>char. 3|A</data>
+<data key='k6'>4</data>
+<data key='k7'>3</data>
+<data key='k8'>char. 3</data>
+<data key='k9'>A</data>
+<data key='k10'>A</data>
+<data key='k61'>0</data>
+<data key='k62'>4</data>
+<data key='k11'>2</data>
+</node>
+<node id='4_D'>
+<data key='k3'>char. 4|D</data>
+<data key='k6'>6</data>
+<data key='k7'>4</data>
+<data key='k8'>char. 4</data>
+<data key='k9'>D</data>
+<data key='k10'>D</data>
+<data key='k61'>5</data>
+<data key='k62'>1</data>
+<data key='k11'>3</data>
+</node>
+<node id='4_C'>
+<data key='k3'>char. 4|C</data>
+<data key='k6'>6</data>
+<data key='k7'>4</data>
+<data key='k8'>char. 4</data>
+<data key='k9'>C</data>
+<data key='k10'>C</data>
+<data key='k61'>5</data>
+<data key='k62'>1</data>
+<data key='k11'>3</data>
+</node>
+<node id='4_B'>
+<data key='k3'>char. 4|B</data>
+<data key='k6'>5</data>
+<data key='k7'>4</data>
+<data key='k8'>char. 4</data>
+<data key='k9'>B</data>
+<data key='k10'>B</data>
+<data key='k61'>1</data>
+<data key='k62'>4</data>
+<data key='k11'>2</data>
+</node>
+<node id='4_A'>
+<data key='k3'>char. 4|A</data>
+<data key='k6'>4</data>
+<data key='k7'>4</data>
+<data key='k8'>char. 4</data>
+<data key='k9'>A</data>
+<data key='k10'>A</data>
+<data key='k61'>1</data>
+<data key='k62'>3</data>
+<data key='k11'>2</data>
+</node>
+<node id='5_A'>
+<data key='k3'>char. 5|A</data>
+<data key='k6'>6</data>
+<data key='k7'>5</data>
+<data key='k8'>char. 5</data>
+<data key='k9'>A</data>
+<data key='k10'>A</data>
+<data key='k61'>6</data>
+<data key='k62'>0</data>
+<data key='k11'>3</data>
+</node>
+<node id='5_B'>
+<data key='k3'>char. 5|B</data>
+<data key='k6'>10</data>
+<data key='k7'>5</data>
+<data key='k8'>char. 5</data>
+<data key='k9'>B</data>
+<data key='k10'>B</data>
+<data key='k61'>10</data>
+<data key='k62'>0</data>
+<data key='k11'>4</data>
+</node>
+<node id='5_C'>
+<data key='k3'>char. 5|C</data>
+<data key='k6'>6</data>
+<data key='k7'>5</data>
+<data key='k8'>char. 5</data>
+<data key='k9'>C</data>
+<data key='k10'>C</data>
+<data key='k61'>4</data>
+<data key='k62'>2</data>
+<data key='k11'>3</data>
+</node>
+<edge directed='true' source='1_A' target='2_A'>
+<data key='k1'>1</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='1_A' target='3_D'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_A' target='4_D'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_A' target='5_A'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_B' target='2_B'>
+<data key='k1'>3</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='1_B' target='3_D'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_B' target='3_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_B' target='4_D'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_B' target='4_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_B' target='5_A'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_B' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='1_C' target='2_C'>
+<data key='k1'>2</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='1_C' target='3_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_C' target='4_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_C' target='5_B'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_D' target='2_D'>
+<data key='k1'>4</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_B' target='1_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='3_A' target='1_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_B' target='1_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_A' target='1_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='1_D' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='5_C' target='1_D'>
+<data key='k1'>3</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_A' target='3_D'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_A' target='4_D'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_A' target='5_A'>
+<data key='k1'>1</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_B' target='3_D'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_B' target='3_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_B' target='4_D'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_B' target='4_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_B' target='5_A'>
+<data key='k1'>2</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_B' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='2_C' target='3_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_C' target='4_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_C' target='5_B'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='3_B' target='2_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='3_A' target='2_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_B' target='2_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_A' target='2_D'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='2_D' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='5_C' target='2_D'>
+<data key='k1'>3</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='3_D' target='4_D'>
+<data key='k1'>3</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_D' target='5_A'>
+<data key='k1'>3</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_C' target='4_C'>
+<data key='k1'>3</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_C' target='5_B'>
+<data key='k1'>3</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='3_B' target='4_B'>
+<data key='k1'>2</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_B' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='3_B' target='5_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='3_A' target='4_A'>
+<data key='k1'>2</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='3_A' target='5_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_D' target='5_A'>
+<data key='k1'>3</data>
+<data key='k2'>1</data>
+<data key='k13'>perfect concomittant</data>
+</edge>
+<edge directed='true' source='4_C' target='5_B'>
+<data key='k1'>3</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+<edge directed='true' source='4_B' target='5_B'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='4_B' target='5_C'>
+<data key='k1'>1</data>
+<data key='k2'>3</data>
+<data key='k13'>overlap</data>
+</edge>
+<edge directed='true' source='4_A' target='5_C'>
+<data key='k1'>2</data>
+<data key='k2'>2</data>
+<data key='k13'>inclusion</data>
+</edge>
+</graph>
+</graphml>

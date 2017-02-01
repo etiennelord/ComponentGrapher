@@ -1,0 +1,230 @@
+#node_id	complete_name	char_label	state_label	n.state_in_matrix	edgecount	in_edgecount	out_edgecount	number_of_taxa	taxa
+0	Skull: dorsal profile|'flat '	Skull: dorsal profile	'flat '	0	157	6	151	4	Tapte,Hyrex,Trios,Acein
+1	Skull: dorsal profile|'concave '	Skull: dorsal profile	'concave '	1	215	25	190	13	Ronfi,Aegbe,Histu,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Hopte,Diale,Rhiso
+2	Skull: dorsal profile|'very concave '	Skull: dorsal profile	'very concave '	2	155	3	152	4	Cersi,Dicbi,Larsa,Rhiun
+3	External auditory pseudo-meatus|'open '	External auditory pseudo-meatus	'open '	0	207	14	193	9	Tapte,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Menar,Acein
+4	External auditory pseudo-meatus|'partly closed '	External auditory pseudo-meatus	'partly closed '	1	192	13	179	7	Hyrex,Trios,Brabr,Telfo,Larsa,Hopte,Diale
+5	External auditory pseudo-meatus|'totally closed (circular) '	External auditory pseudo-meatus	'totally closed (circular) '	2	182	6	176	5	Coean,Dicar,Diaag,Rhiun,Rhiso
+6	Skull: back of tooth row|'in the posterior half '	Skull: back of tooth row	'in the posterior half '	0	223	108	115	19	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+7	Skull: back of tooth row|'in the anterior half '	Skull: back of tooth row	'in the anterior half '	1	123	8	115	2	Dicbi,Coean
+8	Skull|'dolichocephalic '	Skull	'dolichocephalic '	0	209	24	185	9	Tapte,Hyrex,Aegbe,Histu,Cersi,Dicsu,Coean,Dicar,Menar
+9	Skull|'brachycephalic '	Skull	'brachycephalic '	1	211	26	185	12	Trios,Ronfi,Dicbi,Brabr,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+10	Nasal bones: rostral end|'narrow '	Nasal bones: rostral end	'narrow '	0	207	46	161	13	Tapte,Hyrex,Trios,Ronfi,Aegbe,Brabr,Dicar,Menar,Telfo,Diaag,Hopte,Acein,Diale
+11	Nasal bones: rostral end|'broad '	Nasal bones: rostral end	'broad '	1	155	6	149	4	Histu,Dicsu,Rhiun,Rhiso
+12	Nasal bones: rostral end|' very broad'	Nasal bones: rostral end	' very broad'	2	160	20	140	4	Cersi,Dicbi,Coean,Larsa
+13	Nasal bones|'totally separated '	Nasal bones	'totally separated '	0	208	43	165	12	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Brabr,Dicar,Menar,Hopte,Acein,Diale
+14	Nasal bones|'anteriorly separated '	Nasal bones	'anteriorly separated '	1	187	17	170	8	Cersi,Dicbi,Dicsu,Telfo,Diaag,Larsa,Rhiun,Rhiso
+15	Nasal bones|'fused '	Nasal bones	'fused '	2	92	0	92	1	Coean
+16	Nasal bones|'short '	Nasal bones	'short '	1	140	3	137	2	Tapte,Acein
+17	Nasal bones|'long '	Nasal bones	'long '	0	226	94	132	19	Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Diale,Rhiun,Rhiso
+18	Nasal bones (median region): aspect|smooth	Nasal bones (median region): aspect	smooth	0	203	44	159	12	Tapte,Hyrex,Trios,Ronfi,Brabr,Dicar,Menar,Telfo,Diaag,Hopte,Acein,Diale
+19	Nasal bones (median region): aspect|rugose	Nasal bones (median region): aspect	rugose	1	192	34	158	9	Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Larsa,Rhiun,Rhiso
+20	Nasal bones (lateral edges): aspect|straight	Nasal bones (lateral edges): aspect	straight	0	227	112	115	19	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+21	Nasal bones (lateral edges): aspect|'dilated (rugose ridges or bumps)'	Nasal bones (lateral edges): aspect	'dilated (rugose ridges or bumps)'	1	124	2	122	2	Dicar,Menar
+22	Frontal bone: aspect|smooth	Frontal bone: aspect	smooth	0	214	83	131	17	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+23	Frontal bone: aspect|'rugose '	Frontal bone: aspect	'rugose '	1	156	22	134	4	Cersi,Dicbi,Dicsu,Coean
+24	Orbit|'not laterally projected'	Orbit	'not laterally projected'	0	224	98	126	18	Tapte,Hyrex,Trios,Ronfi,Aegbe,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+25	Orbit|'laterally projected'	Orbit	'laterally projected'	1	145	15	130	3	Histu,Cersi,Dicbi
+26	Zygomatic/frontal widths|'equals or more than 1.5 '	Zygomatic/frontal widths	'equals or more than 1.5 '	1	192	21	171	7	Tapte,Telfo,Diaag,Acein,Diale,Rhiun,Rhiso
+27	Zygomatic/frontal widths|'less than 1.5 '	Zygomatic/frontal widths	'less than 1.5 '	0	221	53	168	14	Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Larsa,Hopte
+28	Occipital crest|'concave '	Occipital crest	'concave '	0	210	45	165	14	Tapte,Hyrex,Trios,Aegbe,Histu,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Acein,Rhiun
+29	Occipital crest|'straight '	Occipital crest	'straight '	1	198	30	168	6	Ronfi,Dicbi,Coean,Hopte,Diale,Rhiso
+30	Occipital crest|'forked '	Occipital crest	'forked '	2	91	0	91	1	Cersi
+31	Maxilla: processus zygomaticus maxillari|'progressive '	Maxilla: processus zygomaticus maxillari	'progressive '	0	224	67	157	17	Tapte,Hyrex,Trios,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Rhiun,Rhiso
+32	Maxilla: processus zygomaticus maxillari|'brutal '	Maxilla: processus zygomaticus maxillari	'brutal '	1	180	17	163	4	Ronfi,Aegbe,Acein,Diale
+33	Squamosal: processus zygomaticus|flat	Squamosal: processus zygomaticus	flat	0	225	72	153	15	Tapte,Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Telfo,Hopte,Acein,Rhiun,Rhiso
+34	Squamosal: processus zygomaticus|'with a longitudinal groove'	Squamosal: processus zygomaticus	'with a longitudinal groove'	1	182	26	156	6	Aegbe,Histu,Menar,Diaag,Larsa,Diale
+35	Occipital: foramen magnum|'circular '	Occipital: foramen magnum	'circular '	0	206	42	164	8	Tapte,Hyrex,Ronfi,Cersi,Dicbi,Dicar,Larsa,Hopte
+36	Occipital: foramen magnum|'subtriangular '	Occipital: foramen magnum	'subtriangular '	1	217	53	164	13	Trios,Aegbe,Histu,Dicsu,Brabr,Coean,Menar,Telfo,Diaag,Acein,Diale,Rhiun,Rhiso
+37	Symphysis|'spindly '	Symphysis	'spindly '	0	211	63	148	11	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Coean,Dicar,Menar
+38	Symphysis|'massive '	Symphysis	'massive '	1	192	39	153	9	Dicsu,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+39	Symphysis|'very massive '	Symphysis	'very massive '	2	97	0	97	1	Brabr
+40	Foramen mentale|'in front of p2 '	Foramen mentale	'in front of p2 '	0	208	40	168	8	Tapte,Ronfi,Aegbe,Dicsu,Coean,Dicar,Telfo,Diaag
+41	Foramen mentale|'at level of p2-4 '	Foramen mentale	'at level of p2-4 '	1	221	54	167	13	Hyrex,Trios,Histu,Cersi,Dicbi,Brabr,Menar,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+42	Corpus mandibulae: base|'straight '	Corpus mandibulae: base	'straight '	0	207	68	139	14	Tapte,Hyrex,Trios,Ronfi,Dicsu,Brabr,Dicar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+43	Corpus mandibulae: base|'convex '	Corpus mandibulae: base	'convex '	1	165	25	140	4	Aegbe,Histu,Menar,Telfo
+44	Corpus mandibulae: base|'very convex '	Corpus mandibulae: base	'very convex '	2	133	23	110	3	Cersi,Dicbi,Coean
+45	Ramus|vertical	Ramus	vertical	1	209	54	155	13	Tapte,Trios,Ronfi,Aegbe,Histu,Dicsu,Brabr,Dicar,Menar,Diaag,Larsa,Hopte,Acein
+46	Ramus|'inclined forward and upward'	Ramus	'inclined forward and upward'	0	185	33	152	5	Hyrex,Telfo,Diale,Rhiun,Rhiso
+47	Ramus|'inclined backward and upward'	Ramus	'inclined backward and upward'	2	133	24	109	3	Cersi,Dicbi,Coean
+48	Compared length of P-p/M-m|'(100 * LP3-4/LM1-3)>50'	Compared length of P-p/M-m	'(100 * LP3-4/LM1-3)>50'	0	220	67	153	15	Tapte,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+49	Compared length of P-p/M-m|'42<(100 * LP3-4/LM1-3)<50 '	Compared length of P-p/M-m	'42<(100 * LP3-4/LM1-3)<50 '	1	202	47	155	6	Hyrex,Trios,Aegbe,Histu,Coean,Telfo
+50	Cheek teeth|'without cement'	Cheek teeth	'without cement'	0	200	57	143	10	Tapte,Hyrex,Trios,Ronfi,Brabr,Telfo,Diaag,Larsa,Hopte,Acein
+51	Cheek teeth|'with cement '	Cheek teeth	'with cement '	1	204	64	140	11	Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Diale,Rhiun,Rhiso
+52	Cheek teeth: aspect of the enamel|'wrinkled '	Cheek teeth: aspect of the enamel	'wrinkled '	0	183	41	142	7	Tapte,Hyrex,Trios,Ronfi,Hopte,Acein,Diale
+53	Cheek teeth: aspect of the enamel|'wrinkled and corrugated '	Cheek teeth: aspect of the enamel	'wrinkled and corrugated '	1	194	48	146	10	Aegbe,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Rhiun,Rhiso
+54	Cheek teeth: aspect of the enamel|'corrugated and arborescent'	Cheek teeth: aspect of the enamel	'corrugated and arborescent'	2	159	40	119	4	Histu,Cersi,Dicbi,Coean
+55	Cheek teeth: crown|'low '	Cheek teeth: crown	'low '	0	208	78	130	14	Tapte,Hyrex,Trios,Ronfi,Dicsu,Brabr,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiso
+56	Cheek teeth: crown|'high '	Cheek teeth: crown	'high '	1	190	60	130	7	Aegbe,Histu,Cersi,Dicbi,Coean,Telfo,Rhiun
+57	C|'present '	C	'present '	0	156	32	124	4	Tapte,Hyrex,Trios,Menar
+58	i1|'present '	i1	'present '	0	214	102	112	17	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicsu,Brabr,Dicar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+59	i2|'present '	i2	'present '	0	213	101	112	17	Tapte,Hyrex,Trios,Ronfi,Aegbe,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+60	i3|'present '	i3	'present '	0	118	13	105	2	Tapte,Hyrex
+61	c|'present '	c	'present '	0	118	14	104	2	Tapte,Hyrex
+62	Upper premolars: labial cingulum|'always present '	Upper premolars: labial cingulum	'always present '	0	136	24	112	3	Tapte,Trios,Ronfi
+63	Upper premolars: labial cingulum|'usually present '	Upper premolars: labial cingulum	'usually present '	1	162	24	138	3	Hyrex,Brabr,Hopte
+64	P2-4: crochet|'usually present '	P2-4: crochet	'usually present '	2	217	88	129	14	Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Menar,Telfo,Larsa,Hopte,Diale,Rhiun,Rhiso
+65	P2-4: metaloph|unconstricted	P2-4: metaloph	unconstricted	0	223	143	80	19	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Diale,Rhiun,Rhiso
+66	P2-4: metaloph|constricted	P2-4: metaloph	constricted	1	119	19	100	2	Hopte,Acein
+67	P2-4: lingual cingulum|'always present '	P2-4: lingual cingulum	'always present '	0	214	84	130	12	Tapte,Hyrex,Trios,Ronfi,Dicbi,Brabr,Dicar,Menar,Diaag,Hopte,Acein,Diale
+68	P2-4: lingual cingulum|'usually present '	P2-4: lingual cingulum	'usually present '	1	138	28	110	2	Aegbe,Rhiso
+69	P2-4: postfossette|' narrow'	P2-4: postfossette	' narrow'	0	216	88	128	15	Tapte,Hyrex,Trios,Dicbi,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+70	P2-4: postfossette|'wide '	P2-4: postfossette	'wide '	1	194	62	132	6	Ronfi,Aegbe,Histu,Cersi,Dicsu,Coean
+71	P2-3: antecrochet|'usually present '	P2-3: antecrochet	'usually present '	2	100	0	100	1	Diale
+72	P1 (in adults)|'always persistent '	P1 (in adults)	'always persistent '	0	202	81	121	12	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Brabr,Dicar,Menar,Diaag,Larsa,Diale
+73	P1 (in adults)|'usually persistent '	P1 (in adults)	'usually persistent '	1	185	70	115	7	Dicbi,Dicsu,Coean,Hopte,Acein,Rhiun,Rhiso
+74	P3-4: crochet and crista|'always separate'	P3-4: crochet and crista	'always separate'	0	205	82	123	13	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Brabr,Dicar,Telfo,Diaag,Larsa,Diale,Rhiun
+75	P3-4: crochet and crista|'usually joined'	P3-4: crochet and crista	'usually joined'	2	151	42	109	3	Cersi,Dicbi,Menar
+76	P3-4: crochet and crista|'usually separate'	P3-4: crochet and crista	'usually separate'	1	156	45	111	4	Dicsu,Hopte,Acein,Rhiso
+77	P3-4: crochet and crista|'always joined'	P3-4: crochet and crista	'always joined'	3	92	1	91	1	Coean
+78	P3-4: constriction of the protocone|'always present '	P3-4: constriction of the protocone	'always present '	3	162	43	119	4	Aegbe,Histu,Menar,Diale
+79	P3-4: constriction of the protocone|'usually present '	P3-4: constriction of the protocone	'usually present '	2	133	29	104	2	Acein,Rhiun
+80	P3-4: protocone and hypocone|'separated '	P3-4: protocone and hypocone	'separated '	2	217	88	129	13	Tapte,Trios,Dicbi,Dicsu,Brabr,Coean,Menar,Diaag,Hopte,Acein,Diale,Rhiun,Rhiso
+81	P3-4: protocone and hypocone|'fused '	P3-4: protocone and hypocone	'fused '	0	96	0	96	1	Hyrex
+82	P3-4: protocone and hypocone|'lingual wall '	P3-4: protocone and hypocone	'lingual wall '	3	159	36	123	3	Ronfi,Aegbe,Histu
+83	P3-4: protocone and hypocone|'lingual bridge '	P3-4: protocone and hypocone	'lingual bridge '	1	179	58	121	4	Cersi,Dicar,Telfo,Larsa
+84	P3-4: metaloph|'transverse '	P3-4: metaloph	'transverse '	0	173	55	118	5	Tapte,Hyrex,Trios,Ronfi,Histu
+85	P3-4: metaloph|'hypocone posterior to metacone '	P3-4: metaloph	'hypocone posterior to metacone '	1	220	111	109	16	Aegbe,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+86	P3: protoloph|'joined to the ectoloph '	P3: protoloph	'joined to the ectoloph '	0	226	131	95	19	Tapte,Trios,Ronfi,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+87	P3: protoloph|'interrupted '	P3: protoloph	'interrupted '	1	150	38	112	2	Hyrex,Aegbe
+88	P3: crista|'usually present '	P3: crista	'usually present '	2	194	75	119	5	Ronfi,Histu,Cersi,Hopte,Rhiun
+89	P3: crista|'always present '	P3: crista	'always present '	3	146	42	104	2	Coean,Menar
+90	P4: antecrochet|'always present '	P4: antecrochet	'always present '	3	141	27	114	2	Telfo,Diale
+91	P4: antecrochet|'usually present '	P4: antecrochet	'usually present '	2	99	0	99	1	Hopte
+92	P4: metacone and hypocone|' joined'	P4: metacone and hypocone	' joined'	0	225	119	106	17	Tapte,Ronfi,Aegbe,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Diale,Rhiun,Rhiso
+93	P4: metacone and hypocone|'separated '	P4: metacone and hypocone	'separated '	1	176	63	113	4	Hyrex,Trios,Histu,Acein
+94	Upper molars: labial cingulum|'always present '	Upper molars: labial cingulum	'always present '	0	168	53	115	5	Tapte,Trios,Dicar,Menar,Diale
+95	Upper molars: labial cingulum|'usually present '	Upper molars: labial cingulum	'usually present '	1	170	45	125	3	Ronfi,Aegbe,Brabr
+96	Upper molars: antecrochet|'usually present '	Upper molars: antecrochet	'usually present '	2	167	47	120	4	Ronfi,Brabr,Hopte,Acein
+97	Upper molars: antecrochet|'always present '	Upper molars: antecrochet	'always present '	3	183	70	113	7	Aegbe,Histu,Dicar,Menar,Telfo,Diaag,Diale
+98	Upper molars: crochet|'usually present '	Upper molars: crochet	'usually present '	2	171	65	106	5	Ronfi,Dicbi,Dicsu,Rhiun,Rhiso
+99	Upper molars: crochet|'always present '	Upper molars: crochet	'always present '	3	218	112	106	12	Aegbe,Histu,Cersi,Brabr,Coean,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale
+100	Upper molars: crista|'usually present '	Upper molars: crista	'usually present '	2	185	77	108	4	Ronfi,Cersi,Menar,Rhiun
+101	Upper molars: crista|'always present '	Upper molars: crista	'always present '	3	92	2	90	1	Coean
+102	Upper molars: crochet and crista|'always separate'	Upper molars: crochet and crista	'always separate'	0	212	117	95	16	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Diale,Rhiso
+103	Upper molars: crochet and crista|'usually joined'	Upper molars: crochet and crista	'usually joined'	2	148	55	93	3	Cersi,Coean,Rhiun
+104	Upper molars: crochet and crista|'usually separate'	Upper molars: crochet and crista	'usually separate'	1	142	50	92	2	Dicbi,Acein
+105	Upper molars: lingual cingulum|'always present '	Upper molars: lingual cingulum	'always present '	0	206	99	107	10	Tapte,Hyrex,Trios,Ronfi,Dicbi,Brabr,Dicar,Menar,Diaag,Diale
+106	Upper molars: lingual cingulum|'usually present '	Upper molars: lingual cingulum	'usually present '	1	119	26	93	2	Hopte,Acein
+107	M1-2: protocone|'always unconstricted'	M1-2: protocone	'always unconstricted'	0	170	68	102	5	Tapte,Hyrex,Trios,Ronfi,Rhiso
+108	M1-2: protocone|'always constricted'	M1-2: protocone	'always constricted'	3	199	94	105	9	Aegbe,Histu,Dicsu,Menar,Telfo,Diaag,Hopte,Acein,Diale
+109	M1-2: protocone|'usually unconstricted'	M1-2: protocone	'usually unconstricted'	1	133	42	91	3	Cersi,Dicbi,Coean
+110	M1-2: protocone|'usually constricted'	M1-2: protocone	'usually constricted'	2	165	52	113	4	Brabr,Dicar,Larsa,Rhiun
+111	M1-2: paracone|folded	M1-2: paracone	folded	0	223	142	81	19	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+112	M1-2: paracone|unfolded	M1-2: paracone	unfolded	1	146	51	95	2	Cersi,Telfo
+113	M1-2: metacone|folded	M1-2: metacone	folded	0	195	88	107	9	Tapte,Hyrex,Trios,Aegbe,Histu,Brabr,Dicar,Menar,Diale
+114	M1-2: metacone|unfolded	M1-2: metacone	unfolded	1	213	111	102	12	Ronfi,Cersi,Dicbi,Dicsu,Coean,Telfo,Diaag,Larsa,Hopte,Acein,Rhiun,Rhiso
+115	M1-2: metastyle|'short '	M1-2: metastyle	'short '	0	145	44	101	4	Tapte,Hyrex,Trios,Dicar
+116	M1-2: metastyle|'long '	M1-2: metastyle	'long '	1	223	145	78	17	Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+117	M1-2: metaloph|'long '	M1-2: metaloph	'long '	0	215	111	104	12	Tapte,Trios,Ronfi,Brabr,Coean,Dicar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun
+118	M1-2: metaloph|'short '	M1-2: metaloph	'short '	1	209	106	103	9	Hyrex,Aegbe,Histu,Cersi,Dicbi,Dicsu,Menar,Telfo,Rhiso
+119	M1-2: posterior part of the ectoloph|'straight '	M1-2: posterior part of the ectoloph	'straight '	0	224	135	89	16	Tapte,Hyrex,Trios,Ronfi,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Telfo,Diaag,Larsa,Hopte,Rhiun,Rhiso
+120	M1-2: posterior part of the ectoloph|'concave '	M1-2: posterior part of the ectoloph	'concave '	1	180	84	96	5	Aegbe,Dicar,Menar,Acein,Diale
+121	M1: metaloph|unconstricted	M1: metaloph	unconstricted	0	212	118	94	12	Tapte,Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Dicar,Menar,Diale,Rhiun,Rhiso
+122	M1: metaloph|'constricted (hypocone isolated)'	M1: metaloph	'constricted (hypocone isolated)'	1	208	112	96	9	Aegbe,Histu,Brabr,Coean,Telfo,Diaag,Larsa,Hopte,Acein
+123	M2: metaloph|unconstricted	M2: metaloph	unconstricted	0	214	121	93	13	Tapte,Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Menar,Diaag,Larsa,Diale,Rhiun,Rhiso
+124	M2: metaloph|'constricted (hypocone isolated)'	M2: metaloph	'constricted (hypocone isolated)'	1	209	117	92	8	Aegbe,Histu,Brabr,Coean,Dicar,Telfo,Hopte,Acein
+125	M2: mesostyle|'present '	M2: mesostyle	'present '	1	197	108	89	7	Aegbe,Histu,Cersi,Dicsu,Coean,Menar,Telfo
+126	M3: ectoloph and metaloph|'distinct '	M3: ectoloph and metaloph	'distinct '	0	143	50	93	4	Tapte,Hyrex,Trios,Ronfi
+127	M3: ectoloph and metaloph|'fused (ectometaloph) '	M3: ectoloph and metaloph	'fused (ectometaloph) '	1	221	155	66	17	Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+128	M3: shape|'quadrangular '	M3: shape	'quadrangular '	0	215	130	85	12	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Coean,Dicar,Menar,Diaag,Diale
+129	M3: shape|'triangular '	M3: shape	'triangular '	1	198	109	89	9	Dicbi,Dicsu,Brabr,Telfo,Larsa,Hopte,Acein,Rhiun,Rhiso
+130	M3: protocone|'always unconstricted'	M3: protocone	'always unconstricted'	0	214	126	88	12	Tapte,Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Dicar,Menar,Rhiun,Rhiso
+131	M3: protocone|'always constricted'	M3: protocone	'always constricted'	2	194	102	92	8	Aegbe,Histu,Telfo,Diaag,Larsa,Hopte,Acein,Diale
+132	M3: protocone|'usually unconstricted'	M3: protocone	'usually unconstricted'	1	92	3	89	1	Coean
+133	M3: protoloph|'transverse '	M3: protoloph	'transverse '	0	225	183	42	20	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+134	M3: protoloph|'mesiodistally elongated '	M3: protoloph	'mesiodistally elongated '	1	91	1	90	1	Cersi
+135	p2-3: vertical external rugosity|'present '	p2-3: vertical external rugosity	'present '	1	99	1	98	1	Hopte
+136	Lower cheek teeth: trigonid|'rounded '	Lower cheek teeth: trigonid	'rounded '	1	214	127	87	12	Tapte,Histu,Dicbi,Dicsu,Brabr,Telfo,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+137	Lower cheek teeth: trigonid|'sharp-edged'	Lower cheek teeth: trigonid	'sharp-edged'	0	210	123	87	9	Hyrex,Trios,Ronfi,Aegbe,Cersi,Coean,Dicar,Menar,Diaag
+138	Lower cheek teeth: trigonid|'acute dihedron '	Lower cheek teeth: trigonid	'acute dihedron '	1	185	99	86	6	Tapte,Aegbe,Histu,Dicar,Menar,Larsa
+139	Lower cheek teeth: trigonid|'obtuse or right dihedron '	Lower cheek teeth: trigonid	'obtuse or right dihedron '	0	226	148	78	15	Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Coean,Telfo,Diaag,Hopte,Acein,Diale,Rhiun,Rhiso
+140	Lower cheek teeth: metaconid|'joined to the metalophid '	Lower cheek teeth: metaconid	'joined to the metalophid '	0	209	127	82	11	Tapte,Ronfi,Dicbi,Dicsu,Dicar,Menar,Diaag,Hopte,Acein,Diale,Rhiso
+141	Lower cheek teeth: metaconid|'constricted '	Lower cheek teeth: metaconid	'constricted '	1	215	134	81	10	Hyrex,Trios,Aegbe,Histu,Cersi,Brabr,Coean,Telfo,Larsa,Rhiun
+142	Lower cheek teeth: entoconid|'joined to the hypolophid '	Lower cheek teeth: entoconid	'joined to the hypolophid '	0	220	164	56	18	Tapte,Hyrex,Trios,Ronfi,Aegbe,Dicbi,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+143	Lower cheek teeth: entoconid|'constricted '	Lower cheek teeth: entoconid	'constricted '	1	149	73	76	3	Histu,Cersi,Coean
+144	Lower premolars: lingual opening of the posterior valley (lingual view)|'U-shaped '	Lower premolars: lingual opening of the posterior valley (lingual view)	'U-shaped '	0	192	109	83	9	Tapte,Hyrex,Trios,Ronfi,Dicsu,Brabr,Dicar,Diaag,Diale
+145	Lower premolars: lingual opening of the posterior valley (lingual view)|'V-shaped '	Lower premolars: lingual opening of the posterior valley (lingual view)	'V-shaped '	1	215	141	74	12	Aegbe,Histu,Cersi,Dicbi,Coean,Menar,Telfo,Larsa,Hopte,Acein,Rhiun,Rhiso
+146	Lower premolars: lingual cingulum|'always present '	Lower premolars: lingual cingulum	'always present '	0	177	95	82	6	Tapte,Dicar,Menar,Telfo,Diaag,Diale
+147	Lower premolars: lingual cingulum|'usually present '	Lower premolars: lingual cingulum	'usually present '	1	99	0	99	1	Ronfi
+148	Lower premolars: labial cingulum|'present '	Lower premolars: labial cingulum	'present '	0	200	121	79	10	Tapte,Hyrex,Ronfi,Brabr,Dicar,Menar,Diaag,Hopte,Acein,Diale
+149	p2|'always present '	p2	'always present '	0	227	190	37	20	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+150	p2|'usually present '	p2	'usually present '	1	94	0	94	1	Telfo
+151	p2: paralophid|'curved, without constriction '	p2: paralophid	'curved, without constriction '	1	212	144	68	11	Tapte,Hyrex,Aegbe,Histu,Cersi,Dicbi,Coean,Menar,Larsa,Rhiun,Rhiso
+152	p2: paralophid|'isolated, spur-like '	p2: paralophid	'isolated, spur-like '	0	199	126	73	10	Trios,Ronfi,Dicsu,Brabr,Dicar,Telfo,Diaag,Hopte,Acein,Diale
+153	p2: paraconid|'developed '	p2: paraconid	'developed '	0	226	191	35	20	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+154	p2: paraconid|'reduced '	p2: paraconid	'reduced '	1	97	1	96	1	Brabr
+155	p2: posterior valley|'lingually open '	p2: posterior valley	'lingually open '	0	219	156	63	17	Tapte,Hyrex,Trios,Aegbe,Histu,Dicbi,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun
+156	p2: posterior valley|'usually closed '	p2: posterior valley	'usually closed '	1	182	108	74	4	Ronfi,Cersi,Coean,Rhiso
+157	Lower molars: lingual cingulum|'always present '	Lower molars: lingual cingulum	'always present '	0	177	94	83	6	Tapte,Ronfi,Dicar,Menar,Diaag,Diale
+158	Lower molars: lingual cingulum|' usually present'	Lower molars: lingual cingulum	' usually present'	1	94	0	94	1	Acein
+159	Lower molars: labial cingulum|'always present '	Lower molars: labial cingulum	'always present '	0	191	115	76	8	Tapte,Hyrex,Ronfi,Brabr,Dicar,Diaag,Hopte,Diale
+160	Lower molars: hypolophid|'transverse '	Lower molars: hypolophid	'transverse '	0	168	96	72	5	Tapte,Hyrex,Trios,Ronfi,Larsa
+161	Lower molars: hypolophid|'oblique '	Lower molars: hypolophid	'oblique '	1	217	155	62	15	Aegbe,Histu,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Hopte,Acein,Diale,Rhiun,Rhiso
+162	Lower molars: hypolophid|'almost mesiodistally oriented '	Lower molars: hypolophid	'almost mesiodistally oriented '	2	91	2	89	1	Cersi
+163	Scaphoid: postero-proximal facet with semilunate|'present '	Scaphoid: postero-proximal facet with semilunate	'present '	0	221	157	64	13	Tapte,Trios,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Coean,Telfo,Larsa,Hopte,Rhiun,Rhiso
+164	Scaphoid: magnum-facet in lateral view|'straight '	Scaphoid: magnum-facet in lateral view	'straight '	1	178	105	73	4	Tapte,Aegbe,Histu,Brabr
+165	Scaphoid: magnum-facet in lateral view|'concave '	Scaphoid: magnum-facet in lateral view	'concave '	0	225	167	58	17	Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+166	Scaphoid: comparison between anterior and posterior heights|'equal '	Scaphoid: comparison between anterior and posterior heights	'equal '	0	207	145	62	10	Tapte,Hyrex,Trios,Ronfi,Dicbi,Dicsu,Dicar,Menar,Telfo,Rhiso
+167	Scaphoid: comparison between anterior and posterior heights|'antH<postH '	Scaphoid: comparison between anterior and posterior heights	'antH<postH '	1	215	153	62	11	Aegbe,Histu,Cersi,Brabr,Coean,Diaag,Larsa,Hopte,Acein,Diale,Rhiun
+168	Semilunate: ulna-facet|'present '	Semilunate: ulna-facet	'present '	1	205	145	60	8	Hyrex,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Larsa
+169	Semilunate: distal border of the anterior side|'rounded '	Semilunate: distal border of the anterior side	'rounded '	1	218	160	58	11	Tapte,Hyrex,Histu,Cersi,Dicbi,Coean,Dicar,Menar,Telfo,Diaag,Hopte
+170	Semilunate: distal border of the anterior side|'sharp '	Semilunate: distal border of the anterior side	'sharp '	0	201	136	65	10	Trios,Ronfi,Aegbe,Dicsu,Brabr,Larsa,Acein,Diale,Rhiun,Rhiso
+171	Semilunate: anterior side|'keeled '	Semilunate: anterior side	'keeled '	0	206	150	56	12	Tapte,Trios,Ronfi,Aegbe,Histu,Dicsu,Brabr,Dicar,Menar,Telfo,Rhiun,Rhiso
+172	Semilunate: anterior side|'smooth '	Semilunate: anterior side	'smooth '	1	213	156	57	9	Hyrex,Cersi,Dicbi,Coean,Diaag,Larsa,Hopte,Acein,Diale
+173	Pyramidal: distal facet for semilunate|'symmetric '	Pyramidal: distal facet for semilunate	'symmetric '	0	203	144	59	10	Tapte,Hyrex,Ronfi,Telfo,Diaag,Hopte,Acein,Diale,Rhiun,Rhiso
+174	Pyramidal: distal facet for semilunate|'asymmetric '	Pyramidal: distal facet for semilunate	'asymmetric '	1	188	124	64	7	Trios,Aegbe,Histu,Brabr,Dicar,Menar,Larsa
+175	Pyramidal: distal facet for semilunate|'L-shaped '	Pyramidal: distal facet for semilunate	'L-shaped '	2	156	93	63	4	Cersi,Dicbi,Dicsu,Coean
+176	Pyramidal: distal side|'triangular '	Pyramidal: distal side	'triangular '	0	216	180	36	18	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+177	Pyramidal: distal side|'elliptic '	Pyramidal: distal side	'elliptic '	1	133	67	66	3	Cersi,Dicbi,Coean
+178	Trapezoid: proximal border in anterior view|'symmetric '	Trapezoid: proximal border in anterior view	'symmetric '	0	210	164	46	11	Tapte,Hyrex,Trios,Ronfi,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa
+179	Trapezoid: proximal border in anterior view|'asymmetric '	Trapezoid: proximal border in anterior view	'asymmetric '	1	205	157	48	10	Aegbe,Histu,Cersi,Dicbi,Dicsu,Hopte,Acein,Diale,Rhiun,Rhiso
+180	Magnum: posterior tuberosity|'short '	Magnum: posterior tuberosity	'short '	0	190	133	57	7	Tapte,Hyrex,Dicsu,Brabr,Diaag,Hopte,Diale
+181	Magnum: posterior tuberosity|'long '	Magnum: posterior tuberosity	'long '	1	217	173	44	14	Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Coean,Dicar,Menar,Telfo,Larsa,Acein,Rhiun,Rhiso
+182	McII: posterior McIII-facet|'always present '	McII: posterior McIII-facet	'always present '	2	208	157	51	11	Cersi,Dicbi,Dicsu,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Rhiun,Rhiso
+183	McII: trapezium-facet|'present '	McII: trapezium-facet	'present '	0	218	178	40	15	Tapte,Hyrex,Trios,Aegbe,Histu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Diale,Rhiun,Rhiso
+184	McIII: magnum-facet in anterior view|'visible '	McIII: magnum-facet in anterior view	'visible '	0	220	185	35	17	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Larsa,Hopte,Acein,Rhiun,Rhiso
+185	McIII: magnum-facet in anterior view|'invisible '	McIII: magnum-facet in anterior view	'invisible '	1	156	93	63	4	Brabr,Telfo,Diaag,Diale
+186	McV|'functional '	McV	'functional '	0	182	130	52	7	Tapte,Hyrex,Trios,Ronfi,Diaag,Hopte,Acein
+187	McV|'vestigial '	McV	'vestigial '	1	213	176	37	14	Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Larsa,Diale,Rhiun,Rhiso
+188	Metacarpals: insertion of the m. extensor carpalis|'flat '	Metacarpals: insertion of the m. extensor carpalis	'flat '	0	213	174	39	12	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar
+189	Metacarpals: insertion of the m. extensor carpalis|'salient '	Metacarpals: insertion of the m. extensor carpalis	'salient '	1	191	141	50	9	Brabr,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+190	Femur: trochanter major|'high '	Femur: trochanter major	'high '	0	203	159	44	13	Tapte,Hyrex,Trios,Ronfi,Brabr,Dicar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+191	Femur: trochanter major|'low '	Femur: trochanter major	'low '	1	196	154	42	7	Aegbe,Cersi,Dicbi,Dicsu,Coean,Menar,Telfo
+192	Femur: third trochanter|'developed '	Femur: third trochanter	'developed '	0	208	171	37	13	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Dicsu,Dicar,Menar,Telfo,Diaag,Acein,Diale
+193	Femur: third trochanter|'very developed '	Femur: third trochanter	'very developed '	1	198	153	45	8	Cersi,Dicbi,Brabr,Coean,Larsa,Hopte,Rhiun,Rhiso
+194	Femur: proximal border of the patellar trochlea|'curved '	Femur: proximal border of the patellar trochlea	'curved '	0	218	188	30	15	Tapte,Hyrex,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicar,Menar,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+195	Femur: proximal border of the patellar trochlea|'straight '	Femur: proximal border of the patellar trochlea	'straight '	1	194	156	38	6	Trios,Dicsu,Brabr,Coean,Telfo,Diaag
+196	Tibia: antero-distal surface|flat	Tibia: antero-distal surface	flat	1	222	194	28	12	Tapte,Aegbe,Histu,Cersi,Dicbi,Brabr,Coean,Telfo,Diaag,Hopte,Rhiun,Rhiso
+197	Tibia: antero-distal surface|'proximo-distally concave (grooved)'	Tibia: antero-distal surface	'proximo-distally concave (grooved)'	0	198	160	38	9	Hyrex,Trios,Ronfi,Dicsu,Dicar,Menar,Larsa,Acein,Diale
+198	Tibia-fibula|'independent '	Tibia-fibula	'independent '	0	222	198	24	16	Tapte,Hyrex,Trios,Ronfi,Cersi,Dicbi,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Hopte,Diale,Rhiun,Rhiso
+199	Tibia-fibula|'in contact or fused '	Tibia-fibula	'in contact or fused '	1	185	148	37	5	Aegbe,Histu,Coean,Larsa,Acein
+200	Tibia: posterior apophysis|'high '	Tibia: posterior apophysis	'high '	0	220	199	21	14	Tapte,Hyrex,Trios,Ronfi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein
+201	Tibia: posterior apophysis|'low '	Tibia: posterior apophysis	'low '	1	189	158	31	7	Aegbe,Histu,Cersi,Dicbi,Diale,Rhiun,Rhiso
+202	Tibia: posterior apophysis|'sharp '	Tibia: posterior apophysis	'sharp '	0	183	149	34	7	Tapte,Hyrex,Trios,Ronfi,Dicsu,Hopte,Acein
+203	Tibia: posterior apophysis|'rounded '	Tibia: posterior apophysis	'rounded '	1	213	192	21	14	Aegbe,Histu,Cersi,Dicbi,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Diale,Rhiun,Rhiso
+204	Astragalus: TD/H|'TD/H<1 '	Astragalus: TD/H	'TD/H<1 '	0	118	41	77	2	Tapte,Hyrex
+205	Astragalus: TD/H|'1<TD/H<1.2 '	Astragalus: TD/H	'1<TD/H<1.2 '	1	217	193	24	15	Trios,Ronfi,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun
+206	Astragalus: TD/H|'1.2<TD/H '	Astragalus: TD/H	'1.2<TD/H '	2	170	125	45	4	Aegbe,Brabr,Telfo,Rhiso
+207	Astragalus: APD/H|'APD/H<0.65 '	Astragalus: APD/H	'APD/H<0.65 '	0	168	120	48	5	Tapte,Hyrex,Dicar,Diaag,Diale
+208	Astragalus: APD/H|'0.65<APD/H '	Astragalus: APD/H	'0.65<APD/H '	1	222	205	17	16	Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Menar,Telfo,Larsa,Hopte,Acein,Rhiun,Rhiso
+209	Astragalus: orientation of the fibula-facet|'oblique '	Astragalus: orientation of the fibula-facet	'oblique '	1	222	207	15	11	Tapte,Aegbe,Histu,Cersi,Dicbi,Brabr,Coean,Menar,Telfo,Diaag,Acein
+210	Astragalus: orientation of the fibula-facet|'subvertical '	Astragalus: orientation of the fibula-facet	'subvertical '	0	198	170	28	10	Hyrex,Trios,Ronfi,Dicsu,Dicar,Larsa,Hopte,Diale,Rhiun,Rhiso
+211	Astragalus: fibula-facet|'flat '	Astragalus: fibula-facet	'flat '	0	224	213	11	19	Tapte,Hyrex,Trios,Ronfi,Histu,Dicbi,Dicsu,Brabr,Coean,Dicar,Menar,Telfo,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+212	Astragalus: fibula-facet|'concave '	Astragalus: fibula-facet	'concave '	1	139	88	51	2	Aegbe,Cersi
+213	Astragalus: collum tali|'high '	Astragalus: collum tali	'high '	0	214	199	15	11	Tapte,Hyrex,Trios,Ronfi,Brabr,Coean,Dicar,Telfo,Diaag,Larsa,Acein
+214	Astragalus: collum tali|'low '	Astragalus: collum tali	'low '	1	205	188	17	10	Aegbe,Histu,Cersi,Dicbi,Dicsu,Menar,Hopte,Diale,Rhiun,Rhiso
+215	Astragalus: posterior tip of the cuboid-facet|salient	Astragalus: posterior tip of the cuboid-facet	salient	0	218	207	11	16	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Menar,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+216	Astragalus: posterior tip of the cuboid-facet|flat	Astragalus: posterior tip of the cuboid-facet	flat	1	181	155	26	5	Brabr,Coean,Dicar,Telfo,Diaag
+217	Astragalus: orientation trochlea/distal articulation|'very oblique '	Astragalus: orientation trochlea/distal articulation	'very oblique '	0	188	163	25	8	Tapte,Hyrex,Trios,Ronfi,Dicar,Larsa,Hopte,Acein
+218	Astragalus: orientation trochlea/distal articulation|'same axis '	Astragalus: orientation trochlea/distal articulation	'same axis '	1	211	199	12	13	Aegbe,Histu,Cersi,Dicbi,Dicsu,Brabr,Coean,Menar,Telfo,Diaag,Diale,Rhiun,Rhiso
+219	Astragalus: calcaneus-facet 1|'very concave '	Astragalus: calcaneus-facet 1	'very concave '	0	223	217	6	18	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+220	Astragalus: calcaneus-facet 1|'nearly flat '	Astragalus: calcaneus-facet 1	'nearly flat '	1	138	85	53	3	Brabr,Telfo,Diaag
+221	Calcaneus: tuber calcanei|'massive '	Calcaneus: tuber calcanei	'massive '	0	221	216	5	14	Tapte,Hyrex,Cersi,Dicbi,Dicsu,Brabr,Coean,Dicar,Telfo,Diaag,Larsa,Acein,Rhiun,Rhiso
+222	Calcaneus: tuber calcanei|'slender '	Calcaneus: tuber calcanei	'slender '	1	191	174	17	7	Trios,Ronfi,Aegbe,Histu,Menar,Hopte,Diale
+223	Limbs|'slender '	Limbs	'slender '	0	224	220	4	19	Tapte,Hyrex,Trios,Ronfi,Aegbe,Histu,Cersi,Dicbi,Dicsu,Coean,Dicar,Menar,Diaag,Larsa,Hopte,Acein,Diale,Rhiun,Rhiso
+224	Limbs|'robust (brachypod) '	Limbs	'robust (brachypod) '	1	126	61	65	2	Brabr,Telfo
+225	Metapodials: intermediate reliefs|'high and acute '	Metapodials: intermediate reliefs	'high and acute '	0	207	198	9	13	Tapte,Hyrex,Trios,Ronfi,Dicsu,Brabr,Dicar,Menar,Telfo,Diaag,Hopte,Acein,Diale
+226	Metapodials: intermediate reliefs|'low and smooth '	Metapodials: intermediate reliefs	'low and smooth '	1	187	167	20	8	Aegbe,Histu,Cersi,Dicbi,Coean,Larsa,Rhiun,Rhiso
+227	Lateral metapodials: insertion of the m. interossei|'long '	Lateral metapodials: insertion of the m. interossei	'long '	0	214	207	7	13	Tapte,Hyrex,Aegbe,Histu,Dicbi,Dicsu,Coean,Menar,Larsa,Hopte,Acein,Rhiun,Rhiso
+228	Lateral metapodials: insertion of the m. interossei|'short '	Lateral metapodials: insertion of the m. interossei	'short '	1	203	198	5	8	Trios,Ronfi,Cersi,Brabr,Dicar,Telfo,Diaag,Diale

@@ -1,0 +1,22 @@
+#CompositeGrapher 1.0 (c) Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov, François-Joseph Lapointe, Éric Bapteste
+#Mon Jan 30 18:19:42 EST 2017
+CompilerFound=true
+ExecutableDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\Executable
+FirstTime=1
+Name=Configuration file (config.dat)
+applicationName=CompositeGrapher
+author=Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov, François-Joseph Lapointe, Éric Bapteste
+currentPath=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER
+dataPath=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\data
+explorerPath=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\sample\\sample_m.txt
+iconsPath=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\data\\icons
+imagePath=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\data\\images
+last_matrix=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\sample\\sample_m.txt
+last_path=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER
+matrix_file=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\sample\\sample_4.txt
+projectsDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\projects
+resultsDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\results
+temporaryDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\tmp
+testDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\test
+tmpDir=C\:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\tmp
+version=1.0
