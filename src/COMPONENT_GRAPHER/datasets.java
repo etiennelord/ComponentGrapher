@@ -69,7 +69,8 @@ public class datasets extends Observable implements Serializable {
     
    public int random=0; 
    public int replicate=3; //--Bootstrap replicate
-   public boolean bootstrap=true;
+   public boolean permutation=true;
+   public boolean bootstrap=false;
    public boolean save_graphml=false;
    public boolean nooutput=true; //--Don't save intermediate
    public boolean remove_undefined_column=false;//f
@@ -236,7 +237,7 @@ public class datasets extends Observable implements Serializable {
        this.total_valid_column=d.total_valid_column; 
        this.max_char_state=d.max_char_state;
 
-       this.bootstrap=d.bootstrap;
+       this.permutation=d.permutation;
        this.save_graphml=d.save_graphml;
        this.nooutput=d.nooutput;
        this.remove_undefined_column=d.remove_undefined_column;

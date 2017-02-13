@@ -56,7 +56,7 @@ public class ConfigureAnalysis_JDialog1 extends javax.swing.JDialog {
         this.Name_jTextField.setText(data.filename);
         this.Directory_jTextField.setText(data.result_directory);
         this.Bootstrap_jTextField.setText(""+data.replicate);
-        this.Bootstrap_jCheckBox.setSelected(data.bootstrap);
+        this.Bootstrap_jCheckBox.setSelected(data.permutation);
         this.remove_multiple_column_jCheckBox.setSelected(data.remove_multiple_column);
         this.remove_undefined_column_jCheckBox.setSelected(data.remove_undefined_column);
         this.Directory_jTextField.setText(data.result_directory);
@@ -503,7 +503,7 @@ public class ConfigureAnalysis_JDialog1 extends javax.swing.JDialog {
     }//GEN-LAST:event_Bootstrap_jTextFieldInputMethodTextChanged
 
     private void Bootstrap_jCheckBoxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_Bootstrap_jCheckBoxStateChanged
-        data.bootstrap=this.Bootstrap_jCheckBox.isSelected();
+        data.permutation=this.Bootstrap_jCheckBox.isSelected();
     }//GEN-LAST:event_Bootstrap_jCheckBoxStateChanged
 
     private void remove_multiple_column_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remove_multiple_column_jCheckBoxActionPerformed

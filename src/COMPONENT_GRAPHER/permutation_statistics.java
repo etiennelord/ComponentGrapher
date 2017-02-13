@@ -21,6 +21,7 @@ package COMPONENT_GRAPHER;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import config.Config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,7 +43,7 @@ import umontreal.iro.lecuyer.charts.CustomHistogramDataset;
 import umontreal.iro.lecuyer.rng.LFSR258;
 
 /**
- * Implement the bootstrap or permutation permutation_statistics
+ * Implement the permutation or permutation permutation_statistics
  * @author Etienne Lord
  */
 public class permutation_statistics implements Serializable {
@@ -59,6 +60,7 @@ public class permutation_statistics implements Serializable {
     public int current_replicate=1;
     LFSR258  rand=new LFSR258();            
     transient Callable callback=null;
+    transient Config config=new Config();
     
     public summary_statistics reference=null; //--The reference 
     public ArrayList<summary_statistics> replicates=new ArrayList<summary_statistics>(); //--The replicates
@@ -119,40 +121,7 @@ public class permutation_statistics implements Serializable {
     public void setCallback(Callable callback_) {
        this.callback=callback_;
     }
-    /***
-     * Randomly permute the value in i and j
-     * @param col i.e. character p.e. pied 
-     */
-    public void permute(int col) {
-        int index_i=rand.nextInt(0,data.ntax-1);        
-        int index_j=rand.nextInt(0,data.ntax-1);
-        while (index_j==index_i) {
-            index_j=rand.nextInt(0,data.ntax-1);
-        }
-       
-        String o=data.current_state_matrix[index_i][col];
-        data.current_state_matrix[index_i][col]=data.current_state_matrix[index_j][col];
-        data.current_state_matrix[index_j][col]=o;        
-    }
-    
-    /**
-     * From the original data, do one matrix permutation
-     */
-    public void generate_permutation() {
-        
-        //Restore original matrix
-       for (int i=0;i<data.ntax;i++) {
-            for (int j=0; j<data.nchar;j++) {
-                data.current_state_matrix[i][j]=original_state_matrix[i][j];
-            }
-        }        
-       
-       //Do the random permuation
-        for (int j=0; j<data.nchar;j++) {
-            for (int i=0; i<data.ntax-1;i++) permute(j);
-         }        
-    }
-    
+      
     public void saveReferenceStatistics() {
         String directory=reference_data.result_directory;
         String serial=directory+File.separator+"reference.json";
@@ -171,7 +140,7 @@ public class permutation_statistics implements Serializable {
     
     public void saveReplicateStatistics(int replicate, summary_statistics su) {
          String directory=reference_data.result_directory;
-         util.CreateDir(directory);         
+         if (!util.DirExists(directory)) util.CreateDir(directory);       
          String serial=directory+File.separator+"randomization_"+replicate+".json";
          su.serialize(serial);
          reference.data.save_CurrentPhylipMatrix(directory+File.separator+"replicate_"+replicate+".phy", true);
@@ -181,21 +150,31 @@ public class permutation_statistics implements Serializable {
      * Main function to call to generate statistics
      */
     public void generate_statistics() {
-        this.replicate=reference_data.replicate;
+       try {
+         String directory=reference_data.result_directory;
+         if (!util.DirExists(directory)) util.CreateDir(directory);   
+        //--Log to the current directory
+           final util logfile=new util();
+            String log_filename=directory+File.separator+"log.txt";
+           logfile.open(log_filename);
+           this.replicate=reference_data.replicate;
        // System.out.println(reference_data.result_directory);
        reference_data.compute();
        data.MessageOption(data.get_info());
        data.MessageOption("Saving to "+reference_data.result_directory);
        data.MessageOption("* This is set in the Run analysis menu.");
+       logfile.println(data.get_info());
        starttime=System.currentTimeMillis();
        reference=new summary_statistics(reference_data);
         data.MessageResult("Calculating reference");
         data.MessageResult("Analyzing :"+reference.data.filename);        
         //System.out.println("Calculating reference\n");
+        logfile.println("Analyzing :"+reference.data.filename);
         reference.calculate_network_statistics();
         //--Save the reference and statistics to results directory
         saveReferenceStatistics();
         data.MessageResult(reference.get_info().toString()); 
+        logfile.println(reference.get_info().toString());
          try {
                         if (callback!=null) callback.call();
                          
@@ -203,16 +182,20 @@ public class permutation_statistics implements Serializable {
                         e.printStackTrace();
                    }
         //--Test if we are doing replicate here
-        
-        
+                
         long estimate=System.currentTimeMillis()-starttime;
         System.out.println("Total time for reference :"+util.msToString(estimate));
+        logfile.println("Total time for reference :"+util.msToString(estimate));
         data.MessageResult("Total time for reference :"+util.msToString(estimate)+"\n"); 
-        if (data.replicate<=1 || !data.bootstrap) return;
+        if (data.replicate<=1 || !data.permutation) {
+            //--No replicate
+            logfile.close();
+            return;
+        }
         System.out.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));      
-        
-         long timerunning=System.currentTimeMillis();  //--We will estimate 1%
-         int one_percent=(int)Math.ceil(replicate/100)+1;
+        logfile.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));
+         //long timerunning=System.currentTimeMillis();  //--We will estimate 1%
+         //int one_percent=(int)Math.ceil(replicate/100)+1; //Not used
          
          ExecutorService pool=Executors.newFixedThreadPool(datasets.maxthreads);
          final ArrayList<Callable<summary_statistics>>partitions=new ArrayList<Callable<summary_statistics>>();
@@ -224,6 +207,7 @@ public class permutation_statistics implements Serializable {
                   final long this_start_time=System.currentTimeMillis();
                    System.out.println(this_replicate+" / "+replicate +" [started]");
                    data.MessageResult(this_replicate+" / "+replicate +" [started]\n");
+                   logfile.println(this_replicate+" / "+replicate +" [started]");
 //                     try {
 //                        if (callback!=null) callback.call();
 //                         
@@ -231,13 +215,18 @@ public class permutation_statistics implements Serializable {
 //                        e.printStackTrace();
 //                   }
                    datasets t=new datasets(data);
-                   t.generate_permutation();
+                   if (data.permutation) {
+                       t.generate_permutation();
+                   } else if (data.bootstrap) {
+                        t.generate_bootstrap();
+                   }
                    t.compute();
                    summary_statistics s=new summary_statistics(t);            
                     s.calculate_network_statistics();           
                     saveReplicateStatistics(this_replicate, s);
                     String dt=this_replicate+" / "+replicate +" [done in "+util.msToString(System.currentTimeMillis()-this_start_time)+"]";
                     System.out.println(dt);
+                    logfile.println(dt);
                     data.MessageResult(dt+"\n");
                     try {
                         if (callback!=null) callback.call();
@@ -261,9 +250,13 @@ public class permutation_statistics implements Serializable {
          }
          endtime=System.currentTimeMillis();
          System.out.println("Total time: "+util.msToString(endtime-starttime));
-               
+         logfile.println("Total time: "+util.msToString(endtime-starttime));
         //--done in the mainframe now...data=reference_data;
-
+       logfile.close();
+       } catch(Exception pp) {
+           
+       }
+       
 }
     
     public Double[] getPvalue(String node_field, ArrayList<summary_statistics> replicates, summary_statistics reference) {
@@ -986,7 +979,7 @@ public class permutation_statistics implements Serializable {
       */
      public ArrayList<stats> calculate_stat() {
        ArrayList<stats> datas=new ArrayList<stats>();
-       if (!data.bootstrap) return datas; //--No pvalue_fieldsplicate
+       if (!data.permutation) return datas; //--No pvalue_fieldsplicate
        for (int p=0; p<pvalue_fields.length;p++) {
            String node_field=pvalue_fields[p];           
             stats s=new stats();

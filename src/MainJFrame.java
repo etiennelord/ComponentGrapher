@@ -1364,12 +1364,18 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     }
     
     void updateMatrixTableInfo() {
-          if (data.states.size()>0) {
+        //--Interface
+         jTabbedPane.setEnabledAt(1, false);
+         jTabbedPane.setEnabledAt(2, false);
+         jTabbedPane.setEnabledAt(3, false);
+        
+        if (data.states.size()>0) {
               Polymorphic_jButton.setEnabled(true);
           } else {
               Polymorphic_jButton.setEnabled(false);
           }
           rowtable.repaint();        
+          
           MatrixJButton.setText("<html>Matrix<br>"+data.intmaxcol()+"x"+data.intmaxrow()+"</html>");
                   Filename_jTextField.setText(data.filename);
                   MatrixTableModel tm=(MatrixTableModel)this.Matrix_jTable.getModel();
@@ -1518,6 +1524,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         this.data=configure.getData(); //--Update data         
         if (configure.status_run) {
             Message("Analyzing "+data.filename+"","");
+            Message("Log is found in: "+data.result_directory,"Analyzing "+data.filename);
             Stop_jButton.setEnabled(true);
              progress.setValue(0);
              percent_jLabel.setText("0 %");
@@ -1560,7 +1567,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                                         
                     //--Permutation statistic here
                     statistics=new permutation_statistics(data);                    
-                 //--If bootstrap, do it here                    
+                 //--If permutation, do it here                    
                     statistics.setCallback(new Callable() {                     
                        @Override
                      public Object call() {
@@ -1620,10 +1627,12 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                                 int prog=(Integer)evt.getNewValue();                                
                                 progress.setValue(prog);
                                 percent_jLabel.setText(prog+" %");
+                                progress.setToolTipText("Currently launched tasks ["+statistics.current_replicate+" / "+statistics.replicate+"]");
                             }
                             else if (o.isDone()&&!o.isCancelled()) {
                                 progress.setValue(100);   
                                 percent_jLabel.setText("100 %");
+                                progress.setToolTipText("Analysis of "+data.filename+" is done.");
                                 //Handled in done() fucntion in SwingWorker
                             }
                         }//End progress update
