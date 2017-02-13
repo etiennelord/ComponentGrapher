@@ -22,6 +22,7 @@ package COMPONENT_GRAPHER;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -190,6 +191,34 @@ public class properties extends Properties implements Comparable {
         } catch(Exception e) {return super.get(key).toString();}
       }
 
+      /**
+     * Get the value associated with a key
+     * @param key
+     * @return a String value or the NotSet String
+     */
+   
+    public String getStringInt(Object key) {       
+        if (!super.containsKey(key)) return ""+0;
+        try {
+        Object o=super.get(key);
+        if (o.getClass()==String.class) {
+            return ""+Integer.valueOf((String)o);
+        }
+        if (o.getClass()==Integer.class) {
+            return ""+(Integer)o;
+        }
+        if (o.getClass()==Double.class) {
+            double d=(Double)o;
+             DecimalFormat myFormatter = new DecimalFormat("####");
+            return myFormatter.format(d);
+        }
+        
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return super.get(key).toString();
+      }
+    
     /**
      * Get an int value from a properties
      * @param key
@@ -235,19 +264,45 @@ public class properties extends Properties implements Comparable {
      * @param key
      * @return the float value or 0 (zero) if not found.
      */
-    public float getFloat(Object key) {
-        //--CASE 1. Already a number in the database
-        try {
-          float i=(Float)super.get(key);
-            return i;
-        } catch(Exception e) {
-
-         //--CASE 2. Try to convert a String to Float
-              try {
-                float i=Float.valueOf(((String)super.get(key)));
-                return i;
-              } catch(Exception e2) {return 0;}
+    public float getFloat(Object key) {        
+       if (!super.containsKey(key)) return 0;
+        if (super.get(key)==null) {       
+            return 0;
         }
+        Object o=super.get(key);        
+        Float dummy=0.0f;
+        try  {
+            if (o.getClass()==Double.class) {
+                double d=(Double)o;
+                dummy=(float)d;
+            }
+            if (o.getClass()==Float.class) {
+                dummy=(Float)o;
+            }
+            if (o.getClass()==String.class) {
+                String s=((String)o).trim();
+                if (!s.isEmpty()) dummy=Float.valueOf(s);
+            }
+            if (o.getClass()==Integer.class) {
+                dummy=0+(Float)o;
+            }
+        } catch(Exception e) {
+           // e.printStackTrace();
+        }       
+        return dummy;
+        //--CASE 1. Already a number in the database
+//        try {
+//          float i=(Float)super.get(key);
+//            return i;
+//        } catch(Exception e) {
+//            //e.printStackTrace();
+//         //--CASE 2. Try to convert a String to Float
+//              try {
+//                float i=Float.valueOf(((String)super.get(key)));
+//                return i;
+//              } catch(Exception e2) {e2.printStackTrace();
+//              return 0;}
+//        }
     }
 
      /**

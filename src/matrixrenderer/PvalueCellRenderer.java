@@ -28,9 +28,13 @@ public class PvalueCellRenderer extends JLabel implements TableCellRenderer {
         //System.out.println(value+" "+value.getClass());
        if (value instanceof Float[]) {
            Float[] v=(Float[])value;
-           this.setText(v[0]+" ***");
+           this.setText(""+v[0]);
        }
       
+        if (value instanceof Double[]) {
+           Double[] v=(Double[])value;
+           this.setText(""+v[0]);
+       }
 
         //cell backgroud color when selected
         if (isSelected) {

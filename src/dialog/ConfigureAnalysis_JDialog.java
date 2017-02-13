@@ -60,9 +60,23 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
 //        this.Solution_jButton.setText("\uf01e");
        
       data.get_info();
+        if (data.info_total_possible_nodes==0) {
+            MessageErreur("Warning! No possible nodes in the generated networks.", "Allow polymorphic character in columns for this analysis.");
+            Run_jButton.setEnabled(false);
+            Run_jButton.setToolTipText("No possible nodes for this analysis.");
+        } else {
+            Run_jButton.setEnabled(true);
+            Run_jButton.setToolTipText("Run analysis");
+            MessageText("Ready to run analysis.","");
+        }
+        this.Bootstrap_jTextField.setText(""+(int)(data.info_total_possible_nodes/0.05));
       this.Recommended_jLabel.setText("<html>(A minimum of <b>"+(int)(data.info_total_possible_nodes/0.05)+"</b> is recommended)</html>");
          //return "<html>Taxa (rows): <b>"+this.ntax+"</b> Characters (columns): <b>"+this.nchar+"</b> Treated columns: <b>"+this.total_valid_column+ "</b> Multistate characters: "+this.info_total_multiple+"</html>";
-        this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
+      this.Taxa_jTextField.setText(""+data.info_Ntaxa);
+      this.Char_jTextField.setText(""+data.info_Nchar);
+      this.Nodes_jTextField.setText(""+data.info_total_possible_nodes);
+      this.Polymorphic_jTextField.setText(""+data.info_total_multistate);
+      //this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
        
 //          if (data.state_strings.size()!=0&&data.info_total_multiple>0) {
 //            String sti=state_strings.get(state_strings.size()-1);              
@@ -137,7 +151,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         Bootstrap_jTextField = new javax.swing.JTextField();
         Bootstrap_jCheckBox = new javax.swing.JCheckBox();
         Recommended_jLabel = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        Run_jButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         remove_multiple_column_jCheckBox = new javax.swing.JCheckBox();
@@ -150,10 +164,22 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         graphml_jCheckBox = new javax.swing.JCheckBox();
         bipartite_jCheckBox = new javax.swing.JCheckBox();
         NoLog_jCheckBox = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
         jStatusMessage = new javax.swing.JLabel();
         Name_jTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        InfojLabel = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        Taxa_jTextField = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        Char_jTextField = new javax.swing.JTextField();
+        Nodes_jTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        Polymorphic_jTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -195,13 +221,12 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(Bootstrap_jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(Bootstrap_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Recommended_jLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Recommended_jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,13 +236,14 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                     .addComponent(Bootstrap_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Bootstrap_jCheckBox)
                     .addComponent(Recommended_jLabel))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Run");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Run_jButton.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        Run_jButton.setText("Run");
+        Run_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                Run_jButtonActionPerformed(evt);
             }
         });
 
@@ -232,7 +258,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         remove_multiple_column_jCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        remove_multiple_column_jCheckBox.setText("Remove from analysis the column(s) containing multiple states (e.g. {1,2,3})");
+        remove_multiple_column_jCheckBox.setText("Remove from analysis the column(s) containing polymorphic states (e.g. {1,2,3})");
         remove_multiple_column_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 remove_multiple_column_jCheckBoxActionPerformed(evt);
@@ -314,11 +340,20 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         bipartite_jCheckBox.setText("Save bipartite networks");
 
         NoLog_jCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        NoLog_jCheckBox.setSelected(true);
         NoLog_jCheckBox.setText("No log (log.txt)");
         NoLog_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 NoLog_jCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("maxthreads");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "4", "6", "8", "10", "20", "50", "100" }));
+        jComboBox1.setSelectedIndex(3);
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
             }
         });
 
@@ -332,8 +367,12 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bipartite_jCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(NoLog_jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(NoLog_jCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -342,7 +381,9 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(graphml_jCheckBox)
                     .addComponent(bipartite_jCheckBox)
-                    .addComponent(NoLog_jCheckBox)))
+                    .addComponent(NoLog_jCheckBox)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jStatusMessage.setForeground(new java.awt.Color(51, 51, 255));
@@ -354,31 +395,98 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("Matrix filename");
 
-        InfojLabel.setText("Matrix description and info");
+        jLabel4.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Miscellaneous options");
+        jLabel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel4.setOpaque(true);
+
+        jLabel6.setBackground(new java.awt.Color(0, 102, 204));
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Statistics");
+        jLabel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel6.setOpaque(true);
+
+        jLabel5.setBackground(new java.awt.Color(0, 102, 204));
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Matrix informations");
+        jLabel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabel5.setOpaque(true);
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setText("Taxa (rows)");
+
+        Taxa_jTextField.setEditable(false);
+        Taxa_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+        Taxa_jTextField.setText("jTextField1");
+        Taxa_jTextField.setBorder(null);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel8.setText("Characters (columns)");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel9.setText("Possible nodes in networks");
+
+        Char_jTextField.setEditable(false);
+        Char_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+        Char_jTextField.setText("jTextField1");
+        Char_jTextField.setBorder(null);
+
+        Nodes_jTextField.setEditable(false);
+        Nodes_jTextField.setText("jTextField3");
+        Nodes_jTextField.setBorder(null);
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel10.setText("Polymorphic characters");
+
+        Polymorphic_jTextField.setEditable(false);
+        Polymorphic_jTextField.setText("jTextField1");
+        Polymorphic_jTextField.setBorder(null);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(InfojLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(Name_jTextField))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
                         .addComponent(jStatusMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(Run_jButton))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(Taxa_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(Nodes_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Polymorphic_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -389,19 +497,37 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                     .addComponent(Name_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(InfojLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(Taxa_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
+                    .addComponent(Nodes_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(Polymorphic_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1)
+                        .addComponent(Run_jButton)
                         .addComponent(jButton2))
                     .addComponent(jStatusMessage, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
@@ -415,13 +541,13 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void Run_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Run_jButtonActionPerformed
           try {
         data.replicate=Integer.valueOf(this.Bootstrap_jTextField.getText());        
         data.remove_multiple_column=this.remove_multiple_column_jCheckBox.isSelected();
@@ -432,7 +558,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
           }
         this.status_run=true;
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_Run_jButtonActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
          try {
@@ -456,17 +582,43 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
     private void remove_multiple_column_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remove_multiple_column_jCheckBoxActionPerformed
         data.remove_multiple_column=this.remove_multiple_column_jCheckBox.isSelected();       
         //data.compute_nodes();
-        data.get_info();        
+        data.get_info();     
+        if (data.info_total_possible_nodes==0) {
+            MessageErreur("Warning! No possible nodes in the generated networks.", "Allow polymorphic character in columns for this analysis.");
+            Run_jButton.setEnabled(false);
+            Run_jButton.setToolTipText("No possible nodes for this analysis.");
+        } else {
+            Run_jButton.setEnabled(true);
+            Run_jButton.setToolTipText("Run analysis");
+            MessageText("Ready to run analysis.","");
+        }
         this.Recommended_jLabel.setText("<html>(A minimum of <b>"+(int)(data.info_total_possible_nodes/0.05)+"</b> is recommended)</html>");
-        this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
+        this.Taxa_jTextField.setText(""+data.info_Ntaxa);
+      this.Char_jTextField.setText(""+data.info_Nchar);
+      this.Nodes_jTextField.setText(""+data.info_total_possible_nodes);
+      this.Polymorphic_jTextField.setText(""+data.info_total_multistate);
+        //this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
     }//GEN-LAST:event_remove_multiple_column_jCheckBoxActionPerformed
 
     private void remove_undefined_column_jCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remove_undefined_column_jCheckBoxActionPerformed
         data.remove_undefined_column=this.remove_undefined_column_jCheckBox.isSelected();
-       
         data.get_info();
+        if (data.info_total_possible_nodes==0) {
+            MessageErreur("Warning! No possible node in the generated networks.", "Allow undefined character in columns for this analysis.");            
+            Run_jButton.setEnabled(false);
+            Run_jButton.setToolTipText("No possible nodes for this analysis.");
+        } else {
+            Run_jButton.setEnabled(true);
+            Run_jButton.setToolTipText("Run analysis");
+            MessageText("Ready to run analysis.","");
+       }
+       
         this.Recommended_jLabel.setText("<html>(A minimum of <b>"+(int)(data.info_total_possible_nodes/0.05)+"</b> is recommended)</html>");
-        this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
+        //this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
+        this.Taxa_jTextField.setText(""+data.info_Ntaxa);
+      this.Char_jTextField.setText(""+data.info_Nchar);
+      this.Nodes_jTextField.setText(""+data.info_total_possible_nodes);
+      this.Polymorphic_jTextField.setText(""+data.info_total_multistate);
 
     }//GEN-LAST:event_remove_undefined_column_jCheckBoxActionPerformed
 
@@ -489,22 +641,39 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+       String s=(String)this.jComboBox1.getSelectedItem();
+        datasets.maxthreads=Integer.valueOf(s);
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox Bootstrap_jCheckBox;
     private javax.swing.JTextField Bootstrap_jTextField;
+    private javax.swing.JTextField Char_jTextField;
     private javax.swing.JTextField Directory_jTextField;
-    private javax.swing.JLabel InfojLabel;
     private javax.swing.JTextField Name_jTextField;
     private javax.swing.JCheckBox NoLog_jCheckBox;
+    private javax.swing.JTextField Nodes_jTextField;
+    private javax.swing.JTextField Polymorphic_jTextField;
     private javax.swing.JLabel Recommended_jLabel;
+    private javax.swing.JButton Run_jButton;
+    private javax.swing.JTextField Taxa_jTextField;
     private javax.swing.JCheckBox bipartite_jCheckBox;
     private javax.swing.JCheckBox graphml_jCheckBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;

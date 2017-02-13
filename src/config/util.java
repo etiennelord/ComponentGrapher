@@ -489,6 +489,12 @@ public class util {
 		return tmp;
 	}  
         
-   
+        public static String loadString(String filename) {
+            String stri="";
+            for (String s:loadStrings(filename)) {
+                stri+=s;
+            }
+            return stri;
+        }
     
 }

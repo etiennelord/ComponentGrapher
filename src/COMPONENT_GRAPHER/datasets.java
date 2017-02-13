@@ -60,9 +60,13 @@ public class datasets extends Observable implements Serializable {
    public double min_taxa_percent=0;
    public double max_taxa_percent=1;
    public double min_taxa=1;
-   public static int maxthreads=10;
+   public static int maxthreads=2;
    
-   
+   //--p-value min (see compute_nodes()
+    public double p05=1.0;
+    public double p01=1.0;
+    public double p001=1.0;
+    
    public int random=0; 
    public int replicate=3; //--Bootstrap replicate
    public boolean bootstrap=true;
@@ -136,6 +140,7 @@ public class datasets extends Observable implements Serializable {
    public ArrayList<state> states=new ArrayList<state>(); //--Multiple-states positions (i,j)and information in the matrix
    public ArrayList<String> state_strings=new ArrayList<String>(); //--StateString for this char matrix        
    public String current_state_matrix[][]; 
+   public String current_state_variation;
     /////////////////////////////////////////////////////////////////////////////
     /// INFO FROM get_Info()
        public int info_total_undefined=0; // ? or -
@@ -206,6 +211,12 @@ public class datasets extends Observable implements Serializable {
          //--Allocate memory
        allocate_edges_memory();
        
+       //--Critical values
+        this.p05=d.p05;
+        this.p01=d.p01;
+        this.p001=d.p001;
+        
+        this.current_state_variation=d.current_state_variation;
         this.callback=d.callback;
         this.node_computed=d.node_computed;
         //--Configuration
@@ -601,7 +612,9 @@ public String[][] charmatrix() {
    * @param str 
    */
   public void process_char_state(String str) {
-        int total=-1;
+      
+      if (str.endsWith(";")) str=str.substring(0, str.length()-1);
+      int total=-1;
         // Spit string by pattern
         ArrayList<String> tmp=get_fields(str);   
         //for (String s:tmp) System.out.println(s);
@@ -668,7 +681,7 @@ public String[][] charmatrix() {
          HashMap<String,String> tmp_state=new HashMap<String,String>();
          this.filename=filename;
          this.result_directory=Config.currentPath+File.separator+"results"+File.separator+Config.CleanFileName(filename);
-         this.serial_file=result_directory+File.separator+"results.ser";
+         this.serial_file=result_directory+File.separator+"results.json";
          
 	 // flags!
 	 boolean flag_in_matrix=false;
@@ -698,9 +711,9 @@ public String[][] charmatrix() {
                     if (line.indexOf("BEGIN CHARACTERS;")>-1) count_section++;
                     if ((line.indexOf("DIMENSIONS")>-1||line.indexOf("dimensions")>-1)&&line.indexOf("NCHAR")>-1||line.indexOf("nchar")>-1) this.nchar=datasets.this.get_ivalue(line, "nchar=([0-9]*)");;    		  
                     if (flag_in_matrix&&line.indexOf(";")>-1) flag_in_matrix=false;	
-                     if (flag_in_CHARSTATELABELS&&(line.charAt(0)==';'||line.charAt(line.length()-1)==';')) {
-                         flag_in_CHARSTATELABELS=false;
-                         process_char_state(tmp_char_state);
+                     if (flag_in_CHARSTATELABELS&&(line.charAt(0)==';'||line.charAt(line.length()-1)==';'||line.endsWith(";"))) {                         
+                         flag_in_CHARSTATELABELS=false;                                            
+                         process_char_state(tmp_char_state+line);                         
                      }	
                     if (flag_in_CHARLABELS&&(line.charAt(0)==';'||line.charAt(line.length()-1)==';')) flag_in_CHARLABELS=false;	
                     if (flag_in_STATELABELS&&(line.charAt(0)==';'||line.charAt(line.length()-1)==';')) {
@@ -710,7 +723,7 @@ public String[][] charmatrix() {
                         flag_in_STATELABELS=false;         		 	                       
                     }
      		// test flag	
-			if (line.indexOf("CHARSTATELABELS")>-1||line.indexOf("charstatelabels")>-1) { 
+			if (line.indexOf("CHARSTATELABELS")>-1||line.indexOf("charstatelabels")>-1) {                             
                             flag_in_CHARSTATELABELS=true;			
 			} else 
                         if (line.indexOf("CHARLABELS")>-1||line.indexOf("charlabels")>-1) { 
@@ -870,7 +883,7 @@ void print_state_label() {
        File f=new File(Config.currentPath);
        String firetory=f.getPath();
        this.result_directory=firetory+File.separator+"results"+File.separator+Config.CleanFileName(filename);
-         this.serial_file=result_directory+File.separator+"results.ser";
+         this.serial_file=result_directory+File.separator+"results.json";
         ArrayList<String> data=loadStrings(filename);
         if (data.isEmpty()) return false;
         for (int i=0; i<data.size();i++) {
@@ -1049,7 +1062,7 @@ void print_state_label() {
        str.append("N characters                         : "+info_Nchar+" (columns)\n");
 //--Create the various state matrix         
        str.append("Total number of multistate characters: "+ info_total_multistate+"\n");
-       str.append("Total number of possible variations  : "+info_total_variation+"\n");    
+       str.append("Total number of possible variations* : "+info_total_variation+"\n");    
        str.append("Total variations tested              : "+ìnfo_total_variation_tested+"\n");
        str.append("Remove multiple state columns        : "+this.remove_multiple_column+"\n");
         str.append("Remove undefined columns             : "+this.remove_undefined_column+"\n");        
@@ -1067,7 +1080,7 @@ void print_state_label() {
        str.append("Total multiple char                  : "+info_total_multiple+"\n");              
        str.append("Total possible nodes                 : "+info_total_possible_nodes+"\n");       
        str.append("===============================================================================\n");       
-       
+       str.append("* Indicate the number of state variation for polymorphic characters.\n");       
         if (this.min_taxa<1) {
           //System.out.print("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
           str.append("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
@@ -1246,7 +1259,10 @@ void print_state_label() {
       if (this.total_states==1) this.current_total_iter=1;
       if (this.total_states<1000&&this.maxiter>this.total_states) this.current_total_iter=(int)this.total_states;
       this.total_edges=(((nodes.size()*(nodes.size()-1))/2)*this.current_total_iter);
-     
+      //--Set the statistic values
+      this.p05=0.05/(float)nodes.size(); //--critical values
+      this.p01=0.01/(float)nodes.size();
+      this.p001=0.001/(float)nodes.size();   
   }
   
   private void allocate_edges_memory() {
@@ -1402,8 +1418,8 @@ void print_state_label() {
 //            }
          this.st_results=new StringBuffer();
           MessageResult("===============================================================================\n");
-          MessageResult("Current iteration : "+(state_id+1)+"/"+this.current_total_iter+ "\nStates variations : "+(solution.equals("")?"none":solution)+"\n(saving to: "+f2+")\n");
-          MessageResult("===============================================================================\n");
+          MessageResult("Current iteration : "+(state_id+1)+"/"+this.current_total_iter+ "\nStates variations : "+this.current_state_variation+"\n(saving to: "+f2+")\n");
+          MessageResult("===============================================================================\n");         
         //--Precompute the partition
          //Reset OR not? TO DO. IF maxiter is not set, we should pile up results?
           
@@ -1550,6 +1566,67 @@ void print_state_label() {
        return true;
    }
    
+    public boolean save_CurrentPhylipMatrix(String filename, boolean phylip_compatible) {
+       String char_state_filename=util.getFilename_wo_Ext(filename)+"_charstates.txt";
+       
+       try {
+           PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));
+           if (phylip_compatible) {
+               pw.println("   "+this.ntax+"   "+this.nchar);
+           }
+           int max_name=10;
+           if (!phylip_compatible) {
+              for (String s:this.label) {
+               if (s.trim().length()>max_name) max_name=s.trim().length();
+              }
+                 max_name=max_name+5;                      
+           }
+           String fs="%-"+max_name+"s";           
+           for (int i=0; i<this.ntax;i++) {
+               pw.printf(fs, this.label.get(i));
+               for (int j=0; j<this.nchar;j++) {
+                   String ch=this.current_state_matrix[i][j];
+                   if (ch.length()==1) {
+                       pw.print(ch);
+                   } else {
+                       pw.print("{");
+                       for (int k=0; k<ch.length();k++) {
+                           pw.print(ch.charAt(k));
+                           if (k<ch.length()-1) pw.print(",");
+                       }
+                       pw.print("}");
+                   }                   
+               }
+               pw.println("");
+           }                      
+           pw.flush();
+           pw.close();
+           //--Write char.state if any
+           pw=new PrintWriter(new FileWriter(new File(char_state_filename)));
+            if (charlabels.size()==0) {
+               for( int j=0; j<this.nchar;j++) charlabels.add("Char. "+(j+1)+"");
+           }
+           for (int j=0; j<this.nchar;j++) {              
+               //--Character
+               if (j<this.statelabels.size()) {
+                    HashMap<String,String> st=this.statelabels.get(j);
+                    if (st!=null) {
+                        ArrayList<String> aa=util.sort((Set<String>)st.keySet());
+                        for (int k=0; k<aa.size();k++) {                               
+                            pw.println((j+1)+"\t"+aa.get(k)+"\t"+this.charlabels.get(j)+"\t"+st.get(aa.get(k)));                                                              
+                       }                            
+                    }
+                }
+           }                   
+           pw.flush();
+           pw.close();
+       } catch (Exception e) {
+           e.printStackTrace();
+           return false;
+       }
+       return true;
+   }
+   
      public boolean save_NexusMatrix(String filename) {
        try {
            PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));
@@ -1607,6 +1684,93 @@ void print_state_label() {
                pw.printf(fs, this.label.get(i));
                for (int j=0; j<this.nchar;j++) {
                    String ch=this.char_matrix[i][j];
+                   if (ch.length()==1) {
+                       pw.print(ch);
+                   } else {
+                       pw.print("{");
+                       for (int k=0; k<ch.length();k++) {
+                           pw.print(ch.charAt(k));
+                           if (k<ch.length()-1) pw.print(",");
+                       }
+                       pw.print("}");
+                   }                   
+               }
+               pw.println("");
+           }     
+           pw.println("\t;");
+           pw.println("ENDBLOCK;");
+           pw.println("BEGIN ASSUMPTIONS;\n" +
+                      "\tOPTIONS DEFTYPE = unord PolyTcount = MINSTEPS ; \n" +
+                      "END;");
+           pw.flush();
+           pw.close();
+           //--Write char.state if any
+           
+           
+       } catch (Exception e) {
+           e.printStackTrace();
+           return false;
+       }
+       return true;
+   }
+     
+     public boolean save_CurrentNexusMatrix(String filename) {
+       try {
+           PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));
+           pw.println("#NEXUS"+"\n");
+           pw.println("[ File saved by COMPOSITEGRAPHER version "+config.get("version")+","+util.returnCurrentDateAndTime()+"]\n");           
+           pw.println("BEGIN TAXA;");
+           pw.println(" \t"+"DIMENSIONS NTAX="+this.ntax+";");
+           pw.println(" \t"+"TAXLABELS");
+           for (int i=0; i<this.ntax;i++) {               
+               pw.println("\t\t'"+this.label.get(i)+"'");
+           }
+           pw.println("\t\t;");
+           pw.println("ENDBLOCK;\n");
+           pw.println("BEGIN CHARACTERS;");
+           pw.println("\tDIMENSIONS NCHAR="+this.nchar+";");
+           pw.println("\tFORMAT DATATYPE=STANDARD MISSING=? GAP=- SYMBOLS=\""+this.getCharMatrixSymbols()+"\";");
+           if (charlabels.size()==0) {
+               for( int j=0; j<this.nchar;j++) charlabels.add("Char. "+(j+1)+"");
+           }
+           pw.println("\tCHARLABELS");
+           for (int j=0; j<this.nchar;j++) {
+               pw.println("\t\t["+(j+1)+"] '"+this.charlabels.get(j)+"'");
+           }
+           pw.println("\t\t;");           
+           if (statelabels.size()>0) {
+            pw.println("\tSTATELABELS");
+               for (int j=0; j<this.nchar;j++) {
+                   pw.println("\t\t"+(j+1));
+                   if (j<this.statelabels.size()) {
+                        HashMap<String,String> st=this.statelabels.get(j);
+                        if (st!=null) {
+                            ArrayList<String> aa=util.sort((Set<String>)st.keySet());
+                           for (int k=0; k<aa.size();k++) {
+                               pw.print("\t\t\t"+st.get(aa.get(k)));
+                               if (k!=aa.size()-1) {
+                                   pw.print("\n");
+                               } else {
+                                   pw.print(",\n");
+                               }
+                               
+                           }                            
+                        }
+                    }
+               }       
+            pw.println("\t;");
+            }          
+           pw.println("\tMATRIX");
+           int max_name=10;
+           for (String s:this.label) {
+               if (s.trim().length()>max_name) max_name=s.trim().length();
+           }
+           max_name=max_name+5;           
+           String fs="\t\t%-"+max_name+"s";
+           for (int i=0; i<this.ntax;i++) {
+               pw.printf(fs, this.label.get(i));
+               for (int j=0; j<this.nchar;j++) {
+                   String ch=this.current_state_matrix[i][j];
                    if (ch.length()==1) {
                        pw.print(ch);
                    } else {
@@ -1821,60 +1985,70 @@ void print_state_label() {
       * @return 
       */
      public String prepare_current_state_matrix(int state_id, boolean rand) {
-          String current_state=""; 
+          current_state_variation=""; 
           if (random>0&&random>total_states) {
               random=0;              
           } 
          
          boolean ok=false;      
+         
         if (!user_state_string.isEmpty()&&user_state_string.length()>=states.size()) {
-                 current_state=user_state_string;             
+                 current_state_variation=user_state_string;                       
              try {
               for(int i=0; i<states.size();i++) {
                   state s=states.get(i);
-                  this.current_state_matrix[s.pos_i][s.pos_j]=""+current_state.charAt(i);
+                  if (!s.state.contains(""+current_state_variation.charAt(i))) {
+                      System.out.println("Illegal user supplied variation string : "+current_state_variation); 
+                      System.out.println("Available states are:");
+                      this.print_state_label();
+                  } else {
+                    this.current_state_matrix[s.pos_i][s.pos_j]=""+current_state_variation.charAt(i);
+                  }
               }
              } catch (Exception e) {
-                 System.out.println("Illegal user supplied variation string : "+current_state); 
-                   ArrayList<String> input=new ArrayList<String>();
-                    for (state s:states) input.add(s.state);
-                     state_strings=util.combinations(input);
-             }
-        } else if (!rand&&total_states<1000&&random==0) {
-             //--Generate the combinations if not generated
-           
-            if (state_strings.isEmpty()) {
-                ArrayList<String> input=new ArrayList<String>();
-               for (state s:states) input.add(s.state);                
-                state_strings=util.combinations(input);                
-            }
-             current_state=state_strings.get(state_id);     
-//             System.out.println(states);
-//             System.out.println(current_state);
-             for(int i=0; i<states.size();i++) {
-                  state s=states.get(i);
-                  this.current_state_matrix[s.pos_i][s.pos_j]=""+current_state.charAt(i);
-              }
-         } else {
-         
+                 System.out.println("Illegal user supplied variation string : "+current_state_variation); 
+                 this.print_state_label();
+                 System.out.println("Available states are:");                   
+             }           
+        } else {
+           //--random
             while (!ok) {
-                current_state="";         
+                current_state_variation="";         
                 for (int i=0; i<states.size();i++) {
                       state s=states.get(i);
                       //--Randomly pick a state
-                       LFSR258  r=new  LFSR258();                      
+                      LFSR258  r=new  LFSR258();                      
                       int pos=r.nextInt(0,s.state.length()-1);
-                      current_state+=s.state.charAt(pos);
+                      current_state_variation+=s.state.charAt(pos);
                       this.current_state_matrix[s.pos_i][s.pos_j]=""+s.state.charAt(pos);
+                      s.selected=pos;
+                      HashMap<String,String> st=statelabels.get(s.pos_j);                      
+                      String k=""+s.state.charAt(pos);
+                      if (!rand) s.selected=-1;
+                      s.state_label=k+"|"+st.get(k);
+                      states.set(i, s);
+                      
+                      
                   }
-                if (!state_strings.contains(current_state)) {                   
+                if (!state_strings.contains(current_state_variation)) {                   
                     ok=true;
                 }
             } 
          }       
-         return current_state;
+         return current_state_variation;
      }
      
+    
+     /**
+      * Test if all the caracters are defined (no polymorphic)
+      * @return 
+      */
+     public boolean matrixNotDefined() {
+         for (state s:states) {
+             if (s.selected<0) return true;
+         }         
+         return false;
+     }
     
           /**
       * This return the possible state found in a column
@@ -2032,6 +2206,20 @@ void print_state_label() {
         return str;
     }
     
+    /**
+     * Return the number fo taxa
+     * but with id starting at 1
+     * @param ids_one
+     * @return 
+     */    
+    int get_taxa_count(ArrayList<Integer> ids_one) {
+        int count=0;
+        for (Integer id:ids_one) {
+           count++;
+        }        
+        return count;
+    }
+    
     public String get_taxa(BitVector s) {
         String str="";
         for (int i=0; i<ntax;i++) {
@@ -2039,6 +2227,20 @@ void print_state_label() {
         }
         if (str.length()>1) str=str.substring(0,str.length()-1);
         return str;
+    }
+    
+     /**
+     * Return the number fo taxa
+     * but with id starting at 1
+     * @param ids_one
+     * @return 
+     */    
+    int get_taxa_count(BitVector s) {
+        int count=0;
+         for (int i=0; i<ntax;i++) {
+            if (s.getBool(i)) count++;
+        }        
+        return count;
     }
     
      public String get_taxa(String s) {
@@ -2315,7 +2517,8 @@ void print_state_label() {
            //process_char_state(str);
          datasets d1=new datasets();
          //d1.load_morphobank_nexus("sample\\matrice_ebapteste.nex");
-         d1.load_simple("sample\\sample_m.txt");
+         d1.load_morphobank_nexus("test\\Suarez_etal_2014_MatrixNexus");
+         //d1.load_simple("sample\\sample_m.txt");
          System.out.println(d1.export_charstate("test2.txt"));
 //         datasets d2=new datasets(d1);
 //         d1.compute_nodes();

@@ -71,10 +71,10 @@ public class R2_TableModel extends AbstractTableModel {
 //       datas.clear();
 //       for (int p=0; p<pv.length;p++) {
 //       
-//           String node_field=pv[p];
+//           String node_field=pvalue_fields[p];
 //           
-//           s.node_field=pv[p];
-//           s.title=decription[p];
+//           s.node_field=pvalue_fields[p];
+//           s.title=pvalue_fields_description[p];
 //            double[] values=new double[data.replicates.size()];
 //            double refvalue=0.0f;            
 //         

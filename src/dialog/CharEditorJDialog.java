@@ -16,11 +16,13 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.RowFilter;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import matrixrenderer.CharStateRowFilter;
-import matrixrenderer.ExcelAdapter;
+import matrixrenderer.ExcelResultAdapter;
 import matrixrenderer.MatrixTableModel;
 import matrixrenderer.StateCharTableModel;
 import matrixrenderer.StateTableCellRenderer;
@@ -34,7 +36,7 @@ public class CharEditorJDialog extends javax.swing.JDialog {
 
       datasets data=null;                             // The dataset
     Frame frame;         
-    ExcelAdapter StateMatrixTable;
+    ExcelResultAdapter StateMatrixTable;
      TableRowSorter sorter;
     
     /**
@@ -52,7 +54,7 @@ public class CharEditorJDialog extends javax.swing.JDialog {
         this.Copy_jButton.setFont(Config.glyphicon);
         this.Copy_jButton.setText("\uf0c5");
         this.setTitle("Edit character and state labels");
-        StateMatrixTable = new ExcelAdapter(this.CharState_jTable);StateCharTableModel tm2=(StateCharTableModel)this.CharState_jTable.getModel();
+        StateMatrixTable = new ExcelResultAdapter(this.CharState_jTable);StateCharTableModel tm2=(StateCharTableModel)this.CharState_jTable.getModel();
             tm2.setData(data);       
             
             tm2.fireTableDataChanged();
@@ -99,6 +101,8 @@ public class CharEditorJDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         Copy_jButton = new javax.swing.JButton();
         Filter_ComboBox = new javax.swing.JComboBox();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -150,6 +154,28 @@ public class CharEditorJDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel2.setBackground(new java.awt.Color(255, 153, 0));
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel2.setText("Note: characters should be used in the order they are available, i.e. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -157,7 +183,7 @@ public class CharEditorJDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(Import_jButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -168,7 +194,8 @@ public class CharEditorJDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(Filter_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Copy_jButton)))
+                        .addComponent(Copy_jButton))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -180,7 +207,9 @@ public class CharEditorJDialog extends javax.swing.JDialog {
                     .addComponent(Copy_jButton)
                     .addComponent(Filter_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Import_jButton)
@@ -204,6 +233,9 @@ public class CharEditorJDialog extends javax.swing.JDialog {
 
     private void Import_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Import_jButtonActionPerformed
             JFileChooser chooser = new JFileChooser(config.getExplorerPath());
+            FileFilter filter_text = new FileNameExtensionFilter("Character state file (.txt)", "txt", "mat");                
+            chooser.addChoosableFileFilter(filter_text);
+            chooser.setFileFilter(filter_text);
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); 
                 chooser.setDialogTitle("Import character-states for this matrix");
                 int returnVal = chooser.showOpenDialog(this);
@@ -221,8 +253,7 @@ public class CharEditorJDialog extends javax.swing.JDialog {
                 int mode=this.Filter_ComboBox.getSelectedIndex();
                 String search_term=(String)this.Filter_ComboBox.getSelectedItem();
                 //if (search_term.indexOf("[")>-1) search_term=search_term.substring(0,search_term.indexOf("["));
-                search_term=search_term.trim();
-                System.out.println(search_term);
+                search_term=search_term.trim();                
                 RowFilter<StateCharTableModel, Object> rf = null;
                 //If current expression doesn't parse, don't update.
                 if (search_term.isEmpty()) {                    
@@ -239,9 +270,12 @@ public class CharEditorJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_Filter_ComboBoxActionPerformed
 
     private void Export_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Export_jButtonActionPerformed
-      JFileChooser chooser = new JFileChooser(config.getExplorerPath());
-                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); 
-                chooser.setDialogTitle("Saving character-states");
+           JFileChooser chooser = new JFileChooser(config.getExplorerPath());
+           FileFilter filter_text = new FileNameExtensionFilter("Character state file (.txt)", "txt", "mat");                
+            chooser.addChoosableFileFilter(filter_text);
+            chooser.setFileFilter(filter_text);          
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); 
+            chooser.setDialogTitle("Saving character-states");
                 int returnVal = chooser.showOpenDialog(this);
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                    data.export_charstate(chooser.getSelectedFile().getAbsolutePath());
@@ -257,7 +291,9 @@ public class CharEditorJDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox Filter_ComboBox;
     private javax.swing.JButton Import_jButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

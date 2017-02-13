@@ -21,56 +21,40 @@ package matrixrenderer;
 
 
 import COMPONENT_GRAPHER.node;
-import matrix.DataMatrix;
-import java.awt.Component;
 import javax.swing.table.*;
-import javax.swing.table.DefaultTableModel;
-import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import matrix.DataMatrix;
+
 
 public class Summary_TableModel extends AbstractTableModel {
    public COMPONENT_GRAPHER.summary_statistics data;
 
-   String[] qualifier={
+   //--Column descriptions
+   String[] qualifier_strings={
    "<html>&nbsp;&nbsp;<b>Nodeid</b></html>",
    "<html>&nbsp;&nbsp;<b>Name</b></html>",
-   "<html>&nbsp;&nbsp;<b>found_in_type_1</b></html>",
-    "<html>&nbsp;&nbsp;<b>found_in_type_2</b></html>",
-    "<html>&nbsp;&nbsp;<b>found_in_type_3</b></html>",
-    "<html>&nbsp;&nbsp;<b>found_in_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>column</b></html>",
-    "<html>&nbsp;&nbsp;<b>encoded_state</b></html>",
-    "<html>&nbsp;&nbsp;<b>char_states</b></html>",
-    "<html>&nbsp;&nbsp;<b>CC_type1</b></html>",
-    "<html>&nbsp;&nbsp;<b>CC_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>local_ap_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>global_ap_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>local_ap_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>global_ap_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>in_degree_type2</b></html>",
-    "<html>&nbsp;&nbsp;<b>norm_indegree_type2</b></html>",
-    "<html>&nbsp;&nbsp;<b>betweenness_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>closeness_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>triplet_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>per_triplet_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>triplet_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>per_triplet_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>max_shortest_path_type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>max_shortest_path_complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>convergence</b></html>",
-    "<html>&nbsp;&nbsp;<b>progressive_transition</b></html>",
-    "<html>&nbsp;&nbsp;<b>progressive_transition_end_node</b></html>",
-    //--Add degree
-    
-    
-    //"<html>&nbsp;&nbsp;<b>contains</b></html>",
-   // "<html>&nbsp;&nbsp;<b>percent_contained</b></html>",
+   "<html>&nbsp;&nbsp;<b>Found in type 1 network</b></html>",
+    "<html>&nbsp;&nbsp;<b>Found in type 2 network</b></html>",
+    "<html>&nbsp;&nbsp;<b>Found in type 3 network</b></html>",
+    "<html>&nbsp;&nbsp;<b>Found in complete network</b></html>",
+    "<html>&nbsp;&nbsp;<b>Column</b></html>",
+    "<html>&nbsp;&nbsp;<b>Encoded state</b></html>",
+    "<html>&nbsp;&nbsp;<b>Character</b></html>",
+    "<html>&nbsp;&nbsp;<b>Connected component type1</b></html>",    
+    "<html>&nbsp;&nbsp;<b>Connected component complete</b></html>",    
+    "<html>&nbsp;&nbsp;<b>Local articulation point type3</b></html>",
+    "<html>&nbsp;&nbsp;<b>Global articulation point type3</b></html>",
+    "<html>&nbsp;&nbsp;<b>Local articulation point complete</b></html>",
+    "<html>&nbsp;&nbsp;<b>Global articulation point complete</b></html>",
+    "<html>&nbsp;&nbsp;<b>Indegree type2</b></html>",
+    "<html>&nbsp;&nbsp;<b>Normalized indegree type2</b></html>",
+    "<html>&nbsp;&nbsp;<b>Betweenness type3</b></html>",
+    "<html>&nbsp;&nbsp;<b>Closeness type3</b></html>",
+    "<html>&nbsp;&nbsp;<b>Numbers of triplet type3 </b></html>",
+    "<html>&nbsp;&nbsp;<b>Percent(%) triplet type3</b></html>",   
+    "<html>&nbsp;&nbsp;<b>Convergence</b></html>",    
+    "<html>&nbsp;&nbsp;<b>Number of taxa</b></html>",    
     "<html>&nbsp;&nbsp;<b>Taxa</b></html>"
    };
-    //pw.println("nodeid\tcontains_taxa\tfound_in_type_1\tfound_in_type_2\tfound_in_type_3\tfound_in_complete\tcolumn\tencoded_state\tchar_states\tCC_type1\tCC_complete\tlocal_ap_type3\tglobal_ap_type3\tlocal_ap_complete\tglobal_ap_complete\tin_degree_type2\tnorm_indegree_type2\tbetweenness_type3\tcloseness_type3\ttriplet_type3\tper_triplet_type3\ttriplet_complete\tper_triplet_complete\tmax_shortest_path_type3\tmax_shortest_path_complete\tconvergence\tprogressive_transition\tprogressive_transition_end_node\tcontains\tpercent_contained\tTaxa");
+    
 
      @Override
     public Object getValueAt(int row, int col) {
@@ -80,37 +64,28 @@ public class Summary_TableModel extends AbstractTableModel {
            switch (col) {
                case 0: return n.id;
                case 1: return " "+n.complete_name;
-               case 2: return (n.stats.getBoolean("found_in_type_1")?"x":" ");
-               case 3: return (n.stats.getBoolean("found_in_type_2")?"x":" ");
-               case 4: return (n.stats.getBoolean("found_in_type_3")?"x":" ");
-               case 5: return (n.stats.getBoolean("found_in_complete")?"x":" ");
-               case 6: return n.stats.get("column");
+               case 2: return (n.stats.getBoolean("found_in_type_1")?"x":"-");
+               case 3: return (n.stats.getBoolean("found_in_type_2")?"x":"-");
+               case 4: return (n.stats.getBoolean("found_in_type_3")?"x":"-");
+               case 5: return (n.stats.getBoolean("found_in_complete")?"x":"-");
+               case 6: return n.stats.getInt("column");
                case 7: return n.stats.get("encoded_state");
                case 8: return n.stats.get("char_states");
-               case 9: return n.stats.get("CC_type1");
-               case 10: return n.stats.get("CC_complete");
-               case 11: return (n.stats.getBoolean("local_ap_type3")?"x":" ");
-               case 12: return (n.stats.getBoolean("global_ap_type3")?"x":" ");
-               case 13: return (n.stats.getBoolean("local_ap_complete")?"x":" ");
-               case 14: return (n.stats.getBoolean("global_ap_complete")?"x":" ");
-               case 15: return n.stats.get("in_degree2");
-               case 16: return n.stats.get("norm_indegree_type2");
-              
-               case 17: return (n.stats.isSet("betweenness_type3")?n.stats.getFloat("betweenness_type3"):0);
-               case 18: return (n.stats.isSet("closeness_type3")?n.stats.getFloat("closeness_type3"):0);
-               case 19: return (n.stats.isSet("triplet_type3")?n.stats.getFloat("triplet_type3"):0);
-               case 20: return n.stats.get("percent_triplet_type3");
-               case 21: return (n.stats.isSet("triplet_complete")?n.stats.getFloat("triplet_complete"):0);
-               case 22: return n.stats.get("percent_triplet_complete");
-               case 23: return n.stats.getInt("max_shortest_path_type3");
-               case 24: return n.stats.getInt("max_shortest_path_complete");
-               case 25: return (n.stats.isSet("convergence")?n.stats.getFloat("convergence"):0);
-               case 26: return n.stats.get("progressive_transition");
-               case 27: return n.stats.get("progressive_transition_end_node");    
-               //case 28: return n.stats.get("contains");
-              // case 29: return n.stats.get("percent_contained");
-               case 28: return n.stats.get("taxa");
-               
+               case 9: return (n.stats.get("CC_type1").equals("0")?"-":n.stats.getStringInt("CC_type1"));
+               case 10: return (n.stats.get("CC_complete").equals("0")?"-":n.stats.getStringInt("CC_complete"));
+               case 11: return (n.stats.getBoolean("local_ap_type3")?"x":"-");
+               case 12: return (n.stats.getBoolean("global_ap_type3")?"x":"-");
+               case 13: return (n.stats.getBoolean("local_ap_complete")?"x":"-");
+               case 14: return (n.stats.getBoolean("global_ap_complete")?"x":"-");
+               case 15: return n.stats.getInt("in_degree2");
+               case 16: return n.stats.get("norm_indegree_type2");             
+               case 17: return (n.stats.isSet("betweenness_type3")?n.stats.getFloat("betweenness_type3"):0.0f);
+               case 18: return (n.stats.isSet("closeness_type3")?n.stats.getFloat("closeness_type3"):0.0f);
+               case 19: return (n.stats.isSet("triplet_type3")?n.stats.getFloat("triplet_type3"):0.0f);
+               case 20: return n.stats.getFloat("percent_triplet_type3");                        
+               case 21: return (n.stats.isSet("convergence")?n.stats.getFloat("convergence"):0.0f);
+               case 22: return (n.stats.isSet("taxa_count")?n.stats.getInt("taxa_count"):0);
+               case 23: return n.stats.get("taxa");               
            }
            
 //return data.char_matrix[col][row];
@@ -121,26 +96,10 @@ public class Summary_TableModel extends AbstractTableModel {
     return 0;
     }
 
-   
-   public Summary_TableModel() {
-     
-   }
-  
-   
-   
-   public void setColumnName(String[] qualifier) {
-       //this.qualifier=qualifier;
-   }
 
    public void setData(COMPONENT_GRAPHER.summary_statistics data) {
        this.data=data;
    }
-
-    public void addData(DataMatrix data) {
-        //this.data.add(data);
-   }
-    
-
     
    @Override
     public int getRowCount() {              
@@ -153,7 +112,7 @@ public class Summary_TableModel extends AbstractTableModel {
 
    @Override
     public int getColumnCount() {       
-        if (qualifier!=null) return qualifier.length;
+        if (qualifier_strings!=null) return qualifier_strings.length;
         //return data.ntax;
         return 0;
     }
@@ -166,32 +125,36 @@ public class Summary_TableModel extends AbstractTableModel {
      public Class getColumnClass(int c) {
          switch(c) {
              case 0: return Integer.class;
+             case 1: return String.class;
+             case 2: return String.class;
+             case 3: return String.class;
+             case 4: return String.class; 
+             case 5: return String.class; 
+             case 6: return Integer.class;    
+             case 7: return String.class;     
+             case 8: return String.class;         
+             case 9: return String.class;    
+             case 10: return String.class;  
+             case 15: return Integer.class;  
              case 17:return Float.class;
-             case 18:return Float.class;
-             case 23: return Integer.class;
-             case 24: return Integer.class;
+             case 18:return Float.class;   
+             case 19:return Float.class;   
+             case 20:return Float.class;   
+             case 21:return Integer.class;   
+             case 22:return Float.class;   
              default: return String.class;
          }
     }
 
 
     @Override
-     public String getColumnName(int c) {
-        //return "  "+data.label.get(c); //--Space for better display
-        return qualifier[c];
+     public String getColumnName(int c) {        
+        return qualifier_strings[c];
      }
 
     @Override
     public boolean isCellEditable(int row, int col) {
          return false;
-    }
-
-        
-    @Override
-    public void setValueAt(Object value, int row, int col) {
-
-        //data.char_matrix[col][row]=(String)value;
-       
     }
 
 

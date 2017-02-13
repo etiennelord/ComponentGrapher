@@ -78,6 +78,7 @@ public class Config {
     
     public static Image image=null;
     public static ImageIcon icon=null;
+    public static ImageIcon loading_icon=null;
     public String defaultSaveFile="config.dat";
     public static PrintWriter log=null;
     public static  Font glyphicon = null;
@@ -112,7 +113,7 @@ public class Config {
        createDir(get("resultsDir"));
        if (glyphicon==null) {
             try {                   
-                    glyphicon = Font.createFont(Font.TRUETYPE_FONT, new File("data\\\\fontawesome-webfont.ttf"));                    
+                    glyphicon = Font.createFont(Font.TRUETYPE_FONT, new File("data"+File.separator+"fontawesome-webfont.ttf"));                    
                     glyphicon = glyphicon.deriveFont(Font.PLAIN, 12f);                                       
          } catch(Exception e2) {
              Config.log("Unable to load glyphicon font.");
@@ -152,17 +153,19 @@ public class Config {
 
     public void loadIcon() {
         //-- Load Icon
-        File tmp=new File(get("smallIconPath"));
+        File application_icon_filename=new File(get("smallIconPath"));
+        File loading_icon_file=new File(dataPath("loading.gif"));
                     try {
-                    icon = new ImageIcon(tmp.toURI().toURL());
+                    icon = new ImageIcon(application_icon_filename.toURI().toURL());                    
                     image = icon.getImage();
-         
+                    icon= new ImageIcon(loading_icon_file.toURI().toURL());                    
+                    loading_icon=icon;
         //--Load Database Tree Explorer icon
              String[] iconName=loadImageslisting(iconsPath());
              for (String filename:iconName) {
                  if (filename.indexOf("icons")>-1) {
-                     tmp=new File(iconsPath()+File.separator+filename);
-                     ImageIcon tmpImage=new ImageIcon(tmp.toURI().toURL());
+                     application_icon_filename=new File(iconsPath()+File.separator+filename);
+                     ImageIcon tmpImage=new ImageIcon(application_icon_filename.toURI().toURL());
                      filename=filename.substring(filename.indexOf(".")+1,filename.indexOf("_"));
                      properties.put(filename, tmpImage);
                  }

@@ -13,7 +13,7 @@ public class CharStateRowFilter extends RowFilter {
     
     
     public CharStateRowFilter(String filter) {
-        this.filter=filter;
+        this.filter=filter.toLowerCase();
     }
             
     @Override
@@ -22,11 +22,11 @@ public class CharStateRowFilter extends RowFilter {
         Integer row=(Integer)entry.getIdentifier();
         int index_char=row / tm.symbols.length();        
         //--Scan the associated char state with filter
-        if (tm.data.charlabels.get(index_char).toLowerCase().contains(filter.toLowerCase())) return true;
+        if (tm.data.charlabels.get(index_char).toLowerCase().contains(filter)) return true;
         //--Scan the associated state
         HashMap<String,String> st=tm.data.statelabels.get(index_char);
         for (String s:st.values()) {
-            if (s.toLowerCase().contains(filter.toLowerCase())) return true;
+            if (s.toLowerCase().contains(filter)) return true;
         }
         
         

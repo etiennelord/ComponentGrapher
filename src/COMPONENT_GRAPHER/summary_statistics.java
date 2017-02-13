@@ -1,9 +1,13 @@
 package COMPONENT_GRAPHER;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
 import config.Config;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -98,7 +102,8 @@ public class summary_statistics implements Serializable {
             this.total_node=data.nodes.size();           
        }
         
-        
+         public summary_statistics() {
+         }
         /**
          * Initialize the data structures and default values (0)
          * @param dat 
@@ -533,6 +538,8 @@ public class summary_statistics implements Serializable {
                     n.stats.put("contains",contain_taxa);
                     n.stats.put("percent_contained",percent_contains);
                     n.stats.put("taxa",data.get_taxa(n.identification));
+                    n.stats.put("taxa_count",data.get_taxa_count(n.identification));
+                    
                   
              //--Update node info
               data.nodes.set(i, n);
@@ -612,7 +619,8 @@ public class summary_statistics implements Serializable {
      public ArrayList<connected_complexe> getConnectedComplexes(int network_type) {
          ArrayList<connected_complexe> CCS=new ArrayList<connected_complexe>();         
          HashMap<Integer,connected_complexe> map=new    HashMap<Integer,connected_complexe>();                                 
-         //System.out.println(Arrays.toString(this.CC_info_complete));
+         boolean found =false; //--Flag of rid 0 
+        //System.out.println(Arrays.toString(this.CC_info_complete));
          //System.out.println(Arrays.toString(this.CC_info_type1));
          int total_CC=0;
          switch(network_type) {
@@ -634,14 +642,26 @@ public class summary_statistics implements Serializable {
                 if (tmp==null) {
                     tmp=new connected_complexe();
                     tmp.network_type=network_type;
-                    tmp.complexe_id=index;                    
+                    tmp.complexe_id=index; 
+                    if (index==0) found=true;
                 }
                 tmp.nodes.add(data.nodes.get(i));
                 map.put(index, tmp);
             }
-         for (int index:map.keySet()) {
-             CCS.add(map.get(index));
+         for (int index:map.keySet()) {             
+             CCS.add(map.get(index));             
          }
+         //--be sure no CCS have id 0         
+         if (found) {
+             for (int i=0; i<CCS.size();i++) {
+                connected_complexe c=CCS.get(i);
+                c.complexe_id++;
+                CCS.set(i, c);
+            }
+         }
+        
+         
+         
          return CCS;
      }
      
@@ -736,11 +756,11 @@ public class summary_statistics implements Serializable {
     public boolean serialize(String filename) {
          
         try {           
-            FileOutputStream fo = new FileOutputStream(filename);
-            ObjectOutputStream oos = new ObjectOutputStream(fo);
-            oos.writeObject(this);
-            oos.flush();   
-            oos.close();
+            Gson gson = new Gson();
+            JsonWriter js = new JsonWriter(new FileWriter(new File(filename)));
+            gson.toJson(this,summary_statistics.class,js);
+            js.flush();
+            js.close();
          } catch(Exception e) {
              e.printStackTrace();
              Config.log("Error in serialize "+filename+":" + e.getMessage());
@@ -751,11 +771,9 @@ public class summary_statistics implements Serializable {
     
     public boolean deserialize(String filename) {
          try {   
-        FileInputStream fi = new FileInputStream(filename);
-            ObjectInputStream ois = new ObjectInputStream(fi);
-           summary_statistics su = (summary_statistics) ois.readObject();
-           //Copy data to current object
-           copy(su);
+            Gson gson = new Gson();
+            summary_statistics su=gson.fromJson(gson.newJsonReader(new FileReader(new File(filename))),summary_statistics.class);
+            copy(su);
            
         } catch(Exception e) {
              Config.log("Error in deserialize "+filename+":" + e.getMessage());

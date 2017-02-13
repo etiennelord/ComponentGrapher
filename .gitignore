@@ -1,0 +1,14 @@
+config.dat
+build
+build/*
+results
+results/*
+dev
+dev/*
+test
+test/*
+internal
+internal/*
+rhino
+rhino/*
+*.log

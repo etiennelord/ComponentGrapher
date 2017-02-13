@@ -8,6 +8,7 @@ package dialog;
 import COMPONENT_GRAPHER.datasets;
 import COMPONENT_GRAPHER.state;
 import config.Config;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Toolkit;
@@ -21,6 +22,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import matrixrenderer.CharStateRowFilter;
 import matrixrenderer.ExcelAdapter;
+import matrixrenderer.ExcelResultAdapter;
 import matrixrenderer.MatrixTableModel;
 import matrixrenderer.PolymorphicChar_TableModel;
 import matrixrenderer.Polymorph_CellEditor;
@@ -36,7 +38,7 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
 
       datasets data=null;                             // The dataset
     Frame frame;         
-    ExcelAdapter StateMatrixTable;
+    ExcelResultAdapter StateMatrixTable;
      TableRowSorter sorter;
     
     /**
@@ -48,6 +50,10 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
         this.frame=parent;
         initComponents();
         PolymorphicChar_TableModel tm = new PolymorphicChar_TableModel();
+        if (data.states.get(0).selected!=-1) {
+            this.Variation_jTextField.setText(data.current_state_variation);
+            this.Variation_jTextField.setForeground(Color.BLACK);
+        }
         this.PolymorphState_jTable.setDefaultEditor(state.class, new Polymorph_CellEditor(data));
         this.PolymorphState_jTable.setDefaultRenderer(String.class, new StateTableCellRenderer());
         this.PolymorphState_jTable.setModel(tm);
@@ -56,7 +62,8 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
 //        this.Copy_jButton.setFont(Config.glyphicon);
 //        this.Copy_jButton.setText("\uf0c5");
         this.setTitle("Select matrix states for polymorphic characters");
-        StateMatrixTable = new ExcelAdapter(this.PolymorphState_jTable);
+        StateMatrixTable = new ExcelResultAdapter(this.PolymorphState_jTable);
+        
         PolymorphicChar_TableModel tm2=(PolymorphicChar_TableModel)this.PolymorphState_jTable.getModel();
             tm2.setData(data);       
             
@@ -67,7 +74,7 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
             
             //this.PolymorphState_jTable.(String.class, staterendere);
             
-             this.PolymorphState_jTable.setModel(tm);
+             this.PolymorphState_jTable.setModel(tm2);
                          TableCellRenderer headerRenderer = new VerticalTableHeaderCellRendered(true);  
                          Enumeration columns=this.PolymorphState_jTable.getColumnModel().getColumns();
                          while (columns.hasMoreElements()) {            
@@ -99,8 +106,9 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         PolymorphState_jTable = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        Variation_jTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -118,11 +126,55 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        PolymorphState_jTable.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                PolymorphState_jTableInputMethodTextChanged(evt);
+            }
+        });
+        PolymorphState_jTable.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                PolymorphState_jTablePropertyChange(evt);
+            }
+        });
         jScrollPane1.setViewportView(PolymorphState_jTable);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("Current matrix state variation");
+
+        Variation_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+        Variation_jTextField.setForeground(new java.awt.Color(204, 204, 204));
+        Variation_jTextField.setText(" Enter a variation string to set the current state matrix");
+        Variation_jTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Variation_jTextFieldMouseClicked(evt);
+            }
+        });
+        Variation_jTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Variation_jTextFieldActionPerformed(evt);
+            }
+        });
+        Variation_jTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                Variation_jTextFieldFocusLost(evt);
+            }
+        });
+        Variation_jTextField.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                Variation_jTextFieldInputMethodTextChanged(evt);
+            }
+        });
+
+        jButton1.setText("Random matrix");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -133,18 +185,24 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 747, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Variation_jTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(Variation_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -155,19 +213,72 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       data.prepare_current_state_matrix(0, true);
+       PolymorphicChar_TableModel tm2=(PolymorphicChar_TableModel)this.PolymorphState_jTable.getModel();
+       tm2.setData(data);                   
+       tm2.fireTableDataChanged();
+       tm2.fireTableStructureChanged();
+       this.PolymorphState_jTable.setModel(tm2);
+       this.Variation_jTextField.setText(data.current_state_variation);
+       this.Variation_jTextField.setForeground(Color.black);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void Variation_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Variation_jTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Variation_jTextFieldActionPerformed
+
+    private void Variation_jTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Variation_jTextFieldMouseClicked
+        
+    }//GEN-LAST:event_Variation_jTextFieldMouseClicked
+
+    private void Variation_jTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_Variation_jTextFieldFocusLost
+      String st=this.Variation_jTextField.getText();
+      if (st.isEmpty()) {
+          this.Variation_jTextField.setText(" Enter a variation string to set the current state matrix");
+          this.Variation_jTextField.setForeground(Color.lightGray);
+      }        
+      
+    }//GEN-LAST:event_Variation_jTextFieldFocusLost
+
+    private void PolymorphState_jTableInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_PolymorphState_jTableInputMethodTextChanged
+       
+        
+    }//GEN-LAST:event_PolymorphState_jTableInputMethodTextChanged
+
+    private void PolymorphState_jTablePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_PolymorphState_jTablePropertyChange
+      String st="";
+        for (state s:data.states) {
+          if (s.selected==-1) {
+              st+="?";
+          } else {
+              st+=s.state.charAt(s.selected);
+          }
+      }
+        this.Variation_jTextField.setText(st);
+        this.Variation_jTextField.setForeground(Color.black);
+    }//GEN-LAST:event_PolymorphState_jTablePropertyChange
+
+    private void Variation_jTextFieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_Variation_jTextFieldInputMethodTextChanged
+        System.out.println("New string");
+    }//GEN-LAST:event_Variation_jTextFieldInputMethodTextChanged
+
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable PolymorphState_jTable;
+    private javax.swing.JTextField Variation_jTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 }

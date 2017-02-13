@@ -36,7 +36,7 @@ public class Polymorph_CellEditor extends AbstractCellEditor implements TableCel
   
     @Override
     public Object getCellEditorValue() {
-        System.out.println("getCellEditorValue"+this_state);
+       // System.out.println("getCellEditorValue"+this_state);
         //if (this_state==null) return 0;
 //        System.out.println(this_state);
 //        System.out.println(selectedindex);
@@ -46,30 +46,21 @@ public class Polymorph_CellEditor extends AbstractCellEditor implements TableCel
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object o, boolean isSelected, int row, int column) {               
-        System.out.println("getting...");
+        
         JComboBox<String> combo=new JComboBox<String>();        
-        System.out.println(o.getClass());
-        System.out.println(o);
+        
         if (o instanceof state) {
             this_state=(state)o;          
-            System.out.println("getting state...");
+            //System.out.println("getting state...");
             //--Get info from dataset
             HashMap<String,String> st=data.statelabels.get(this_state.pos_j);
             for (int i=0; i<this_state.state.length();i++) {
                 String k=""+this_state.state.charAt(i);
                 combo.addItem(k+"|"+st.get(k));
             }
-            
-            for (String ss:this_state.states) {
-                System.out.println(ss);
-            }
-//                combo.addItem(ss);
-//                System.out.println(ss);
-//            }
-            //System.out.println();
         } 
          try {
-         combo.setSelectedIndex(0);
+            combo.setSelectedIndex(0);
          } catch(Exception e) {
              
          }
@@ -82,8 +73,9 @@ public class Polymorph_CellEditor extends AbstractCellEditor implements TableCel
     public void actionPerformed(ActionEvent e) {
             JComboBox<String> combo = (JComboBox<String>) e.getSource();
             this.selectedindex = combo.getSelectedIndex();    
-            System.out.println( this.selectedindex);
+            //System.out.println( this.selectedindex);
             this_state.selected=selectedindex;
-            System.out.println( combo.getSelectedItem());
+            this_state.state_label=(String)combo.getSelectedItem();            
+            //System.out.println( combo.getSelectedItem());
     }
 }

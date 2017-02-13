@@ -193,4 +193,5 @@ public class VerticalLabelUI extends BasicLabelUI {
       to.height = from.height;
       return to;
    }
+   
 }

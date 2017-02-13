@@ -14,6 +14,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import matrixrenderer.CharStateRowFilter;
 import matrixrenderer.ExcelAdapter;
+import matrixrenderer.ExcelResultAdapter;
 import matrixrenderer.MatrixTableModel;
 import matrixrenderer.StateCharTableModel;
 import matrixrenderer.StateTableCellRenderer;
@@ -28,7 +29,7 @@ public class TaxaEditorJDialog extends javax.swing.JDialog {
 
       datasets data=null;                             // The dataset
     Frame frame;         
-    ExcelAdapter StateMatrixTable;
+    ExcelResultAdapter StateMatrixTable;
      TableRowSorter sorter;
     
     /**
@@ -46,7 +47,7 @@ public class TaxaEditorJDialog extends javax.swing.JDialog {
         this.Copy_jButton.setFont(Config.glyphicon);
         this.Copy_jButton.setText("\uf0c5");
         this.setTitle("Edit character and state labels");
-        StateMatrixTable = new ExcelAdapter(this.CharState_jTable);
+        StateMatrixTable = new ExcelResultAdapter(this.CharState_jTable);
         TaxaTableModel tm2=(TaxaTableModel)this.CharState_jTable.getModel();
             tm2.setData(data);       
             tm2.fireTableDataChanged();

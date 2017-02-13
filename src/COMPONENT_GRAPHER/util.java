@@ -318,6 +318,31 @@ public class util {
          } catch(Exception e) {}
      }
     
+       /**
+      * Print stri to the open PrintWriter
+      * @param stri 
+      */
+     public void println() {
+         try {
+             pw.println("");
+         } catch(Exception e) {}
+     }
+     
+      /**
+      * Print stri to the open PrintWriter
+      * @param stri 
+      */
+     public void print(String stri) {
+         try {
+             pw.print(stri);
+         } catch(Exception e) {}
+     }
+     
+     public static String encapsulate(String stri) {
+         if (stri.contains(",")) return "'"+stri+"'";
+         return stri;
+     }
+     
      /**
       * Close the PrintWriter
       */

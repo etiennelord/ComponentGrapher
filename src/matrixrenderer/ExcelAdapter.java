@@ -1,5 +1,6 @@
 package matrixrenderer;
 
+import COMPONENT_GRAPHER.datasets;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -135,7 +136,13 @@ sbf.append(jTable1.getValueAt(rowsselected[i],colsselected[j]));
          // cells
          int numcols=jTable1.getColumnCount();
          int numrows=jTable1.getRowCount();
-          
+         datasets d=((MatrixTableModel)jTable1.getModel()).data; 
+        //--Hack to get taxa name 
+         if (d.inverse_matrix_table) {
+            sbf.append("taxa/char\t");
+         } else {
+             sbf.append("char/taxa\t");
+         }
            for (int j=0;j<numcols;j++)
             {
            String name=jTable1.getColumnName(j);
@@ -148,7 +155,13 @@ sbf.append(jTable1.getValueAt(rowsselected[i],colsselected[j]));
           sbf.append("\n");
          for (int i=0;i<numrows;i++)
          {
-            for (int j=0;j<numcols;j++)
+            //--Append this taxa
+             if (d.inverse_matrix_table) {
+                 sbf.append(d.label.get(i)+"\t");
+             } else {
+                  sbf.append(d.charlabels.get(i)+"\t");
+             }
+             for (int j=0;j<numcols;j++)
             {
             sbf.append(jTable1.getValueAt(i,j));
                if (j<numcols-1) sbf.append("\t");

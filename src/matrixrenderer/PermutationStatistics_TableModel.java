@@ -29,58 +29,8 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
    public COMPONENT_GRAPHER.permutation_statistics data;
    ArrayList<stats> datas=new ArrayList<stats>();
    
-      String[] complete_pv={
-                    "total_CC_type1",
-                    "total_CC_type3",
-                    "total_CC_complete",
-                    "total_ap_global_complete",
-                    "total_edges_type1",
-                    "total_edges_type2",
-                    "total_edges_type3",
-                    "total_edges_complete",
-                    "total_ap_global_type3",
-                    "total_ap_local_type3",
-                    "total_ap_local_complete",
-                    "triplet_type3",
-                    "convergence",
-                    "per_loop4_type3",
-                    "per_len4_type3"
-      };
-      String[] pv={
-                    "total_CC_type1",
-                    "total_edges_type3",
-                    "total_ap_global_complete", 
-                    "total_ap_local_complete",
-                    "total_ap_local_type3",
-                     "triplet_type3", 
-                     "convergence",                   
-      };
-      String[] decription={
-             "nb de complexes (CC type 1)",
-                    "nb d’aretes (type 3)",
-                    "nb de points d'articulations globaux", 
-                    "nb de points d’articulations locaux",
-                    " nb de points d’articulations locaux (type 3)",
-                     "nb de triplets non transitifs (type 3)", 
-                     "proportion de cycles de taille 4 (type3)",        
-          
-      };
    
-//   class stats {
-//       String title="";
-//       String node_field="";
-//       Double reference_value=0.0;       
-//       DescriptiveStatistics stat=new DescriptiveStatistics();    
-//       Double[] pvalue; 
-//       
-//       //d[0]=P1;
-//       //       d[1]=P2;
-//       //       d[2]=ceg;    
-//       //       d[3]=cinf;
-//       //       d[4]=csup;
-//   }
-   
-   String[] qualifier={"Statistics","Reference","<html><i>p</i>-value</html>","Mean","STD","Min","Max"};
+   String[] qualifier={"Statistics","Reference","<html><i>p</i>-value</html>","Significance","Mean","STD","Min","Max","5%","95%"};
     //pw.println("nodeid\tcontains_taxa\tfound_in_type_1\tfound_in_type_2\tfound_in_type_3\tfound_in_complete\tcolumn\tencoded_state\tchar_states\tCC_type1\tCC_complete\tlocal_ap_type3\tglobal_ap_type3\tlocal_ap_complete\tglobal_ap_complete\tin_degree_type2\tnorm_indegree_type2\tbetweenness_type3\tcloseness_type3\ttriplet_type3\tper_triplet_type3\ttriplet_complete\tper_triplet_complete\tmax_shortest_path_type3\tmax_shortest_path_complete\tconvergence\tprogressive_transition\tprogressive_transition_end_node\tcontains\tpercent_contained\tTaxa");
    
    public void setData(COMPONENT_GRAPHER.permutation_statistics data) {
@@ -95,17 +45,20 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
         try {
            
            stats s=datas.get(row);
-                      
+           double pvalue=Math.min(s.pvalue[0],s.pvalue[1]);
            switch (col) {
                case 0: return s.title;
                case 1: return s.reference_value;
-               case 2: return Math.min(s.pvalue[0],s.pvalue[1]); //P1
+               case 2: return (s.reference_value==0?"NA":pvalue); //P1
+               case 3: return getSignificance(pvalue, s.reference_value);
                //case 3: return ; //P2
-               case 3: return s.stat.getMean();
-               case 4: return s.stat.getStandardDeviation();
-               case 5: return s.stat.getMin();
-               case 6: return s.stat.getMax();
-               default: return s.stat.getElement(col-7);
+               case 4: return s.stat.getMean();
+               case 5: return s.stat.getStandardDeviation();
+               case 6: return s.stat.getMin();
+               case 7: return s.stat.getMax();
+               case 8: return s.stat.getPercentile(5);
+               case 9: return s.stat.getPercentile(95);    
+               default: return s.stat.getElement(col-10);
            }
            
 //return data.char_matrix[col][row];
@@ -115,7 +68,19 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
        }         
     //return 0;
     }
+    
+    
 
+      public String getSignificance(double value, double reference) {          
+          if (data.replicate<100) return " ";
+          if (reference==0) return " ";
+          if (value<=0.0) return " ";
+         if (value>0.05) return " ";
+         if (value<data.reference_data.p001) return "***";
+         if (value<data.reference_data.p01) return "**";
+         if (value<data.reference_data.p05) return "*";
+         return "";
+     }
     
    @Override
     public int getRowCount() {              
@@ -142,7 +107,8 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
      public Class getColumnClass(int c) {
          switch(c) {
              case 0: return String.class;
-             //case 20: return Float.class;
+             case 3: return String.class;
+             case 2: return String.class;
              default: return Float.class;
          }
     }
@@ -152,7 +118,7 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
      public String getColumnName(int c) {
         //return "  "+data.label.get(c); //--Space for better display
         if (c<qualifier.length) return qualifier[c];
-        return "Replicate "+(c-qualifier.length);
+        return "Randomization "+(c-qualifier.length);
      }
 
     @Override
@@ -167,6 +133,6 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
         //data.char_matrix[col][row]=(String)value;
        
     }
-
+        
 
 }

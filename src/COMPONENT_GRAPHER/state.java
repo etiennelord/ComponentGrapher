@@ -36,6 +36,7 @@ public class state implements Serializable {
     public ArrayList<String> states=new ArrayList<String>(); //--State as en ArrayList
     public  String state=""; //--State at this position (e.g. ABC) 
     public int selected=-1;
+    public String state_label="";
     
     public state() {}
     public state( state s) {
@@ -49,8 +50,10 @@ public class state implements Serializable {
 
     @Override
     public String toString() {
-       if (selected!=-1) return ""+state.charAt(selected);
-        return state;        
+       if (selected==-1) {
+           return "Choose a state.";
+       }        
+        return state_label;        
     }
 
 }

@@ -64,9 +64,9 @@ public class node implements Comparable,Serializable{
     
     ////////////////////////////////////////////////////////////////////////////
     /// CONSTRUCTOR
+    public node() {}
     
-    public node(node n) {
-        super();
+    public node(node n) {        
         this.name=n.name;
         this.id=n.id;
         this.complete_name=n.complete_name;

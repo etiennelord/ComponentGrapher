@@ -64,8 +64,8 @@ public class MatrixTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         // We need to get to the displayed sequence
        try {
-            if (data.inverse_matrix_table) return data.char_matrix[row][col];
-           return data.char_matrix[col][row];
+            if (data.inverse_matrix_table) return data.char_matrix[row][col].toUpperCase();
+           return data.char_matrix[col][row].toUpperCase();
         
        } catch(Exception e) {
            e.printStackTrace();
@@ -100,10 +100,7 @@ public class MatrixTableModel extends AbstractTableModel {
            } else {
              colname=data.label.get(c);
          }
-         
-         if (colname.length()>40) {
-             colname=colname.substring(0,40)+"...";
-         }
+        
          return colname;
                 
      }
@@ -117,9 +114,9 @@ public class MatrixTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object value, int row, int col) {
         if (data.inverse_matrix_table) {
-             data.char_matrix[row][col]=(String)value;
+             data.char_matrix[row][col]=((String)value).toUpperCase();
         } else {
-            data.char_matrix[col][row]=(String)value;
+            data.char_matrix[col][row]=((String)value).toUpperCase();
         }
        
     }

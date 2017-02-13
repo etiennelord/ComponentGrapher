@@ -65,7 +65,7 @@ public class main {
             int perm_n=5;            //--Number of permutation for the p-value   
             String user_state_string="";//--passed user state string
             String node_information_filename="";
-            String output_file="output.html";
+            String output_file="output";
             
             //--Main dataset to compute 
           datasets d=new datasets();
@@ -130,12 +130,13 @@ public class main {
              maxiter=random_n;
          }
          if (!user_state_string.isEmpty()) {
-             maxiter=1;
-             random_n=0;             
+             maxiter=1;             
+             d.random=0;
+             d.user_state_string=user_state_string;
+             d.prepare_current_state_matrix(d.random, false);
          }
          
-         d.filename=filename;
-         d.random=random_n;
+         d.filename=filename;                  
          d.nooutput=nooutput;
          d.bipartite=bipartite;
          d.save_graphml=save_graphml;
@@ -145,18 +146,20 @@ public class main {
          d.replicate=perm_n;
          d.maxiter=maxiter;
          d.min_taxa=mintaxa;
-         d.save_summary=save_summary;
-         d.user_state_string=user_state_string;
+         d.save_summary=save_summary;         
+         
          if (show_matrix) d.printCharMatrix();
          
          //--If there is an associated character file, use it.
          d.load_charstate(node_information_filename);
           
-         if (analyse1) {
+         if (analyse1) {             
              permutation_statistics stat=new permutation_statistics(d);
+             System.out.println(d.current_state_variation);
              stat.generate_statistics();
-             System.out.println("Saving to results to: "+output_file);
-             stat.output_html(output_file);
+             System.out.println(stat.reference_data.current_state_variation);
+             System.out.println("Saving to results to directory: "+d.result_directory);
+             stat.output_csv(d.result_directory);
              System.exit(0);
          }
          //--Actual computing

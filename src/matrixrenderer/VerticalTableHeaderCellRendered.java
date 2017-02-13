@@ -24,6 +24,7 @@ import javax.swing.table.JTableHeader;
 public class VerticalTableHeaderCellRendered extends DefaultTableCellRenderer  {
 
     ImageIcon icon;
+    String _value="";
   /**
    * Constructs a <code>VerticalTableHeaderCellRenderer</code>.
    * <P>
@@ -46,18 +47,23 @@ public class VerticalTableHeaderCellRendered extends DefaultTableCellRenderer  {
 
     @Override
     public Component getTableCellRendererComponent(JTable table,Object value, boolean isSelected, boolean hasFocus,int row, int column) {       
-        JLabel lbl = (JLabel) super.getTableCellRendererComponent(table,value, isSelected, hasFocus, row, column);
+        String s=value.toString();                
+        _value=s;
+        if (s.length()>40) {           
+           s=s.substring(0,40)+"...";             
+         }       
+        JLabel lbl = (JLabel) super.getTableCellRendererComponent(table,s, isSelected, hasFocus, row, column);
          lbl.setBorder(BorderFactory.createCompoundBorder(lbl.getBorder(), BorderFactory.createEtchedBorder(1)));       
         return lbl;
     }
 
-    
-
+   
     
 
     @Override
-    public String getToolTipText(MouseEvent e) {
-        return super.getToolTipText(e);
+    public String getToolTipText(MouseEvent e) {        
+        return this._value;
+        //return super.getToolTipText(e);
 //        java.awt.Point p = e.getPoint();
 //        
 //        int index = columnModel.getColumnIndexAtX(p.x);
