@@ -375,7 +375,7 @@
                 <Component class="javax.swing.JButton" name="jInfo">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="i"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Display informations for this matrix"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Display informations for this matrix and current analysis log."/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jInfoActionPerformed"/>

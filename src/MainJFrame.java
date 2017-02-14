@@ -276,10 +276,51 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
           LoadAnalysis(config.get("last_analysis"));
       } else if (config.isSet("last_matrix")) {
            if(!LoadTable(config.get("last_matrix"))) {
-             config.remove("last_matrix");
+             config.remove("last_matrix");             
+             config.Save();
              MessageError("Unable to load pri", null);
            }
        }         
+    }
+    
+    void Save_Analysis() {
+         final JFileChooser chooser = new JFileChooser(config.getExplorerPath());
+             chooser.setDialogTitle("Saving analysis");
+            // FileFilter filter_csv = new FileNameExtensionFilter("CSV files (results only)", "csv");
+             FileFilter filter_json = new FileNameExtensionFilter("JSON file (whole analysis)", "json");
+             
+             
+             chooser.addChoosableFileFilter(filter_json);
+             //chooser.addChoosableFileFilter(filter_csv);
+             chooser.setFileFilter(filter_json);
+                int returnVal = chooser.showOpenDialog(this);
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                            config.set("last_analysis", chooser.getSelectedFile().getAbsolutePath());
+                            config.set("analysis", chooser.getSelectedFile().getAbsolutePath()); //--Current loaded analysis
+                            config.Save();
+                             SwingWorker sw=new SwingWorker() {
+
+                                @Override
+                                protected Object doInBackground() {
+                                  saving_info.setVisible(true);
+                                  //--we need to take care of csv file herr 
+                                  
+                                  if (statistics==null) {
+                                            statistics=new permutation_statistics(data);
+                                       }
+                                       statistics.saveAnalysis(chooser.getSelectedFile().getAbsolutePath());
+                                      
+                                return true;
+                                }
+
+                                protected void done() {
+                                    saving_info.setVisible(false);
+                                    Message("Saved analysis", "");
+                                }
+
+                            }; 
+                           sw.run();
+                }
     }
     
     private void MatrixOptionAction() {
@@ -397,7 +438,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         });
 
         jInfo.setText("i");
-        jInfo.setToolTipText("Display informations for this matrix");
+        jInfo.setToolTipText("Display informations for this matrix and current analysis log.");
         jInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jInfoActionPerformed(evt);
@@ -1015,12 +1056,6 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                config.Save();
                
                this.LoadTable(chooser.getSelectedFile().getAbsolutePath());
-               jTabbedPane.setSelectedIndex(0);
-               jTabbedPane.setEnabledAt(1, true);
-                jTabbedPane.setEnabledAt(2, false);
-                jTabbedPane.setEnabledAt(3, false);
-                this.progress.setValue(0);
-
           }
     }//GEN-LAST:event_ImportMatrix_jMenuItemActionPerformed
 
@@ -1148,8 +1183,23 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
        //--Do clean up here...
-        
-        System.exit(0);
+        //--Test if we want to save the analysis
+        if (statistics!=null) {
+            if (!config.isSet("analysis")) {
+                 String msg="<html>Warning, current analysis was not saved.<br><br>Do you want to save the results before exiting?</html>";
+                Object[] options = {"Yes","No","Cancel"};
+                int n = JOptionPane.showOptionDialog(this,msg,"Save analysis before exiting...",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,options, options[2]);
+                switch(n) {
+                    case 0:  Save_Analysis();
+                             break;
+                    case 1:  that.dispose();
+                             System.exit(0);   
+                             break;
+                    case 2:  break;   
+                }
+            }
+        }
+       
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void Polymorphic_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Polymorphic_jButtonActionPerformed
@@ -1166,42 +1216,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     }//GEN-LAST:event_PolymorphicChar_jMenuActionPerformed
 
     private void SaveAnalysis_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveAnalysis_jMenuItemActionPerformed
-         final JFileChooser chooser = new JFileChooser(config.getExplorerPath());
-             chooser.setDialogTitle("Saving analysis");
-            // FileFilter filter_csv = new FileNameExtensionFilter("CSV files (results only)", "csv");
-             FileFilter filter_json = new FileNameExtensionFilter("JSON file (whole analysis)", "json");
-             
-             
-             chooser.addChoosableFileFilter(filter_json);
-             //chooser.addChoosableFileFilter(filter_csv);
-             chooser.setFileFilter(filter_json);
-                int returnVal = chooser.showOpenDialog(this);
-                if(returnVal == JFileChooser.APPROVE_OPTION) {
-                            config.set("last_analysis", chooser.getSelectedFile().getAbsolutePath());
-                            config.Save();
-                             SwingWorker sw=new SwingWorker() {
-
-                                @Override
-                                protected Object doInBackground() {
-                                  saving_info.setVisible(true);
-                                  //--we need to take care of csv file herr 
-                                  
-                                  if (statistics==null) {
-                                            statistics=new permutation_statistics(data);
-                                       }
-                                       statistics.saveAnalysis(chooser.getSelectedFile().getAbsolutePath());
-                                
-                                return true;
-                                }
-
-                                protected void done() {
-                                    saving_info.setVisible(false);
-                                    Message("Saved analysis", "");
-                                }
-
-                            }; 
-                           sw.run();
-                }
+        Save_Analysis();
     }//GEN-LAST:event_SaveAnalysis_jMenuItemActionPerformed
 
     private void LoadAnalysis_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadAnalysis_jMenuItemActionPerformed
@@ -1324,6 +1339,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                             statistics=new permutation_statistics(data);                            
                             if (statistics.loadAnalysis(filename)) {
                                   config.set("last_analysis", filename);
+                                  config.set("analysis", filename); //--Current loaded analysis
                                   config.Save(); 
                                    Message("Loaded analysis "+filename,""); 
                                    data=statistics.reference_data;
@@ -1353,22 +1369,25 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         boolean r=data.load_morphobank_nexus(filename);               
          if (!r||data.nchar==0||data.ntax==0) r=data.load_simple(filename);
          if (!r||data.nchar==0||data.ntax==0) {                     
-             MessageError("Unable to load "+filename,"");
+             MessageError("Unable to load matrix "+filename,"");
              return false;
          } else {                    
             config.set("last_matrix",filename);
+            config.remove("current_analysis"); //--Set current to null
             config.Save();
+             jTabbedPane.setSelectedIndex(0);
+             jTabbedPane.setEnabledAt(1, false);
+             jTabbedPane.setEnabledAt(2, false);
+             jTabbedPane.setEnabledAt(3, false);
+             this.progress.setValue(0);
             updateMatrixTableInfo();
             return true;
          }       
     }
     
     void updateMatrixTableInfo() {
-        //--Interface
-         jTabbedPane.setEnabledAt(1, false);
-         jTabbedPane.setEnabledAt(2, false);
-         jTabbedPane.setEnabledAt(3, false);
         
+        //--Interface        
         if (data.states.size()>0) {
               Polymorphic_jButton.setEnabled(true);
           } else {
@@ -1524,6 +1543,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         this.data=configure.getData(); //--Update data         
         if (configure.status_run) {
             Message("Analyzing "+data.filename+"","");
+            config.remove("analysis"); //--Analysis is not saved
+            config.Save();
             Message("Log is found in: "+data.result_directory,"Analyzing "+data.filename);
             Stop_jButton.setEnabled(true);
              progress.setValue(0);
