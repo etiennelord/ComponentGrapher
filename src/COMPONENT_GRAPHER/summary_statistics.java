@@ -203,8 +203,7 @@ public class summary_statistics implements Serializable {
                       g.addEdge(src, dest);
                       g.addEdge(dest, src);                      
                       g.total_edges++;
-                      g.directed=false;            
-                     
+                      g.directed=false;                                 
                   }
                   if (type==2&&data.type_edge[i]==2) {
                       int src=g.addNode(data.src_edge[i]);
@@ -438,8 +437,8 @@ public class summary_statistics implements Serializable {
       data.MessageResult("===============================================================================\n");
       long timerunning=System.currentTimeMillis();                
       ArrayList<graph> networks=getGraphs();
-         System.out.println(networks);
-         System.out.println("here");
+     //    System.out.println(networks);
+         
 
       //--Calculate stats for different types of network
       //--Complete (type 0)          
@@ -645,6 +644,8 @@ public class summary_statistics implements Serializable {
                  if (max_sp_complete[n.id]!=null&&max_sp_complete[n.id]<graph.infinity) max_spc=""+max_sp_complete[n.id];
                  if (max_sp_complete[n.id]==null||max_sp_complete[n.id]<1) max_spc="";
                   total_progressive+=Progressive_transition[n.id].size();
+                  n.stats.put("nodeid", n.id);
+                  n.stats.put("complete_name", n.complete_name);
                   n.stats.put("found_in_type_1", data.node_id_type.get(1).containsKey(n.id));
                   n.stats.put("found_in_type_2", data.node_id_type.get(2).containsKey(n.id));
                   n.stats.put("found_in_type_3", data.node_id_type.get(3).containsKey(n.id));
@@ -945,7 +946,7 @@ public class summary_statistics implements Serializable {
            Locale.setDefault(new Locale("en", "US"));
          datasets data=new datasets();
          data.replicate=5;
-         data.load_simple("sample\\sample_5.txt");
+         data.load_simple("sample\\sample_4.txt");
          datasets data2=new datasets(data);
          data.compute();
          data2.compute();
@@ -959,10 +960,10 @@ public class summary_statistics implements Serializable {
             su.calculate_node_statistics();
             //su2.calculate_network_statistics();
          //}
-            System.out.println(su);
-            su.serialize("test.ser");
-            su2.deserialize("test.ser");
-            System.out.println(su2);
+//            System.out.println(su);
+//            su.serialize("test.ser");
+//            su2.deserialize("test.ser");
+//            System.out.println(su2);
      }
      
 }

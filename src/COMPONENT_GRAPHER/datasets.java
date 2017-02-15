@@ -1855,6 +1855,115 @@ void print_state_label() {
         
     }
    
+   public boolean export_cytoscapejs(String filename, int type) {
+         try {      
+             // for (String s:this.charlabels) System.out.println(s);
+             PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));     
+               pw.println("<html>");
+               pw.println("<head>");
+               pw.println("<style>");
+               pw.println("#cy {\n" +
+                          "  width: 1200px;\n" +
+                          "  height: 1200px;\n" +
+                          "  display: block;\n" +
+                          "}");
+               pw.println("</style>");
+               pw.println("<script src='cola.v3.min.js'></script>");
+               pw.println("<script src='cytoscape.min.js'></script>");      
+             pw.println("<script src='cytoscape-cola.js'></script>");
+               pw.println("</head>");
+               pw.println("<body>");
+               pw.println("<div id='cy'></div>");               
+               
+               //--Include the graph here
+               pw.println("<script>var cy = cytoscape({\n" +
+                            "\n" +
+                            "  container: document.getElementById('cy'), // container to render in\n" +
+                            "\n" +                           
+                            "  elements: [ // list of graph elements to start with\n");                            
+                            HashMap<Integer,Integer> nodes_id=node_id_type.get(type);
+               for (node n:nodes) {                   
+                   if (nodes_id.containsKey(n.id)) {
+                       pw.println("{data: {id: '"+n.id+"', vname:\""+n.complete_name+"\" } },");
+                   }
+               }
+               for (int i=0; i<current_total_edge;i++) {                  
+                   if (type==type_edge[i]||type==0) {
+                    switch(type_edge[i]) {
+                        case 1: pw.println("{  data: { id: 'e"+i+"', source: '"+src_edge[i]+"', target: '"+dest_edge[i]+"',type: '"+type_edge[i]+"' },classes: 'type1' },"); break;
+                        case 2: pw.println("{  data: { id: 'e"+i+"', source: '"+src_edge[i]+"', target: '"+dest_edge[i]+"',type: '"+type_edge[i]+"' },classes: 'type2' },"); break;
+                        case 3: pw.println("{  data: { id: 'e"+i+"', source: '"+src_edge[i]+"', target: '"+dest_edge[i]+"',type: '"+type_edge[i]+"' },classes: 'type3' },"); break;
+                            
+                    }                      
+                   }
+               }
+                pw.println(" ],");
+                    pw.println(
+                            " style: [ // the stylesheet for the graph\n" +
+                            "    {\n" +
+                            "      selector: 'node',\n" +
+                            "      style: {\n" +                              
+                           "'background-color': '#999',\n" +
+                    "        'color': '#000',\n" +
+                    "        'label': 'data(vname)',		\n" +
+                    "        'text-valign': 'center',\n" +
+                    "        'text-outline-width': 0,"+
+                            "      }\n" +
+                            "    },\n" +
+                            "\n" +
+                            "    {\n" +
+                            "      selector: 'edge',\n" +
+                            "      style: {\n" +
+                            "        'width': 3,\n" +
+                            "        'line-color': '#ccc',\n" +
+                            "        'target-arrow-color': '#ccc',\n" +
+                            "        'target-arrow-shape': 'triangle'\n" +
+                            "      }\n" +
+                            "    }\n" +
+                            "  ],\n" +
+                            "\n" +
+                            "  layout: {\n" +
+                            "    name: 'grid',\n" +
+                            "    rows: 1\n" +
+                            "  }\n" +
+                            "\n" +
+                            "});</script>");
+               pw.println("<script> var params = {\n" +
+                            "    name: 'cola',\n" +
+                            "    nodeSpacing: 5,\n" +
+                            "    edgeLengthVal: 5,\n" +
+                            "    animate: true,\n" +
+                            "    maxSimulationTime: 4000,\n"+
+                            "    randomize: true,\n" +
+                            "    maxSimulationTime: 1500\n" +
+                            "  };\n" +
+                            "  var layout = makeLayout();\n" +
+                            "  var running = false;\n" +
+                            "\n" +
+//                            "  cy.on('layoutstart', function(){\n" +
+//                            "    running = true;\n" +
+//                            "  }).on('layoutstop', function(){\n" +
+//                            "    running = false;\n" +
+//                            "  });\n" +
+                            "   function makeLayout( opts ){ "+
+                            "    params.randomize = true;\n"+
+                            //"    params.edgeLength = function(e){ return params.edgeLengthVal / e.data('weight'); };"+
+                            "    for( var i in opts ){"+
+                            "      params[i] = opts[i];"+
+                            "    }"+
+                            "    return cy.makeLayout( params );"+
+                            "  }"+
+                            "  layout.run();</script>");     
+               pw.println("</body>");
+               pw.println("</html>");
+               pw.flush();
+               pw.close();
+         } catch(Exception e) {
+             return false;
+        }
+         return true;
+   }
+   
    /**
     * Export graphml
     * @param filename
@@ -1874,7 +1983,7 @@ void print_state_label() {
                //pw.println("<key id='r1' for='edge' attr.name='randindex' attr.type='double'/>");
                pw.println("<key id='k1' for='edge' attr.name='total_shared_taxa' attr.type='double'/>");
                
-               //pw.println("<key id='k13' for='edge' attr.name='iteraction' attr.type='string'/>");             
+               pw.println("<key id='k0' for='node' attr.name='nodeid' attr.type='string'/>");             
                pw.println("<key id='k3' for='node' attr.name='fullname' attr.type='string'/>");
                pw.println("<key id='k4' for='node' attr.name='number_of_taxa' attr.type='double'/>");               
                pw.println("<key id='k5' for='node' attr.name='partition' attr.type='string'/>");
@@ -1899,6 +2008,7 @@ void print_state_label() {
                    if (nodes_id.containsKey(n.id)) {
                     pw.println("<node id='"+n.name+"'>");
                     pw.println("<data key='k3'>"+n.complete_name+"</data>");
+                     pw.println("<data key='k0'>"+n.id+"</data>");
                     //pw.println("<data key='k4'>"+n.count+"</data>");                    
                    if (type!=4) {
                     pw.println("<data key='k6'>"+n.edgecount+"</data>");
@@ -2279,6 +2389,7 @@ void print_state_label() {
     }
     
     //-- TO DO: only generate the node once
+    //--WARNING: in development, NOT functionnal!
     public int estimate_link_likelyhood(node node1, node node2) {
         int total=0;
         int len=node1.partition.size();
@@ -2519,9 +2630,15 @@ void print_state_label() {
            //process_char_state(str);
          datasets d1=new datasets();
          //d1.load_morphobank_nexus("sample\\matrice_ebapteste.nex");
-         d1.load_morphobank_nexus("test\\Suarez_etal_2014_MatrixNexus");
-         //d1.load_simple("sample\\sample_m.txt");
-         System.out.println(d1.export_charstate("test2.txt"));
+         //d1.load_simple("sample\\sample_5.txt");
+         d1.load_morphobank_nexus("sample\\Rouse_M742.nexus");
+        //d1.load_simple("sample\\sample_4.txt");         
+         d1.printCharMatrix();
+         d1.compute();
+         //d1.compute_network_solution();
+         d1.export_cytoscapejs("data\\test.html", 1);
+//System.out.println(d1.export_charstate("test2.txt"));
+         
 //         datasets d2=new datasets(d1);
 //         d1.compute_nodes();
 //         for (node n:d1.nodes) {

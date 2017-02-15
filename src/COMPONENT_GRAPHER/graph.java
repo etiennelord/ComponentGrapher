@@ -110,7 +110,7 @@ public class graph {
    public int addNode(int node_id) {
        Integer id=old_id_to_id.get(node_id);
        if (id!=null) return id;
-       id=this.old_id_to_id.size();
+       id=this.old_id_to_id.size();         
        this.old_id_to_id.put(node_id,id);
        this.id_to_old_id.put(id,node_id);
        return id;
@@ -332,17 +332,30 @@ public class graph {
        for (int i=0; i<len;i++)
            for (int j=0;j<len;j++) {
                if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
-                   
-                //if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
-                   //--Really bad, but work...
+                   int i_id=neighbor.get(i);
+                   int j_id=neighbor.get(j);
+                //if (verbose) 
+                 // System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
+                   System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType A");
+//                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
+//                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id)));
+//                   System.out.println("i--j 4"+others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
+                    //--Really bad, but work...
                    total[0]++;                   
-                   if (others.get(1).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[1]++; //--Edge of type 1
-                   if (others.get(2).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[2]++; //--Edge of type 2
-                   if (others.get(4).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[3]++; //--Edge of type 4                  
+                   if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                       total[1]++;
+                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType B");
+                   } //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {
+                       total[2]++;
+                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType C");
+                   } //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType D");
+                       total[3]++;
+                   } //--Edge of type 4                  
                }
-           }
-       //System.out.println(total);
-       System.out.println(total);
+           }              
        return total;
    } 
    

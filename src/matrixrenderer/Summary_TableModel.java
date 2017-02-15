@@ -53,10 +53,10 @@ public class Summary_TableModel extends AbstractTableModel {
     "<html>&nbsp;&nbsp;<b>Convergence</b></html>",    
     "<html>&nbsp;&nbsp;<b>Number of taxa</b></html>",    
     "<html>&nbsp;&nbsp;<b>Taxa</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet A</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet B</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet C</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet D</b></html>"
+     "<html>&nbsp;&nbsp;<b>Triplet type A</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet type B</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet type C</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet type D</b></html>"
    };
     
 
@@ -90,10 +90,10 @@ public class Summary_TableModel extends AbstractTableModel {
                case 21: return (n.stats.isSet("convergence")?n.stats.getFloat("convergence"):0.0f);
                case 22: return (n.stats.isSet("taxa_count")?n.stats.getInt("taxa_count"):0);
                case 23: return n.stats.get("taxa");      
-               case 24: return n.stats.get("triplet_typeA");      
-               case 25: return n.stats.get("triplet_typeB");      
-               case 26: return n.stats.get("triplet_typeC");      
-               case 27: return n.stats.get("triplet_typeD");          
+               case 24: return (n.stats.isSet("triplet_typeA")?n.stats.get("triplet_typeA"):"-");      
+               case 25: return (n.stats.isSet("triplet_typeB")?n.stats.get("triplet_typeA"):"-");
+               case 26: return (n.stats.isSet("triplet_typeC")?n.stats.get("triplet_typeA"):"-");    
+               case 27: return (n.stats.isSet("triplet_typeD")?n.stats.get("triplet_typeA"):"-");          
            }
            
 //return data.char_matrix[col][row];

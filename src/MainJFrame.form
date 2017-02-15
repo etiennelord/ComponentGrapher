@@ -255,7 +255,7 @@
                           <Component id="jPanel5" alignment="0" min="-2" pref="67" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="MatrixjScrollPane" pref="583" max="32767" attributes="0"/>
+                      <Component id="MatrixjScrollPane" pref="584" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -530,6 +530,13 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="Summary_sum_jPanel" pref="1078" max="32767" attributes="0"/>
                   <Component id="Summary_jScrollPane" alignment="0" pref="1078" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="nodeinfo_jButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="nodeinfo_jlabel" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -537,7 +544,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="Summary_sum_jPanel" min="-2" pref="56" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="Summary_jScrollPane" min="-2" pref="574" max="-2" attributes="0"/>
+                      <Component id="Summary_jScrollPane" min="-2" pref="555" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="nodeinfo_jButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="nodeinfo_jlabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -638,6 +650,21 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JButton" name="nodeinfo_jButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Node informations"/>
+                <Property name="toolTipText" type="java.lang.String" value="Display information about the selected node"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nodeinfo_jButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="nodeinfo_jlabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value=" "/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="Statistiques_jPanel">
@@ -670,7 +697,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="Nodes_jScrollPane" pref="294" max="32767" attributes="0"/>
+                      <Component id="Nodes_jScrollPane" pref="295" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -855,7 +882,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="608" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="609" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

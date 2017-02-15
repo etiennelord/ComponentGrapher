@@ -406,6 +406,8 @@ public class ExportNetworkJDialog extends javax.swing.JDialog {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
        JFileChooser chooser = new JFileChooser(config.getExplorerPath());
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+                chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+                chooser.setApproveButtonText("Select");
                 chooser.setDialogTitle("Select output directory");
                 int returnVal = chooser.showOpenDialog(this);
                 if(returnVal == JFileChooser.APPROVE_OPTION) {

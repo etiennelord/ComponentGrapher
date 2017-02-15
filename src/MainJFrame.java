@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import COMPONENT_GRAPHER.node;
 import COMPONENT_GRAPHER.permutation_statistics;
 import config.Config;
 import config.util;
@@ -29,6 +30,7 @@ import dialog.HelpJDialog;
 import dialog.InformationJDialog;
 import dialog.MatrixInfoJDialog;
 import dialog.MatrixOptions;
+import dialog.NodeView_JDialog;
 import dialog.PolymorphicChar_EditorJDialog;
 import dialog.RenameTaxaJDialog;
 import dialog.TaxaEditorJDialog;
@@ -56,6 +58,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -87,16 +91,15 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     public COMPONENT_GRAPHER.summary_statistics summary;        //--The main summary_statistics (current table)
     public COMPONENT_GRAPHER.permutation_statistics statistics; //--The main permutation_statistics
     
-    RowNumberTable rowtable;                 //--For the row label
+     RowNumberTable rowtable;                 //--For the row label
      ExcelResultAdapter SummaryMatrixTable;  //--For eawsy copying data from table (Cut-and-Paste)
      ExcelResultAdapter StatisticsTable;
      ExcelAdapter MainMatrixTable;     
      InformationJDialog loading_info;
      InformationJDialog saving_info;
      ExcelResultAdapter ComplexeTable;
-     ExcelResultAdapter NodeTable;
-     
-      TableRowSorter summary_sorter;
+     ExcelResultAdapter NodeTable;     
+     TableRowSorter summary_sorter;
      
     SwingWorker<Boolean, String> ComponetGrapher_SwingWorker;
     
@@ -248,9 +251,20 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         }
         
           this.Summary_jTable.getTableHeader().setResizingAllowed(true);        
-    //--Set min and max
+            //--Set min and max
           this.Summary_jTable.getColumnModel().getColumn(0).setPreferredWidth(27);
           this.Summary_jTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+          //--Display information about the selected node 
+          this.Summary_jTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (!lse.getValueIsAdjusting()) {
+                   setInfoSummaryNode();
+                   nodeinfo_jButton.setEnabled(true);
+                }
+            }
+
+        });
           
        this.MatrixjScrollPane.setRowHeaderView(rowtable);
        MatrixJButton=new JButton("");
@@ -288,10 +302,11 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
              chooser.setDialogTitle("Saving analysis");
             // FileFilter filter_csv = new FileNameExtensionFilter("CSV files (results only)", "csv");
              FileFilter filter_json = new FileNameExtensionFilter("JSON file (whole analysis)", "json");
-             
-             
              chooser.addChoosableFileFilter(filter_json);
              //chooser.addChoosableFileFilter(filter_csv);
+             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+             chooser.setApproveButtonText("Save");
+             
              chooser.setFileFilter(filter_json);
                 int returnVal = chooser.showOpenDialog(this);
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -362,6 +377,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Filter_ComboBox = new javax.swing.JComboBox();
         Summary_jScrollPane = new javax.swing.JScrollPane();
         Summary_jTable = new javax.swing.JTable();
+        nodeinfo_jButton = new javax.swing.JButton();
+        nodeinfo_jlabel = new javax.swing.JLabel();
         Statistiques_jPanel = new javax.swing.JPanel();
         Statistics_jPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -578,7 +595,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                         .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MatrixjScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE))
+                .addComponent(MatrixjScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Data", Matrix_jPanel);
@@ -643,19 +660,40 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Summary_jTable.setDragEnabled(true);
         Summary_jScrollPane.setViewportView(Summary_jTable);
 
+        nodeinfo_jButton.setText("Node informations");
+        nodeinfo_jButton.setToolTipText("Display information about the selected node");
+        nodeinfo_jButton.setEnabled(false);
+        nodeinfo_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nodeinfo_jButtonActionPerformed(evt);
+            }
+        });
+
+        nodeinfo_jlabel.setText(" ");
+
         javax.swing.GroupLayout Summary_jPanelLayout = new javax.swing.GroupLayout(Summary_jPanel);
         Summary_jPanel.setLayout(Summary_jPanelLayout);
         Summary_jPanelLayout.setHorizontalGroup(
             Summary_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(Summary_sum_jPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1078, Short.MAX_VALUE)
             .addComponent(Summary_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1078, Short.MAX_VALUE)
+            .addGroup(Summary_jPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(nodeinfo_jButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(nodeinfo_jlabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         Summary_jPanelLayout.setVerticalGroup(
             Summary_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Summary_jPanelLayout.createSequentialGroup()
                 .addComponent(Summary_sum_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Summary_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Summary_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(Summary_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(nodeinfo_jButton)
+                    .addComponent(nodeinfo_jlabel))
                 .addContainerGap())
         );
 
@@ -763,7 +801,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Nodes_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
+                .addComponent(Nodes_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Permutation statistics", Statistiques_jPanel);
@@ -820,7 +858,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
             .addGroup(ConnectedComponent_jPanelLayout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Complexes", ConnectedComponent_jPanel);
@@ -1047,6 +1085,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
              //chooser.addChoosableFileFilter(filter_phylip);
              chooser.setDialogTitle("Import matrix file");
              chooser.setToolTipText("Import matrix in nexus format or in phylip format.");
+             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+             chooser.setApproveButtonText("Import");
              int returnVal = chooser.showOpenDialog(this);
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                    System.out.println("Matrix filename: " +chooser.getSelectedFile().getAbsolutePath());
@@ -1155,7 +1195,9 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private void ImportState_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportState_jMenuItemActionPerformed
             JFileChooser chooser = new JFileChooser(config.getExplorerPath());
             chooser.setDialogTitle("Select character state file");
-            FileFilter filter_text = new FileNameExtensionFilter("Character state file (.txt)", "txt", "mat");                
+            FileFilter filter_text = new FileNameExtensionFilter("Character state file (.txt)", "txt", "mat"); 
+            chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+             chooser.setApproveButtonText("Import");
             chooser.addChoosableFileFilter(filter_text);
             chooser.setFileFilter(filter_text);
                 int returnVal = chooser.showOpenDialog(this);
@@ -1224,6 +1266,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
           final JFileChooser chooser = new JFileChooser(config.getExplorerPath());
              chooser.setDialogTitle("Loading analysis");
              FileFilter filter_json = new FileNameExtensionFilter("JSON file (whole analysis)", "json");
+             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+             chooser.setApproveButtonText("Load");
              chooser.addChoosableFileFilter(filter_json);
              chooser.setFileFilter(filter_json);
                 int returnVal = chooser.showOpenDialog(this);
@@ -1254,6 +1298,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         final JFileChooser chooser = new JFileChooser(config.getExplorerPath());
              chooser.setDialogTitle("Saving results");
              FileFilter filter_csv = new FileNameExtensionFilter("CSV files (results only)", "csv");
+             chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+             chooser.setApproveButtonText("Save");
             // FileFilter filter_json = new FileNameExtensionFilter("JSON file (whole analysis)", "json");
               chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
              
@@ -1291,6 +1337,11 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private void Help_JitemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Help_JitemActionPerformed
        HelpJDialog help=new HelpJDialog(that);
     }//GEN-LAST:event_Help_JitemActionPerformed
+
+    private void nodeinfo_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeinfo_jButtonActionPerformed
+       int nodeid=this.Summary_jTable.getSelectedRow();
+        NodeView_JDialog nv=new NodeView_JDialog(that, summary, nodeid);
+    }//GEN-LAST:event_nodeinfo_jButtonActionPerformed
 
     
     
@@ -1661,9 +1712,23 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                  });
               return nt;
        }
-     
+    
      ///////////////////////////////////////////////////////////////////////////
-    /// MESSAGE FONCTION
+    /// SELECTED NODE FUNCTION
+
+    void setInfoSummaryNode() {
+        int nodeid=this.Summary_jTable.getSelectedRow();
+        try {
+            node n=data.nodes.get(nodeid);
+            nodeinfo_jlabel.setText(n.complete_name);
+        } catch(Exception e) {
+            nodeinfo_jlabel.setText("");
+        }
+    }
+    
+    
+     ///////////////////////////////////////////////////////////////////////////
+    /// MESSAGE FUNCTION
 
     void Message(String text, String tooltip) {
         this.Message_jLabel.setEnabled(true);
@@ -1750,6 +1815,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane;
+    private javax.swing.JButton nodeinfo_jButton;
+    private javax.swing.JLabel nodeinfo_jlabel;
     private javax.swing.JLabel percent_jLabel;
     private javax.swing.JProgressBar progress;
     // End of variables declaration//GEN-END:variables
