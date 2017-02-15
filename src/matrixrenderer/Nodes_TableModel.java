@@ -166,20 +166,21 @@ public class Nodes_TableModel extends AbstractTableModel {
            double pvalue=pvalues.get(row);
            double reference=references.get(row);
            DescriptiveStatistics stat=stats.get(row);
+           //--For the moment, all strings...
            switch(col) {
-               case 0: return n.id;
-               case 1: return n.complete_name;
-               case 2: return reference;
-               case 3: return (reference<=0?"NA":pvalue);
-               case 4: return getSignificance(pvalue, reference); //--significance
-               case 5: return stat.getN();
-               case 6: return stat.getMin();
-               case 7: return stat.getMax();
-               case 8: return stat.getMean();
-               case 9: return stat.getStandardDeviation();
-               case 10: return stat.getPercentile(5);
-               case 11: return stat.getPercentile(95);                                      
-               default: return stat.getElement(col-12);    
+               case 0: return ""+n.id;
+               case 1: return ""+n.complete_name;
+               case 2: return ""+reference;
+               case 3: return ""+(reference<=0?"NA":pvalue);
+               case 4: return ""+getSignificance(pvalue, reference); //--significance
+               case 5: return ""+stat.getN();
+               case 6: return ""+stat.getMin();
+               case 7: return ""+stat.getMax();
+               case 8: return ""+stat.getMean();
+               case 9: return ""+stat.getStandardDeviation();
+               case 10: return ""+stat.getPercentile(5);
+               case 11: return ""+stat.getPercentile(95);                                      
+               default: return ""+stat.getElement(col-12);    
            }
            
        } catch(Exception e) {

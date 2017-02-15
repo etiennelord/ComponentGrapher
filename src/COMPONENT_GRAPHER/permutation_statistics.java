@@ -246,7 +246,8 @@ public class permutation_statistics implements Serializable {
             }
             
          } catch(Exception e){
-             e.printStackTrace();
+             logfile.println("Job was stopped. "+e.getMessage());
+            // e.printStackTrace();
          }
          endtime=System.currentTimeMillis();
          System.out.println("Total time: "+util.msToString(endtime-starttime));

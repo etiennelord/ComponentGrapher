@@ -297,13 +297,70 @@ public class graph {
        for (int i=0; i<len;i++)
            for (int j=0;j<len;j++) {
                if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
-                   if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
+                   //if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
                    total++;
                }
            }
        //System.out.println(total);
        return total;
    } 
+   
+    /**
+     * This return the number of time s is in a middle of a triplet i --- s --- j 
+     * when i is not connected to j
+     * @param s
+     * @param verbose
+     * @return 
+     */
+   public Float[] find_triplet(int s, boolean verbose, ArrayList<graph> others) {
+       
+       Float[] total=new Float[4];
+       total[0]=0.0f;
+       total[1]=0.0f;
+       total[2]=0.0f;
+       total[3]=0.0f;
+       
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+      
+       
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();      
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
+                   
+                //if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
+                   //--Really bad, but work...
+                   total[0]++;                   
+                   if (others.get(1).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[1]++; //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[2]++; //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i), id_to_old_id.get(j))) total[3]++; //--Edge of type 4                  
+               }
+           }
+       //System.out.println(total);
+       System.out.println(total);
+       return total;
+   } 
+   
+   /**
+    * This find if a particular edge exists from the old_id
+    * @param old_id_src
+    * @param old_id_dest
+    * @return 
+    */
+   public boolean edge_exists(int old_id_src, int old_id_dest) {
+       if (!old_id_to_id.containsKey(old_id_src)) return false;
+       if (!old_id_to_id.containsKey(old_id_dest)) return false;
+        int new_id_src=this.old_id_to_id.get(old_id_src);
+        int new_id_dest=this.old_id_to_id.get(old_id_dest);
+        return get_adj(new_id_src).containsKey(new_id_dest);
+     
+      
+   }
    
   //http://stackoverflow.com/questions/10226251/how-to-find-the-number-of-different-shortest-paths-between-two-vertices-in-dire
    public int[] BFS_count(int s) {

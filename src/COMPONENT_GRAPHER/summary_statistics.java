@@ -114,7 +114,7 @@ public class summary_statistics implements Serializable {
               local_articulation_point_complete=new boolean[data.nodes.size()];
               global_articulation_point_complete=new boolean[data.nodes.size()];
             //ArrayList<Integer>[] global_articulation_point=new ArrayList[4];
-              Triplets=new Float[4][data.nodes.size()];
+              Triplets=new Float[7][data.nodes.size()]; // 0..3 (network complete,type 1, ...), 4: type 1 edge, 5, type 2 edge, 6: type 4 edge
               betweenness=new Float[data.nodes.size()];
               closeness=new Float[data.nodes.size()];
               in_degree2=new Float[data.nodes.size()];
@@ -157,11 +157,18 @@ public class summary_statistics implements Serializable {
        */    
       public ArrayList<graph> getGraphs() {
           ArrayList<graph> tmp=new ArrayList<graph>();  
-          for (int type=0; type<4;type++) {
+          for (int type=0; type<=4;type++) {
              graph g=new graph();
              g.name="network "+type;
               if (type==4) {
-                  
+                   for (int i=0; i<data.type4_total_edge;i++) {
+                      int src=g.addNode(data.type4_src_edge[i]);
+                      int dest=g.addNode(data.type4_dest_edge[i]);
+                      g.addEdge(src, dest);
+                      g.addEdge(dest, src);                      
+                      g.total_edges++;                           
+                   }
+                    g.directed=false;  
               }
 
               //--Add edge
@@ -188,15 +195,14 @@ public class summary_statistics implements Serializable {
                       g.addEdge(src, dest);
                       g.addEdge(dest, src);                      
                       g.total_edges++;
-                      g.directed=false;                      
-                      
+                      g.directed=false;                                            
                   }                 
                   if (type==1&&data.type_edge[i]==1) {
                       int src=g.addNode(data.src_edge[i]);
                       int dest=g.addNode(data.dest_edge[i]);
                       g.addEdge(src, dest);
                       g.addEdge(dest, src);                      
-                        g.total_edges++;
+                      g.total_edges++;
                       g.directed=false;            
                      
                   }
@@ -215,7 +221,7 @@ public class summary_statistics implements Serializable {
                       g.total_edges++;
                       g.directed=false;                        
                   } 
-              }
+              } //End edges type 0...3
               g.total_nodes=g.id_to_old_id.size();
               tmp.add(g);
         }   
@@ -226,7 +232,7 @@ public class summary_statistics implements Serializable {
       * Main function to calculate_network_statistics 
       * This calculate the network statistics
       */     
-     public StringBuilder calculate_network_statistics() {
+     public StringBuilder calculate_network_statistics_old() {
       StringBuilder st=new StringBuilder();
       init();
       data.MessageResult("===============================================================================\n");
@@ -268,7 +274,7 @@ public class summary_statistics implements Serializable {
                       int dest=g.addNode(data.dest_edge[i]);
                       g.addEdge(src, dest);
                       g.addEdge(dest, src);                      
-                        g.total_edges++;
+                      g.total_edges++;
                       g.directed=false;            
                      
                   }
@@ -344,18 +350,15 @@ public class summary_statistics implements Serializable {
                       for (int w:cc) CC_info_type3[g.id_to_old_id.get(w)]=i+1;
                   }
                   for (int i=0; i<g.total_nodes;i++) {
-                  betweenness[g.id_to_old_id.get(i)]=tmp[i];
-                  closeness[g.id_to_old_id.get(i)]=tmp_c[i];
-                  local_articulation_point[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
-                  global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
-                  graph.results r=g.findLoops(i,false);
-                  path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
-                  path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;
-                  
-                    //if (g.is_local_articulation_point(i)) local_articulation_point[0].add(g.id_to_old_id.get(i));
-                  //if (g.is_global_articulation_point(i)) global_articulation_point[0].add(g.id_to_old_id.get(i)); 
-                  Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false);
-                  total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
+                      betweenness[g.id_to_old_id.get(i)]=tmp[i];
+                      closeness[g.id_to_old_id.get(i)]=tmp_c[i];
+                      local_articulation_point[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
+                      global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
+                      graph.results r=g.findLoops(i,false);
+                      path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
+                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;                                    
+                      Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false); //--Normal Triplet
+                      total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
                 }
               }
                
@@ -423,7 +426,153 @@ public class summary_statistics implements Serializable {
         return st;
      }     
        
-     
+     /**
+      * Main function to calculate_network_statistics 
+      * This calculate the network statistics
+      */     
+     public StringBuilder calculate_network_statistics() {
+      StringBuilder st=new StringBuilder();
+      init();
+      data.MessageResult("===============================================================================\n");
+      data.MessageResult("Computing statistics:\n");
+      data.MessageResult("===============================================================================\n");
+      long timerunning=System.currentTimeMillis();                
+      ArrayList<graph> networks=getGraphs();
+         System.out.println(networks);
+         System.out.println("here");
+
+      //--Calculate stats for different types of network
+      //--Complete (type 0)          
+                  graph g=networks.get(0);
+                   for (int i=0; i<g.total_nodes;i++) {                          
+                     Triplets[0][g.id_to_old_id.get(i)]=g.find_triplet(i, false);                     
+                    total_triplet_complete+= Triplets[0][g.id_to_old_id.get(i)];
+                    if (Triplets[0][g.id_to_old_id.get(i)]==0)Triplets[0][g.id_to_old_id.get(i)]=null; //--for display purpose
+                     local_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
+                     global_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
+                   }
+                   ArrayList<ArrayList<Integer>>tmp=g.getCC();
+                    total_CC_complete=tmp.size();
+                    for (int i=0; i<tmp.size();i++) {
+                      ArrayList<Integer>cc=tmp.get(i);
+                      for (int w:cc) CC_info_complete[g.id_to_old_id.get(w)]=i+1;
+                  }
+                   
+         //--Complete (type 1)        
+              
+              g=networks.get(1);
+                  CC=g.getCC();
+                  total_CC_type1=CC.size();
+                  //--REname each node in cc
+                  for (int i=0; i<CC.size();i++) {
+                      ArrayList<Integer>cc=CC.get(i);
+                      for (int w:cc) CC_info_type1[g.id_to_old_id.get(w)]=i+1;
+                  }
+                         
+            //--Complete (type 2)     
+                g=networks.get(2);
+                 for (int i=0; i<g.total_nodes;i++) {                                             
+                   in_degree2[g.id_to_old_id.get(i)]=g.in_degree(i);
+                   out_degree2[g.id_to_old_id.get(i)]=g.out_degree(i);
+                   in_degree2_norm[g.id_to_old_id.get(i)]=  in_degree2[g.id_to_old_id.get(i)]/(float)(g.total_nodes-1);
+                }   
+
+              
+              //--Complete (type 3) 
+                  g=networks.get(3);
+                  
+                  float[] tmp3=g.Betweenness();
+                  float[] tmp_c3=g.Closeness();
+                  CC=g.getCC();
+                  total_CC_type3=CC.size();
+                  //--REname each node in cc
+                  for (int i=0; i<CC.size();i++) {
+                      ArrayList<Integer>cc=CC.get(i);
+                      for (int w:cc) CC_info_type3[g.id_to_old_id.get(w)]=i+1;
+                  }
+                  for (int i=0; i<g.total_nodes;i++) {
+                      betweenness[g.id_to_old_id.get(i)]=tmp3[i];
+                      closeness[g.id_to_old_id.get(i)]=tmp_c3[i];
+                      local_articulation_point[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
+                      global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
+                      graph.results r=g.findLoops(i,false);
+                      path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
+                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;                                    
+                      //Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false); //--Normal Triplet
+                      Float[] tri=g.find_triplet(i,false,networks);
+                      Triplets[3][g.id_to_old_id.get(i)]=tri[0]; //--Type A
+                      Triplets[4][g.id_to_old_id.get(i)]=tri[1]; //--Type B
+                      Triplets[5][g.id_to_old_id.get(i)]=tri[2]; //--Type C
+                      Triplets[6][g.id_to_old_id.get(i)]=tri[3]; //--Type D
+                      
+                      total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
+                 }
+              
+                //--End  
+               
+             // data.MessageResult("("+(type+1)*10+"%) Phase ["+(type+1)+"/4] ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+         
+          
+         data.MessageResult("(50%) Creating and analyzing intermediate networks ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+          //--Test for transitive progress (Shortpath>2 in type 3 but never smaller in complete
+          //--Note: the graph is mixed
+          graph g3=new graph();
+          graph gc=new graph();
+          for (int i=0; i<data.current_total_edge;i++) {
+                      int type=data.type_edge[i];
+                      int src=gc.addNode(data.src_edge[i]);
+                      int dest=gc.addNode(data.dest_edge[i]);                      
+                      gc.addEdge(src, dest);
+                      if (type!=2)gc.addEdge(dest, src);                                              
+                      src=g3.addNode(data.src_edge[i]);
+                      dest=g3.addNode(data.dest_edge[i]); 
+                      if (type==3) {
+                          g3.addEdge(dest, src);
+                          g3.addEdge(src, dest);
+                      }
+                      
+                     
+         }
+          g3.directed=false; 
+          gc.directed=true;
+          g3.total_nodes=g3.id_to_old_id.size();
+          gc.total_nodes=gc.id_to_old_id.size();
+          //--Now execute Floyd
+          data.MessageResult("(60%) Shortest paths complete network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+          int[][] gcf= gc.Floyd();
+          data.MessageResult("(80%) Shortest paths type 3 network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+          int[][] g3f=g3.Floyd();
+         
+          //--Search for progressive_tr
+          for (int i=0; i<g3.total_nodes;i++) {
+              int original_id=g3.id_to_old_id.get(i);
+              max_sp_type3[original_id]=-1; 
+              max_sp_complete[original_id]=-1;
+              int original_id_gc=gc.old_id_to_id.get(original_id);
+              for (int j=0; j<g3.total_nodes;j++) {
+              if (i!=j) {
+                int original_id_j=g3.id_to_old_id.get(j);
+                //int nodeid_g3=i;
+                int nodeid_gc=gc.old_id_to_id.get(original_id_j);
+                Integer len_g3=g3f[i][j];
+                Integer len_gc=gcf[original_id_gc][nodeid_gc];
+                    if (len_g3<graph.infinity) {
+                        if (len_g3>2&&len_gc>=len_g3) {
+                            Progressive_transition[original_id].add(data.nodes.get(original_id_j).complete_name);
+                        }
+                    }
+                   if (len_g3>max_sp_type3[original_id]&&len_g3<graph.infinity) max_sp_type3[original_id]=len_g3;
+                   if (len_gc>max_sp_complete[original_id]&&len_gc<graph.infinity) max_sp_complete[original_id]=len_gc;
+              }
+            }
+         }
+       this.total_time=System.currentTimeMillis()-timerunning;
+       st=calculate_node_statistics();
+       data.MessageResult("(100%) Done statistics ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+        data.MessageResult("===============================================================================\n");
+        
+        return st;
+     }     
      
      /**
       * This calculate individual node statistics 
@@ -519,6 +668,12 @@ public class summary_statistics implements Serializable {
                     n.stats.put("triplet_type2",Triplets[2][n.id]);                    
                     triplet_type2+= n.stats.getFloat("triplet_type2");
                     n.stats.put("triplet_type3",Triplets[3][n.id]);
+                    
+                     n.stats.put("triplet_typeA",Triplets[3][n.id]);
+                     n.stats.put("triplet_typeB",Triplets[4][n.id]);
+                     n.stats.put("triplet_typeC",Triplets[5][n.id]);
+                     n.stats.put("triplet_typeD",Triplets[6][n.id]);
+                    
                     triplet_type3+= n.stats.getFloat("triplet_type3");                    
                     n.stats.put("triplet_complete",Triplets[0][n.id]);                                        
                     triplet_complete+= n.stats.getFloat("triplet_complete");
@@ -710,7 +865,7 @@ public class summary_statistics implements Serializable {
               for (int j=0;j<degrees[i].length;j++) degrees[i][j]=su.degrees[i][j];
           }
 
-          this.total_triplet_type3=su.total_triplet_type3;
+        this.total_triplet_type3=su.total_triplet_type3;
         this.total_triplet_complete=su.total_triplet_complete;
         this.total_triplet_type2=su.total_triplet_type2;
         this.total_CC_type1=su.total_CC_type1;
@@ -800,7 +955,8 @@ public class summary_statistics implements Serializable {
         // for (int i=0; i<10;i++) {
             summary_statistics su=new summary_statistics(data);
             summary_statistics su2=new summary_statistics(new datasets());
-            //su.calculate_network_statistics();
+            su.calculate_network_statistics();
+            su.calculate_node_statistics();
             //su2.calculate_network_statistics();
          //}
             System.out.println(su);

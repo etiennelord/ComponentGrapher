@@ -1951,7 +1951,8 @@ void print_state_label() {
     @Override
     public String toString() {
         
-        return "<html>Taxa (rows): <b>"+this.ntax+"</b> Characters (columns): <b>"+this.nchar+"</b> Treated columns: <b>"+this.total_valid_column+ "</b> Multistate characters: "+this.info_total_multiple+"</html>";
+        //return "<html>Taxa (rows): <b>"+this.ntax+"</b> Characters (columns): <b>"+this.nchar+"</b> Treated columns: <b>"+this.total_valid_column+ "</b> Multistate characters: "+this.info_total_multiple+"</html>";
+        return "Taxa (rows): "+this.ntax+" Characters (columns): "+this.nchar+" Treated columns: "+this.total_valid_column+ " Multistate characters: "+this.info_total_multiple;
         
     }
    

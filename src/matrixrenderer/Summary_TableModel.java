@@ -52,7 +52,11 @@ public class Summary_TableModel extends AbstractTableModel {
     "<html>&nbsp;&nbsp;<b>Percent(%) triplet type3</b></html>",   
     "<html>&nbsp;&nbsp;<b>Convergence</b></html>",    
     "<html>&nbsp;&nbsp;<b>Number of taxa</b></html>",    
-    "<html>&nbsp;&nbsp;<b>Taxa</b></html>"
+    "<html>&nbsp;&nbsp;<b>Taxa</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet A</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet B</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet C</b></html>",
+     "<html>&nbsp;&nbsp;<b>Triplet D</b></html>"
    };
     
 
@@ -85,7 +89,11 @@ public class Summary_TableModel extends AbstractTableModel {
                case 20: return n.stats.getFloat("percent_triplet_type3");                        
                case 21: return (n.stats.isSet("convergence")?n.stats.getFloat("convergence"):0.0f);
                case 22: return (n.stats.isSet("taxa_count")?n.stats.getInt("taxa_count"):0);
-               case 23: return n.stats.get("taxa");               
+               case 23: return n.stats.get("taxa");      
+               case 24: return n.stats.get("triplet_typeA");      
+               case 25: return n.stats.get("triplet_typeB");      
+               case 26: return n.stats.get("triplet_typeC");      
+               case 27: return n.stats.get("triplet_typeD");          
            }
            
 //return data.char_matrix[col][row];

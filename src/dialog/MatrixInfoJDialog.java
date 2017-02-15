@@ -35,7 +35,7 @@ public class MatrixInfoJDialog extends javax.swing.JDialog {
           if (config.isSet("analysis")&&util.FileExists(config.get("analysis"))) {
               analysis_jTextField1.setText(config.get("analysis"));
           } else {
-              analysis_jTextField1.setText("<html><i>Analysis not performed</i></html>");
+              analysis_jTextField1.setText("Analysis not performed");
           }
           
           String log_filename=directory+File.separator+"log.txt";
