@@ -1,4 +1,4 @@
-# COMPONENT-GRAPHER
+# COMPOSITEGRAPHER
 
 ## About
 
@@ -16,31 +16,31 @@ COMPONENT-GRAPHER is a command-line tool programmed in Java.
 A) Create the networks and export as graphml files 
 
 ```
-java -jar COMPONENT-GRAPHER.jar example/Sample.phy -graphml
+java -jar COMPOSITEGRAPHER.jar example/Sample.phy -graphml
 ```
 
 B) Processing the Smith-Caron sample matrix and generate a summary of the results.
 
 ```
-java -Xms=2g -Xmx=4g -jar COMPONENT-GRAPHER.jar example/Smith_Caron.nex -summary
+java -Xms=2g -Xmx=4g -jar COMPOSITEGRAPHER.jar example/Smith_Caron.nex -summary
 ```
 
 ### Binary releases
 
-COMPONENT-GRAPHER is compatible with Java SE5 (JDK 5) and later versions of Java. The latest
+COMPOSITEGRAPHER is compatible with Java SE5 (JDK 5) and later versions of Java. The latest
 Java platform is available at
 [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 ## Compilation
 
-The source code is distributed as  Netbeans project format. 
+The source code is distributed as Netbeans project format. 
 
 ## Dependencies
 
-COMPONENT-GRAPHER depends on the following library:
+COMPOSITEGRAPHER depends on the following library:
 
 ##### [SSJ](https://github.com/umontreal-simul/ssj)  
 The SSJ library is used for BitVector calculations and for computing random uniform distribution.  The
-`ssj.jar` archive is included in the COMPONENT-GRAPHER distribution 
+`ssj.jar` archive is included in the COMPOSITEGRAPHER distribution 
 and it must be in the CLASSPATH environment variable.
 
