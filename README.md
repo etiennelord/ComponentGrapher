@@ -41,28 +41,29 @@ Full command-line options are:
 |	-graphml       | Output graphml network files (Gephi, Cytoscape compatibles).|
 |	-nodeid=file   | Provide a node identification file when importing the matrix.|
 |	-variation=X   | Specify the variation string to use if polymorphic states are presents.|
-| -triplets      | Output triplets file (triplets.txt) |
+| -triplets            | Output triplets file (triplets.txt) |
 
-Generated results files are:  
+Generated results files are:   
+
 |             Files    | Informations                                   |
 | -------------------- | ---------------------------------------------- |
+|	log.txt                               | logfile.  |
 |	matrixfile_complete.txt               | edge list of the complete network. |
-|	matrixfile_1.txt                      : edge list of the type 1 connections.|
-|	matrixfile_2.txt                      : edge list of the type 2 connections.|
-|	matrixfile_3.txt                      : edge list of the type 3 connections.|
-|	matrixfile_4.txt                      : edge list of the type 4 connections.|
-|	matrixfile_id.txt                     : identification for each node.|
-|	matrixfile_summary.txt                : statistics and parameters for this run. |
-|	matrixfile_summary_statistics.csv     : nodes statistics. |
-|	log.txt                               : logfile.  |
-|	reference.json                        : Serialized results for original dataset.|
-|	randomization_XX.json                 : Serialized results for one permuation.|
-|	matrixfile_permutation_statistics.csv : network statistics and _p_-value. |
-|	matrixfile_percent_triplet_type3.csv  : tyep 3 network triplets per nodes. |
-|	matrixfile_out_degree2.csv            : outdegree in type 2 network.  |
-|	matrixfile_in_degree2.csv             : indegree in type 2 network.   |
-|	matrixfile_closeness_type3.csv        : closeness in type 3 network.  |
-|	matrixfile_betweenness_type3.csv      : betweenness in type3 network. |
+|	matrixfile_1.txt                      | edge list of the type 1 connections.|
+|	matrixfile_2.txt                      | edge list of the type 2 connections.|
+|	matrixfile_3.txt                      | edge list of the type 3 connections.|
+|	matrixfile_4.txt                      | edge list of the type 4 connections.|
+|	matrixfile_id.txt                     | identification for each node.|
+|	matrixfile_summary.txt                | statistics and parameters for this run. |
+|	matrixfile_summary_statistics.csv     | nodes statistics. |
+|	reference.json                        | serialized results for original dataset.|
+|	randomization_XX.json                 | serialized results for each permuation.|
+|	matrixfile_permutation_statistics.csv | network statistics and _p_-value. |
+|	matrixfile_percent_triplet_type3.csv  | type 3 network triplets per nodes. |
+|	matrixfile_out_degree2.csv            | outdegree in type 2 network.  |
+|	matrixfile_in_degree2.csv             | indegree in type 2 network.   |
+|	matrixfile_closeness_type3.csv        | closeness in type 3 network.  |
+|	matrixfile_betweenness_type3.csv      | betweenness in type3 network. |
 
 If the [-bipartite] option is use, the following files will also be produced:  
 
