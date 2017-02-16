@@ -24,6 +24,8 @@ import config.util;
 import dialog.AboutJDialog;
 import dialog.CharEditorJDialog;
 import dialog.ConfigureAnalysis_JDialog;
+import dialog.CreateNewMatrix;
+import dialog.CreateNewMatrix_JDialog;
 import dialog.ExportMatrixJDialog1;
 import dialog.ExportNetworkJDialog;
 import dialog.HelpJDialog;
@@ -412,10 +414,12 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         PolymorphicChar_jMenu = new javax.swing.JMenu();
         EditCharacter_jMenuItem = new javax.swing.JMenuItem();
         EditTaxa_jMenuItem = new javax.swing.JMenuItem();
         Define_state_jMenuItem = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
         Help_Jitem = new javax.swing.JMenuItem();
@@ -918,7 +922,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
         jMenu1.setText("File");
 
-        ImportMatrix_jMenuItem.setText("Import matrix");
+        ImportMatrix_jMenuItem.setText("Load matrix");
         ImportMatrix_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ImportMatrix_jMenuItemActionPerformed(evt);
@@ -926,7 +930,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         });
         jMenu1.add(ImportMatrix_jMenuItem);
 
-        ExportMatrix_jMenuItem.setText("Export matrix");
+        ExportMatrix_jMenuItem.setText("Save matrix");
         ExportMatrix_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ExportMatrix_jMenuItemActionPerformed(evt);
@@ -1000,6 +1004,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         });
         jMenu4.add(jMenuItem5);
 
+        jMenuItem4.setText("Export triplets");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem4);
+
         jMenuBar1.add(jMenu4);
 
         PolymorphicChar_jMenu.setText("Edit");
@@ -1029,6 +1041,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Define_state_jMenuItem.setToolTipText("");
         Define_state_jMenuItem.setEnabled(false);
         PolymorphicChar_jMenu.add(Define_state_jMenuItem);
+
+        jMenuItem3.setText("Create new matrix");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        PolymorphicChar_jMenu.add(jMenuItem3);
 
         jMenuBar1.add(PolymorphicChar_jMenu);
 
@@ -1103,6 +1123,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
        ExportMatrixJDialog1 savematrix=new ExportMatrixJDialog1(this, data);
        this.Filename_jTextField.setText(savematrix.filename);
        this.data.filename=savematrix.filename;
+       this.data.result_directory=Config.currentPath+File.separator+"results"+File.separator+Config.CleanFileName(data.filename);
     }//GEN-LAST:event_ExportMatrix_jMenuItemActionPerformed
 
     private void Stop_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Stop_jButtonActionPerformed
@@ -1128,6 +1149,9 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void Run_Analysis_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Run_Analysis_jButtonActionPerformed
+        if (data.filename.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please save the matrix file before starting an analysis.","Matrix not saved", JOptionPane.WARNING_MESSAGE);
+        } else
         if (data.nchar==0) {
             JOptionPane.showMessageDialog(this, "Please load a matrix file before starting an analysis.","No matrix loaded", JOptionPane.WARNING_MESSAGE);
         } else {
@@ -1342,6 +1366,23 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
        int nodeid=this.Summary_jTable.getSelectedRow();
         NodeView_JDialog nv=new NodeView_JDialog(that, summary, nodeid);
     }//GEN-LAST:event_nodeinfo_jButtonActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+       CreateNewMatrix_JDialog nm=new CreateNewMatrix_JDialog(that);
+        System.out.println(nm.data);
+       if (nm.data!=null) {
+           System.out.println("here");
+           this.data=nm.data;          
+           updateMatrixTableInfo();          
+           jTabbedPane.setEnabledAt(1, false);
+           jTabbedPane.setEnabledAt(2, false);
+           jTabbedPane.setEnabledAt(3, false);
+       }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        statistics.reference.export_triplets("triplets.txt", "\t");
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     
     
@@ -1804,6 +1845,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem8;

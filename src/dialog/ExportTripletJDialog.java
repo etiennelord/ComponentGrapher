@@ -1,7 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ /*  COMPONENT-GRAPHER v1.0
+ *  
+ *  Copyright (C) 2015-2017  Etienne Lord
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package dialog;
 
@@ -21,7 +33,7 @@ import javax.swing.JOptionPane;
  *
  * @author Etienne
  */
-public class ExportMatrixJDialog1 extends javax.swing.JDialog {
+public class ExportTripletJDialog extends javax.swing.JDialog {
 
     datasets data=null;
     Config config=new Config();
@@ -32,7 +44,7 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
     /**
      * Creates new form ExportNetworkJDialog
      */
-    public ExportMatrixJDialog1(java.awt.Frame parent, datasets data_) {
+    public ExportTripletJDialog(java.awt.Frame parent, datasets data_) {
         super(parent, true);
         this.parent=parent;
         this.data=data_;
@@ -51,10 +63,8 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
     
     public void saveFile() {
           filename=this.Filename_jTextField.getText();
-         switch(Matrix_type_jComboBox.getSelectedIndex()) {
-             case 0: data.save_NexusMatrix(filename); break;
-             case 1: data.save_PhylipMatrix(filename, false); break;
-             case 2: data.save_PhylipMatrix(filename, true); break;
+         switch(format_jComboBox.getSelectedIndex()) {
+             
          }        
          
          this.setVisible(false);
@@ -105,7 +115,7 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        Matrix_type_jComboBox = new javax.swing.JComboBox();
+        format_jComboBox = new javax.swing.JComboBox();
         jStatusMessage = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
@@ -165,12 +175,12 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
         );
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Matrix types"));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Format"));
 
-        Matrix_type_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Nexus matrix", "Simple", "Phylip compatible" }));
-        Matrix_type_jComboBox.addActionListener(new java.awt.event.ActionListener() {
+        format_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "TSV (tab-separated values)", "CSV (comma-separated values)" }));
+        format_jComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Matrix_type_jComboBoxActionPerformed(evt);
+                format_jComboBoxActionPerformed(evt);
             }
         });
 
@@ -180,11 +190,11 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Matrix_type_jComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(format_jComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Matrix_type_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(format_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jStatusMessage.setForeground(new java.awt.Color(51, 51, 255));
@@ -193,7 +203,7 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
         jLabel2.setBackground(new java.awt.Color(0, 153, 0));
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText(" Save matrix");
+        jLabel2.setText(" Export triplets list");
         jLabel2.setOpaque(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -284,21 +294,21 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
                 }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void Matrix_type_jComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Matrix_type_jComboBoxActionPerformed
-       if (this.Matrix_type_jComboBox.getSelectedIndex()==2&&data.info_total_multistate>0) {
-           MessageErreur("Phylip doesn't accept multistate characters.", "");
-           this.Save_jButton.setEnabled(false);
-       } else {
-           this.Save_jButton.setEnabled(true);
-       }
-    }//GEN-LAST:event_Matrix_type_jComboBoxActionPerformed
+    private void format_jComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_format_jComboBoxActionPerformed
+        if (this.format_jComboBox.getSelectedIndex()==2&&data.info_total_multistate>0) {
+            MessageErreur("Phylip doesn't accept multistate characters.", "");
+            this.Save_jButton.setEnabled(false);
+        } else {
+            this.Save_jButton.setEnabled(true);
+        }
+    }//GEN-LAST:event_format_jComboBoxActionPerformed
 
   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Cancel_jButton;
     private javax.swing.JTextField Filename_jTextField;
-    private javax.swing.JComboBox Matrix_type_jComboBox;
     private javax.swing.JButton Save_jButton;
+    private javax.swing.JComboBox format_jComboBox;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

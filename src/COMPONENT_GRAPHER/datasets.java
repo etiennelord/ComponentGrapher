@@ -55,6 +55,14 @@ public class datasets extends Observable implements Serializable {
     transient static LFSR258  rand=new LFSR258();  
     
    /////////////////////////////////////////////////////////////////////////////
+   /// Colors of links (edges)
+    
+    // Type1 17,255,17GREEN
+    // Type2 0,98,203 BLUE
+    // Type3 255,42,80 RED
+    
+    
+   /////////////////////////////////////////////////////////////////////////////
    /// OPTIONS 
    public double min_rand_index=0.0;
    public double min_taxa_percent=0;
@@ -1058,13 +1066,16 @@ void print_state_label() {
      //--Output to screen some information about the char matrix              
        str.append("=============================== PARAMETERS ====================================\n");       
        str.append("Command line options                 : "+this.commandline+"\n");            
-       str.append("Input                                : "+this.filename+"\n");       
+       str.append("Input                                : "+this.filename+"\n");   
+       str.append("Output directory                     : "+this.result_directory+"\n");   
        str.append("N taxa                               : "+info_Ntaxa+" (rows)\n");
        str.append("N characters                         : "+info_Nchar+" (columns)\n");
 //--Create the various state matrix         
        str.append("Total number of multistate characters: "+ info_total_multistate+"\n");
        str.append("Total number of possible variations* : "+info_total_variation+"\n");    
        str.append("Total variations tested              : "+ìnfo_total_variation_tested+"\n");
+       str.append("Permuations statistics               : "+this.replicate+"\n");   
+       str.append("Suggested permutations**             : "+(int)(info_total_possible_nodes/0.05)+"\n");  
        str.append("Remove multiple state columns        : "+this.remove_multiple_column+"\n");
         str.append("Remove undefined columns             : "+this.remove_undefined_column+"\n");        
 
@@ -1079,9 +1090,12 @@ void print_state_label() {
        str.append("Total treated column                 : "+info_total_valid_column+"\n");
        str.append("Total undefined char                 : "+info_total_undefined+"\n");
        str.append("Total multiple char                  : "+info_total_multiple+"\n");              
-       str.append("Total possible nodes                 : "+info_total_possible_nodes+"\n");       
+       str.append("Total possible nodes                 : "+info_total_possible_nodes+"\n");   
+       
+       str.append("Number of thread (maxpool)           : "+this.maxthreads+"\n");  
        str.append("===============================================================================\n");       
-       str.append("* Indicate the number of state variation for polymorphic characters.\n");       
+       str.append("*  Indicate the number of state variation for polymorphic characters.\n");       
+       str.append("** Indicate the minimum number of permuations for significant p-values.\n");       
         if (this.min_taxa<1) {
           //System.out.print("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
           str.append("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
@@ -1403,20 +1417,20 @@ void print_state_label() {
             // Bipartition
             String solution2=""+(state_id+1);
             if (solution.isEmpty()) solution2="";
-            String f=filename+".bipartite";
-            String f2=filename+"_"+solution2+"_complete.txt";
+            String f=result_directory+File.separator+util.getFilename(filename)+".bipartite";
+            String f2=result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_complete.txt";
             String f_complete=f+"_"+solution2+"_complete.txt";
             String f_1= f+"_"+solution2+"_1.txt";
             String f_2= f+"_"+solution2+"_2.txt";
             String f_3= f+"_"+solution2+"_3.txt";
             String f_id= f+"_"+solution2+"_id.txt";          
-//            if (bipartite) {
-//                output_biparition_complete.open(f_complete);            
-//                output_biparition_1.open(f_1);
-//                output_biparition_2.open(f_2);
-//                output_biparition_3.open(f_3);            
-//                bipartite_index=nodes.size(); //starting bipartition id
-//            }
+            if (bipartite) {
+                output_biparition_complete.open(f_complete);            
+                output_biparition_1.open(f_1);
+                output_biparition_2.open(f_2);
+                output_biparition_3.open(f_3);            
+                bipartite_index=nodes.size(); //starting bipartition id
+            }
          this.st_results=new StringBuffer();
           MessageResult("===============================================================================\n");
           MessageResult("Current iteration : "+(state_id+1)+"/"+this.current_total_iter+ "\nStates variations : "+this.current_state_variation+"\n(saving to: "+f2+")\n");
@@ -1433,13 +1447,13 @@ void print_state_label() {
                  output_biparition_2.close();
                 output_biparition_3.close();     
              }
-                if (!nooutput) export_edgelist(filename+"_"+solution2);   
+                if (!nooutput) export_edgelist(result_directory+File.separator+util.getFilename(filename)+"_"+solution2);   
                 if (save_graphml) {           
-                     export_graphml(filename+"_"+solution2+"_complete",0);
-                     export_graphml(filename+"_"+solution2+"_1",1);
-                     export_graphml(filename+"_"+solution2+"_2",2);
-                     export_graphml(filename+"_"+solution2+"_3",3);
-                     export_graphml(filename+"_"+solution2+"_4",4);
+                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_complete",0);
+                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_1",1);
+                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_2",2);
+                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_3",3);
+                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_4",4);
                 }
                 
                 //--This save to file

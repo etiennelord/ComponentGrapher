@@ -821,6 +821,20 @@ public class summary_statistics implements Serializable {
          return CCS;
      }
      
+     /**
+      * Export triplets to filename
+      * @param filename
+      * @param sep (separataor e.g. \t, ;, ,
+      */
+     public void export_triplets(String filename,String sep) {
+         System.out.println("Saving triplets to:\n"+filename);
+         ArrayList<graph> network=getGraphs();
+         graph g3=network.get(3);
+         g3.export_triplet(filename, network,sep);
+         //--save the nodeid
+         //--Export summary
+         
+     }
 
     @Override
     public String toString() {

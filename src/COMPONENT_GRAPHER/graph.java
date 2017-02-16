@@ -324,8 +324,7 @@ public class graph {
 //       1: Type B: i -3- n -3- j ,i-1-j
 //       2: Type C: i -3- n -3- j ,i-2-j
 //       3: Type D: i -3- n -3- j ,i-4-j 
-      
-       
+             
        ArrayList<Integer> neighbor=new ArrayList<Integer>();
        for (int i:get_adj(s).keySet()) neighbor.add(i);
        int len=neighbor.size();      
@@ -336,7 +335,7 @@ public class graph {
                    int j_id=neighbor.get(j);
                 //if (verbose) 
                  // System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
-                   System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType A");
+                   //System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType A");
 //                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
 //                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id)));
 //                   System.out.println("i--j 4"+others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
@@ -344,20 +343,83 @@ public class graph {
                    total[0]++;                   
                    if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
                        total[1]++;
-                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType B");
+                       //System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType B");
                    } //--Edge of type 1
                    if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {
                        total[2]++;
-                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType C");
+                       //System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType C");
                    } //--Edge of type 2
                    if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
-                       System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType D");
+                       //System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType D");
                        total[3]++;
                    } //--Edge of type 4                  
                }
            }              
        return total;
    } 
+   
+     /**
+     * This return the number of time s is in a middle of a triplet i --- s --- j 
+     * when i is not connected to j
+     * @param s
+     * @param verbose
+     * @return 
+     */
+   public boolean export_triplet(String filename, ArrayList<graph> others, String sep) {
+       
+       Float[] total=new Float[4];
+       total[0]=0.0f;
+       total[1]=0.0f;
+       total[2]=0.0f;
+       total[3]=0.0f;
+       
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+      util u=new util();
+      u.open(filename);
+       for (int s=0;s<this.total_nodes;s++) {
+           System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();
+       u.println("#node1\tcentral_node\tnode3\ttype");
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
+                   int i_id=neighbor.get(i);
+                   int j_id=neighbor.get(j);
+                //if (verbose) 
+                 // System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type A");
+//                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
+//                   System.out.println("i--j 1"+others.get(1).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id)));
+//                   System.out.println("i--j 4"+others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id)));
+                    //--Really bad, but work...
+                   total[0]++;                   
+                   if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                       total[1]++;
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type B");
+                   } //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {
+                       total[2]++;
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type C");
+                   } //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                      u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type D");
+                       total[3]++;
+                   } //--Edge of type 4                  
+               }
+           }    
+       }     
+       u.close();
+       System.out.println("Total triplets\tType A\tType B\tType C\tType D");
+       System.out.println("\t\t"+total[0]+"\t"+total[1]+"\t"+total[2]+"\t"+total[3]);
+       //--ouput 
+       return true;
+   } 
+   
    
    /**
     * This find if a particular edge exists from the old_id

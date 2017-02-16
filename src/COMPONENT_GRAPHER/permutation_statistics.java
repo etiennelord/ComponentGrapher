@@ -127,13 +127,16 @@ public class permutation_statistics implements Serializable {
         String serial=directory+File.separator+"reference.json";
         util.CreateDir(directory);             
         // 1. Serialize
+        System.out.println("===============================================================================");
+        System.out.println("Saving reference statistics (in json format):");
         System.out.println(serial);
+        System.out.println("===============================================================================");
         reference.serialize(serial);
         
         // 2. Export summary statistics ...
         
         // 3. Save the matrix 
-        reference.data.save_CurrentPhylipMatrix(directory+File.separator+"reference.phy", true);
+        //reference.data.save_CurrentPhylipMatrix(directory+File.separator+"reference.phy", true);
         // 4. Save the summary
         
     }
@@ -143,7 +146,7 @@ public class permutation_statistics implements Serializable {
          if (!util.DirExists(directory)) util.CreateDir(directory);       
          String serial=directory+File.separator+"randomization_"+replicate+".json";
          su.serialize(serial);
-         reference.data.save_CurrentPhylipMatrix(directory+File.separator+"replicate_"+replicate+".phy", true);
+         //reference.data.save_CurrentPhylipMatrix(directory+File.separator+"replicate_"+replicate+".phy", true);
     }
     
     /**
@@ -161,8 +164,8 @@ public class permutation_statistics implements Serializable {
        // System.out.println(reference_data.result_directory);
        reference_data.compute();
        data.MessageOption(data.get_info());
-       data.MessageOption("Saving to "+reference_data.result_directory);
-       data.MessageOption("* This is set in the Run analysis menu.");
+       //data.MessageOption("Saving to "+reference_data.result_directory);
+       //data.MessageOption("* This is set in the Run analysis menu.");
        logfile.println(data.get_info());
        starttime=System.currentTimeMillis();
        reference=new summary_statistics(reference_data);
@@ -192,8 +195,8 @@ public class permutation_statistics implements Serializable {
             logfile.close();
             return;
         }
-        System.out.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));      
-        logfile.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));
+        //System.out.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));      
+        //logfile.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));
          //long timerunning=System.currentTimeMillis();  //--We will estimate 1%
          //int one_percent=(int)Math.ceil(replicate/100)+1; //Not used
          
@@ -251,6 +254,7 @@ public class permutation_statistics implements Serializable {
          }
          endtime=System.currentTimeMillis();
          System.out.println("Total time: "+util.msToString(endtime-starttime));
+         System.out.println("===============================================================================");
          logfile.println("Total time: "+util.msToString(endtime-starttime));
         //--done in the mainframe now...data=reference_data;
        logfile.close();
@@ -895,7 +899,7 @@ public class permutation_statistics implements Serializable {
                        u.print("randomization "+(rep+1)+",");
                    }
                    u.println();
-                   System.out.println("nodes size:"+reference_data.nodes.size());
+                   //System.out.println("nodes size:"+reference_data.nodes.size());
                     for (int nodeid=0; nodeid<reference_data.nodes.size();nodeid++) {
                      node n=reference.data.nodes.get(nodeid);
                    

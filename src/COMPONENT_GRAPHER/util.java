@@ -456,6 +456,17 @@ public class util {
 
     }
     
+      /**
+    * 
+    * @param filename
+    * @return a path free filename
+    */
+   public static String getFilename(String filename) {
+       File f=new File(filename);
+       return f.getName();
+   }
+   
+    
     public static String getFilename_wo_Ext(String filename) {
         int i=filename.lastIndexOf(".");
         if (i>-1) {

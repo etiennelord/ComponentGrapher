@@ -25,6 +25,7 @@ import COMPONENT_GRAPHER.permutation_statistics;
 import COMPONENT_GRAPHER.util;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.io.File;
 import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -51,21 +52,22 @@ public class main {
             boolean analyse1=true;        //--Permutation statistic
             boolean save_graphml=false;   //--Save output as graphML
             boolean save_bipartite=false; //--Compute and save bipartite networks
+            boolean save_triplets=false; //--Compute and save triplets information
             boolean save_summary=false; //--Compute and save summary permutation_statistics
             boolean bipartite=false;    //--Compute and save bipartite graph
             int bipartite_type=0;      //--Generate bipartite networks of type X where 0 indicate the complete networks
             boolean undefined=false;   //--Treat column containing undefined characters
             boolean multiple=false;    //--Treat column containing multiple characters
             boolean show_matrix=false; //--Display to stdout the input matrix
-            boolean nooutput=true;    //--Silence output
+            boolean nooutput=false;    //--Silence output
             double minrand=0.0;        //--*Unused for now, the minimum randIndex to consider
             float mintaxa=1;         //-- the minimum number of taxa to consider
             int maxiter=1;          //--default, one iteration, get the first state
             int random_n=0;          //--Specify that we want random partition
-            int perm_n=5;            //--Number of permutation for the p-value   
+            int perm_n=0;            //--Number of permutation for the p-value   
             String user_state_string="";//--passed user state string
             String node_information_filename="";
-            String output_file="output";
+            String output_directory="";
             
             //--Main dataset to compute 
           datasets d=new datasets();
@@ -90,10 +92,12 @@ public class main {
                 }
             }
             if (s.indexOf("-maxpool=")>-1) datasets.maxthreads=Integer.valueOf(st.substring(9));
-            if (s.indexOf("-perm=")>-1) perm_n=Integer.valueOf(st.substring(6));
+            if (s.indexOf("-perm=")>-1) { 
+                perm_n=Integer.valueOf(st.substring(6));
+            } 
             if (s.indexOf("-random=")>-1) random_n=Integer.valueOf(st.substring(8));
             if (s.indexOf("-variation=")>-1) user_state_string=st.substring(11);
-            if (s.indexOf("-output=")>-1) output_file=st.substring(8);
+            if (s.indexOf("-output=")>-1) output_directory=st.substring(8);
             if (s.indexOf("-undefined")>-1) undefined=true;
             if (s.indexOf("-multiple")>-1) multiple=true;            
             if (s.indexOf("-show_matrix")>-1) show_matrix=true;            
@@ -102,6 +106,7 @@ public class main {
             if (s.indexOf("-taxa=")>-1) d.taxa=s.substring(6);
             if (s.indexOf("-nooutput")>-1) nooutput=true;
             if (s.indexOf("-summary")>-1) save_summary=true; 
+            if (s.indexOf("-triplets")>-1) save_triplets=true; 
             //--Given a graph, analyse it...
 //            if (s.indexOf("-analyse")>-1) {
 //                analyse1=true;
@@ -126,16 +131,25 @@ public class main {
          }
         
         
-        if (random_n>0&&maxiter==1) {             
-             maxiter=random_n;
-         }
+//        if (random_n>0&&maxiter==1) {             
+//             maxiter=random_n;
+//         }
          if (!user_state_string.isEmpty()) {
              maxiter=1;             
              d.random=0;
              d.user_state_string=user_state_string;
              d.prepare_current_state_matrix(d.random, false);
          }
-         
+         if (!output_directory.isEmpty()) {
+             d.result_directory=output_directory;
+             if (!util.DirExists(output_directory)) {
+                 if (!util.CreateDir(output_directory)) {
+                     System.out.println("Error. Unable to create the output directory:`"+output_directory);
+                     System.exit(-1);
+                 }
+             }
+         }   
+             
          d.filename=filename;                  
          d.nooutput=nooutput;
          d.bipartite=bipartite;
@@ -146,7 +160,7 @@ public class main {
          d.replicate=perm_n;
          d.maxiter=maxiter;
          d.min_taxa=mintaxa;
-         d.save_summary=save_summary;         
+         d.save_summary=save_summary;                
          
          if (show_matrix) d.printCharMatrix();
          
@@ -154,12 +168,15 @@ public class main {
          d.load_charstate(node_information_filename);
           
          if (analyse1) {             
-             permutation_statistics stat=new permutation_statistics(d);
-             System.out.println(d.current_state_variation);
-             stat.generate_statistics();
-             System.out.println(stat.reference_data.current_state_variation);
-             System.out.println("Saving to results to directory: "+d.result_directory);
-             stat.output_csv(d.result_directory);
+             System.out.println(d.get_info());
+             System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
+             System.out.println("===============================================================================");
+             permutation_statistics stat=new permutation_statistics(d);             
+             stat.generate_statistics();                                   
+             stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
+             if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
+              System.out.println("===============================================================================");
+             System.out.println("done.");
              System.exit(0);
          }
          //--Actual computing
@@ -184,7 +201,7 @@ public class main {
       }
     }
     //http://docs.oracle.com/javafx/2/charts/bar-chart.htm
-    
+      
      public static void help() {
          System.out.println("COMPONENT-GRAPHER v"+version+"\n"+authors); 
          System.out.println("========================== COMMAND-LINE OPTIONS ===============================");
@@ -196,43 +213,57 @@ public class main {
           System.out.println("\tmatrixfile : a nexus or phylip matrix to analyse.");      
           
           System.out.println("Options :");
-          System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
-          System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");
-          System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");
-          System.out.println("\t-random=9    : Force a number of random variations.");
+          //System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
+          System.out.println("\t-perm=100    : Specify the number permutation to performed.");          
+          System.out.println("\t-maxpool=10  : Specify the number of concurrent threads.");          
+          //System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");          
+          //System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");
+          //System.out.println("\t-random=9    : Force a number of random variations.");
           System.out.println("\t-undefined   : Remove column containing undefined states (e.g. ?,-)");
           System.out.println("\t-multiple    : Remove column containing multiple states (e.g. {1,2,3}).");          
-          System.out.println("\t-bipartite   : Output bipartite file.");
-          System.out.println("\t-graphml     : Output graphml file (Gephi compatible).");
+          System.out.println("\t-bipartite   : Output bipartite files.");
+          System.out.println("\t-graphml     : Output graphml files (Gephi,Cytoscape compatibles).");
           System.out.println("\t-nodeid=file : Provide a node identification file.");
-          System.out.println("\t-output=file : Specify output filename.");
+          System.out.println("\t-output=dir  : Specify output directory.");
           System.out.println("\t-variation=X : Specify the variation string to use.");
-          System.out.println("\t-summary     : Compute summary statistic such as degrees, betweenness.");
+          System.out.println("\t-triplets    : Output triplets file (triplets.txt).");
+          //System.out.println("\t-summary     : Compute summary statistic such as degrees, betweenness.");
          
-          System.out.println("================================= OUTPUTS =====================================");
-          System.out.println("\nFor each iteration (see maxiter parameter) :\n");
-          System.out.println("\tmatrixfile_XXX_complete.txt: edge list of the complete network.");
-          System.out.println("\tmatrixfile_XXX_1.txt       : edge list of the type 1 connections.");
-          System.out.println("\tmatrixfile_XXX_2.txt       : edge list of the type 2 connections.");
-          System.out.println("\tmatrixfile_XXX_3.txt       : edge list of the type 3 connections.");
-          System.out.println("\tmatrixfile_XXX_4.txt       : edge list of the type 4 connections.");
-          System.out.println("\tmatrixfile_XXX_id.txt      : identification for each node");
-          System.out.println("\tmatrixfile_XXX_stat.txt    : statistics and parameters for this run.");
-          System.out.println("\t*XXX will be replace by the iteration number if there is multiple states. ");
+          System.out.println("================================= OUTPUTS =====================================");          
+          System.out.println("matrixfile_complete.txt               : edge list of the complete network.");
+          System.out.println("matrixfile_1.txt                      : edge list of the type 1 connections.");
+          System.out.println("matrixfile_2.txt                      : edge list of the type 2 connections.");
+          System.out.println("matrixfile_3.txt                      : edge list of the type 3 connections.");
+          System.out.println("matrixfile_4.txt                      : edge list of the type 4 connections.");
+          System.out.println("matrixfile_id.txt                     : identification for each node.");
+          System.out.println("matrixfile_summary.txt                : statistics and parameters for this run.");
+          System.out.println("matrixfile_summary_statistics.csv     : nodes statistics.");
+          
+          System.out.println("log.txt                               : logfile");
+          System.out.println("reference.json                        : serialized results for original dataset.");
+          System.out.println("randomization_XX.json                 : serialized results for each permuation.");
+          
+          System.out.println("matrixfile_permutation_statistics.csv : network statistics and p-value.");
+          System.out.println("matrixfile_percent_triplet_type3.csv  : type 3 network triplets per nodes.");
+          System.out.println("matrixfile_out_degree2.csv            : outdegree in type 2 network.");
+          System.out.println("matrixfile_in_degree2.csv             : indegree in type 2 network.");
+          System.out.println("matrixfile_closeness_type3.csv        : closeness in type 3 network.");
+          System.out.println("matrixfile_betweenness_type3.csv      : betweenness in type3 network.");
+                    
           System.out.println("\nIf the [-bipartite] option is use, the following files will also be produced:");
-          System.out.println("\tmatrixfile.bipartite_XXX_complete.txt: bipartite network of the\n\t\t\t\t\t\tcomplete network.");
-          System.out.println("\tmatrixfile.bipartite_XXX_1.txt       : bipartite network of the type 1.");
-          System.out.println("\tmatrixfile.bipartite_XXX_2.txt       : bipartite network of the type 2.");
-          System.out.println("\tmatrixfile.bipartite_XXX_3.txt       : bipartite network of the type 3.");          
-          System.out.println("\tmatrixfile.bipartite_XXX_id.txt      : identification for each node");
-          System.out.println("\nIf the [-summary] option is use, the following file will also be produced:");
-          System.out.println("\tmatrixfile_XXX_summary.txt           : summary statistics for this run.");
-          System.out.println("\nIf the [-graphml] option is used, the following file will also be produced:");
-          System.out.println("\tmatrixfile_XXX_complete.graphml");
-          System.out.println("\tmatrixfile_XXX_1.graphml");
-          System.out.println("\tmatrixfile_XXX_2.graphml");
-          System.out.println("\tmatrixfile_XXX_3.graphml");
-          System.out.println("\tmatrixfile_XXX_4.graphml");
+          System.out.println("\tmatrixfile.bipartite_complete.txt: bipartite network of the\n\t\t\t\t\t\tcomplete network.");
+          System.out.println("\tmatrixfile.bipartite_1.txt       : bipartite network of the type 1.");
+          System.out.println("\tmatrixfile.bipartite_2.txt       : bipartite network of the type 2.");
+          System.out.println("\tmatrixfile.bipartite_3.txt       : bipartite network of the type 3.");          
+          System.out.println("\tmatrixfile.bipartite_id.txt      : identification for each node");
+          System.out.println("\nIf the [-graphml] option is used, the following files will also be produced:");
+          System.out.println("\tmatrixfile_complete.graphml");
+          System.out.println("\tmatrixfile_1.graphml");
+          System.out.println("\tmatrixfile_2.graphml");
+          System.out.println("\tmatrixfile_3.graphml");
+          System.out.println("\tmatrixfile_4.graphml");
+          System.out.println("\nIf the [-triplets] option is used, the following file will also be produced:");
+          System.out.println("\ttriplets.txt                     : triplets found in type 3 network");
           System.out.println("===============================================================================");
           
           System.exit(0);
