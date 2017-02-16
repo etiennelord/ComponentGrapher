@@ -28,20 +28,22 @@ With the **2000** permutations (-perm=1000)  and **100** concurrent threads (-ma
 ```
 java -jar COMPOSITEGRAPHER.jar sample/sample_5.txt -perm=2000 -maxpool=100
 ```
-Full command-line options are 
-option | usages 
--------|-------
-	-perm=100    | Specify the number permutation to performed.
-	-maxpool=10  | Specify the number of concurrent threads.
-	-random=9    | Force a number of random variations.
-	-undefined   | Remove column containing undefined states (e.g. ?,-)
-	-multiple    | Remove column containing multiple states (e.g. {1,2,3}).
-	-bipartite   | Output bipartite file.
-	-graphml     | Output graphml file (Gephi compatible).
-	-nodeid=file | Provide a node identification file.
-	-output=file | Specify output filename.
-	-variation=X | Specify the variation string to use.
-	-summary     | Compute summary statistic such as degrees, betweenness.
+Full command-line options are:   
+
+
+
+|             Options   | Usages                                         |
+| -------------------- | ---------------------------------------------- |
+|	-perm=100      | Specify the number permutation to performed.  |
+|	-maxpool=10    | Specify the number of concurrent threads.|
+|	-undefined     | Remove column containing undefined states (e.g. ?,-,\*)|
+|	-multiple      | Remove column containing polymorphic states (e.g. {1,2,3}).|
+|	-bipartite     | Output bipartite network files.|
+|	-graphml       | Output graphml network files (Gephi, Cytoscape compatibles).|
+|	-nodeid=file   | Provide a node identification file when importing the matrix.|
+|	-output=file   | Specify the output filename.|
+|	-variation=X   | Specify the variation string to use if polymorphic states are presents.|
+|	-summary       | Output summary statistic such as degrees, betweenness.|
 
 
 ### Requirements
