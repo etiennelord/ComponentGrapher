@@ -30,20 +30,65 @@ java -jar COMPOSITEGRAPHER.jar sample/sample_5.txt -perm=2000 -maxpool=100
 ```
 Full command-line options are:   
 
-
-
 |             Options   | Usages                                         |
 | -------------------- | ---------------------------------------------- |
 |	-perm=100      | Specify the number permutation to performed.  |
 |	-maxpool=10    | Specify the number of concurrent threads.|
+|	-output=dir    | Specify output directory.|
 |	-undefined     | Remove column containing undefined states (e.g. ?,-,\*)|
 |	-multiple      | Remove column containing polymorphic states (e.g. {1,2,3}).|
 |	-bipartite     | Output bipartite network files.|
 |	-graphml       | Output graphml network files (Gephi, Cytoscape compatibles).|
 |	-nodeid=file   | Provide a node identification file when importing the matrix.|
-|	-output=file   | Specify the output filename.|
 |	-variation=X   | Specify the variation string to use if polymorphic states are presents.|
-|	-summary       | Output summary statistic such as degrees, betweenness.|
+| -triplets      | Output triplets file (triplets.txt) |
+
+Generated results files are:  
+|             Files    | Informations                                   |
+| -------------------- | ---------------------------------------------- |
+|	matrixfile_complete.txt               | edge list of the complete network. |
+|	matrixfile_1.txt                      : edge list of the type 1 connections.|
+|	matrixfile_2.txt                      : edge list of the type 2 connections.|
+|	matrixfile_3.txt                      : edge list of the type 3 connections.|
+|	matrixfile_4.txt                      : edge list of the type 4 connections.|
+|	matrixfile_id.txt                     : identification for each node.|
+|	matrixfile_summary.txt                : statistics and parameters for this run. |
+|	matrixfile_summary_statistics.csv     : nodes statistics. |
+|	log.txt                               : logfile.  |
+|	reference.json                        : Serialized results for original dataset.|
+|	randomization_XX.json                 : Serialized results for one permuation.|
+|	matrixfile_permutation_statistics.csv : network statistics and _p_-value. |
+|	matrixfile_percent_triplet_type3.csv  : tyep 3 network triplets per nodes. |
+|	matrixfile_out_degree2.csv            : outdegree in type 2 network.  |
+|	matrixfile_in_degree2.csv             : indegree in type 2 network.   |
+|	matrixfile_closeness_type3.csv        : closeness in type 3 network.  |
+|	matrixfile_betweenness_type3.csv      : betweenness in type3 network. |
+
+If the [-bipartite] option is use, the following files will also be produced:  
+
+|             Files    | Informations                                   |
+| -------------------- | ---------------------------------------------- |
+|matrixfile.bipartite_complete.txt| bipartite network of the complete network.|
+|	matrixfile.bipartite_1.txt      | bipartite network of the type 1. |
+| matrixfile.bipartite_2.txt      | bipartite network of the type 2.|
+| matrixfile.bipartite_3.txt      | bipartite network of the type 3.|
+|	matrixfile.bipartite_XX_id.txt  | identification for each node|
+
+If the [-graphml] option is used, the following files will also be produced:
+
+|             Files    | Informations                                   |
+| -------------------- | ---------------------------------------------- |
+|	matrixfile_complete.graphml | complete network (type 1,2, and 3 edges)|
+|	matrixfile_1.graphml | type 1 network |
+|	matrixfile_2.graphml | type 2 network |
+|	matrixfile_3.graphml | type 3 network |
+|	matrixfile_4.graphml | type 4 network |
+
+If the [-triplets] option is used, the following file will also be produced:
+	
+|             Files    | Informations                                   |
+| -------------------- | ---------------------------------------------- |
+| triplets.txt         | triplets found in type 3 network               |
 
 
 ### Requirements
@@ -54,7 +99,7 @@ Java platform is available at
 
 ## Compilation
 
-The source code is distributed as Netbeans project format. 
+The source code is distributed as Netbeans project format. A compiled jar file is also available.
 
 ## Dependencies
 
