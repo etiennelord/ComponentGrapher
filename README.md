@@ -2,13 +2,13 @@
 
 ## About
 
-This is the source code and some sample matrices for the COMPONENT-GRAPHER software.
+This is the source code and some sample matrices for the COMPOSITEGRAPHER software.
 
-The COMPONENT-GRAPHER software generates networks containing: perfect, inclusion, partial concomitant links between character-states.
+The COMPOSITERAPHER software generates networks containing: perfect, inclusion, partial concomitant links between character-states.
 
 ## Usage
 
-COMPONENT-GRAPHER is a command-line tool programmed in Java. 
+COMPOSITERAPHER is a command-line tool programmed in Java. 
 
 1. First obtain a [binary release](#binary-releases) or [compile](#Compilation) your own version.
 2. Typical command-line to analyse a morphological matrix are:
