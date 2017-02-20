@@ -1,6 +1,7 @@
 package COMPONENT_GRAPHER;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import config.Config;
 import java.io.File;
@@ -26,7 +27,7 @@ public class summary_statistics implements Serializable {
         
         public datasets data; //Dataset for this summary_statistics
     
-        public  ArrayList<ArrayList<Integer>> CC;
+        public  ArrayList<ArrayList<Integer>> CC=new ArrayList<ArrayList<Integer>>();
         public  Integer[] CC_info_type1;
         public  Integer[] CC_info_type2;
         public  Integer[] CC_info_complete;
@@ -44,6 +45,7 @@ public class summary_statistics implements Serializable {
         public  Float[] in_degree2_norm;
         public  Float[] path_len4_type3;
         public  Float[] path_loop_len4_type3;
+        public  Float[] density; //--Density of the networks
         public  int[][] degrees;
           
  
@@ -51,12 +53,20 @@ public class summary_statistics implements Serializable {
         public   Integer[] max_sp_type3;
         public   Integer[] max_sp_complete;
         public   float total_triplet_type3=0;
+        public   float total_triplet_typeA=0; //--Note, over-estimate the total triangle
+        public   float total_triangle=0; 
+        public   float total_possible_triangle=0;  
+        public   float prop_triangle=0;//--Ratio on total number of triangle
+        public   float total_triplet_typeB=0;
+        public   float total_triplet_typeC=0;
+        public   float total_triplet_typeD=0;
+        public   float total_triplet_typeE=0;
         public   float total_triplet_complete=0;
         public   float total_triplet_type2=0;
         public   int total_CC_type1=0;
         public   int total_CC_type2=0;
         public   int total_CC_type3=0;
-        public   int total_CC_complete=0;
+        public   int total_CC_complete=0;        
        
         public long total_time=0;
        
@@ -67,6 +77,7 @@ public class summary_statistics implements Serializable {
          public int  total_node_type1=0;
          public int  total_node_type2=0;
          public int  total_node_type3=0;
+          public int  total_node_type4=0;
          public int  total_node_type0=0;
          public int  total_edges_complete=0;
          public int  total_edges_type1=0;
@@ -114,7 +125,7 @@ public class summary_statistics implements Serializable {
               local_articulation_point_complete=new boolean[data.nodes.size()];
               global_articulation_point_complete=new boolean[data.nodes.size()];
             //ArrayList<Integer>[] global_articulation_point=new ArrayList[4];
-              Triplets=new Float[7][data.nodes.size()]; // 0..3 (network complete,type 1, ...), 4: type 1 edge, 5, type 2 edge, 6: type 4 edge
+              Triplets=new Float[8][data.nodes.size()]; // 0..3 (network complete,type 1, ...), 4: type 1 edge, 5, type 2 edge, 6: type 4 edge, 7: type 3 edge (triangles)
               betweenness=new Float[data.nodes.size()];
               closeness=new Float[data.nodes.size()];
               in_degree2=new Float[data.nodes.size()];
@@ -123,13 +134,20 @@ public class summary_statistics implements Serializable {
               path_len4_type3=new Float[data.nodes.size()];
               path_loop_len4_type3=new Float[data.nodes.size()];
               degrees=new int[data.nodes.size()][6];
+              density=new Float[5]; //--network density
               CC_info_type1=new Integer[data.nodes.size()];
+              CC_info_type2=new Integer[data.nodes.size()];
               CC_info_type3=new Integer[data.nodes.size()];
               CC_info_complete=new Integer[data.nodes.size()];
               Progressive_transition=new  ArrayList[data.nodes.size()];
               max_sp_type3=new Integer[data.nodes.size()];
               max_sp_complete=new Integer[data.nodes.size()]; 
               total_triplet_type3=0;
+              total_triplet_typeA=0;
+              total_triplet_typeB=0;
+              total_triplet_typeC=0;
+              total_triplet_typeD=0;
+              total_triplet_typeE=0;
               total_triplet_complete=0;
               total_triplet_type2=0;
               total_CC_type1=0;
@@ -139,6 +157,8 @@ public class summary_statistics implements Serializable {
                 for (int j=0; j<6;j++) degrees[i][j]=0;
                 CC_info_type1[i]=0;
                 CC_info_complete[i]=0;
+                CC_info_type1[i]=0;
+                CC_info_type2[i]=0;
                 CC_info_type3[i]=0;
                 max_sp_type3[i]=0;
                 max_sp_complete[i]=0;
@@ -231,200 +251,202 @@ public class summary_statistics implements Serializable {
       * Main function to calculate_network_statistics 
       * This calculate the network statistics
       */     
-     public StringBuilder calculate_network_statistics_old() {
-      StringBuilder st=new StringBuilder();
-      init();
-      data.MessageResult("===============================================================================\n");
-      data.MessageResult("Computing statistics:\n");
-      data.MessageResult("===============================================================================\n");
-      long timerunning=System.currentTimeMillis();                
-      for (int type=0; type<4;type++) {
-            
-             graph g=new graph();
-             g.name="network "+type;
-              //--Add edge
-              for (int i=0; i<data.current_total_edge;i++) {
-                  if (type==0) {
-                      int src=g.addNode(data.src_edge[i]);
-                      int dest=g.addNode(data.dest_edge[i]);
-                      switch(data.type_edge[i]) {
-                          case 1: degrees[data.src_edge[i]][0]++;
-                                  degrees[data.dest_edge[i]][0]++;
-                                  degrees[data.src_edge[i]][1]++;
-                                  degrees[data.dest_edge[i]][1]++;                                  
-                                  break;                                                        
-                          case 2: degrees[data.src_edge[i]][3]++;                                                                    
-                                  degrees[data.dest_edge[i]][2]++;                                  
-                                  break;                                  
-                          case 3: degrees[data.src_edge[i]][4]++;
-                                  degrees[data.dest_edge[i]][4]++;
-                                  degrees[data.src_edge[i]][5]++;
-                                  degrees[data.dest_edge[i]][5]++;                                  
-                                  break;                                 
-                      }
-                      g.addEdge(src, dest);
-                      g.addEdge(dest, src);                      
-                      g.total_edges++;
-                      g.directed=false;                      
-                      
-                  }
-                  if (type==1&&data.type_edge[i]==1) {
-                      int src=g.addNode(data.src_edge[i]);
-                      int dest=g.addNode(data.dest_edge[i]);
-                      g.addEdge(src, dest);
-                      g.addEdge(dest, src);                      
-                      g.total_edges++;
-                      g.directed=false;            
-                     
-                  }
-                  if (type==2&&data.type_edge[i]==2) {
-                      int src=g.addNode(data.src_edge[i]);
-                      int dest=g.addNode(data.dest_edge[i]);
-                      g.addEdge(src, dest);
-                      g.total_edges++;
-                      g.directed=true;
-                  } 
-                  if (type==3&&data.type_edge[i]==3) {
-                      int src=g.addNode(data.src_edge[i]);
-                      int dest=g.addNode(data.dest_edge[i]);
-                      g.addEdge(src, dest);
-                      g.addEdge(dest, src);   
-                      g.total_edges++;
-                      g.directed=false;                        
-                  } 
-              }
-              g.total_nodes=g.id_to_old_id.size();
-                            
-              //System.out.println(""+(type==0?"complete    \t":type+"           \t")+g.total_nodes+"\t"+g.total_edges+" \t"+g.density());
-              //--calculate_network_statistics some statistic on each graph                           
-              if (type==0) {
-                   for (int i=0; i<g.total_nodes;i++) {                          
-                     Triplets[0][g.id_to_old_id.get(i)]=g.find_triplet(i, false);                     
-                    total_triplet_complete+= Triplets[0][g.id_to_old_id.get(i)];
-                    if (Triplets[0][g.id_to_old_id.get(i)]==0)Triplets[0][g.id_to_old_id.get(i)]=null; //--for display purpose
-                     local_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
-                     global_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
-                   }
-                   ArrayList<ArrayList<Integer>>tmp=g.getCC();
-                    total_CC_complete=tmp.size();
-                    for (int i=0; i<tmp.size();i++) {
-                      ArrayList<Integer>cc=tmp.get(i);
-                      for (int w:cc) CC_info_complete[g.id_to_old_id.get(w)]=i+1;
-                  }
-                   
-              }
-              
-              if (type==1) {
-                  CC=g.getCC();
-                  total_CC_type1=CC.size();
-                  //--REname each node in cc
-                  for (int i=0; i<CC.size();i++) {
-                      ArrayList<Integer>cc=CC.get(i);
-                      for (int w:cc) CC_info_type1[g.id_to_old_id.get(w)]=i+1;
-                  }
-              }           
-              
-              if (type==2) {
-//                   CC=g.getCC();
-//                  total_CC_type2=CC.size();
-                 for (int i=0; i<g.total_nodes;i++) {                                             
-                   in_degree2[g.id_to_old_id.get(i)]=g.in_degree(i);
-                   out_degree2[g.id_to_old_id.get(i)]=g.out_degree(i);
-                   in_degree2_norm[g.id_to_old_id.get(i)]=  in_degree2[g.id_to_old_id.get(i)]/(float)(g.total_nodes-1);
-                }   
+//     public StringBuilder calculate_network_statistics_old() {
+//      StringBuilder st=new StringBuilder();
+//      init();
+//      data.MessageResult("===============================================================================\n");
+//      data.MessageResult("Computing statistics:\n");
+//      data.MessageResult("===============================================================================\n");
+//      long timerunning=System.currentTimeMillis();                
+//      for (int type=0; type<4;type++) {
+//            
+//             graph g=new graph();
+//             g.name="network "+type;
+//              //--Add edge
+//              for (int i=0; i<data.current_total_edge;i++) {
+//                  if (type==0) {
+//                      int src=g.addNode(data.src_edge[i]);
+//                      int dest=g.addNode(data.dest_edge[i]);
+//                      switch(data.type_edge[i]) {
+//                          case 1: degrees[data.src_edge[i]][0]++;
+//                                  degrees[data.dest_edge[i]][0]++;
+//                                  degrees[data.src_edge[i]][1]++;
+//                                  degrees[data.dest_edge[i]][1]++;                                  
+//                                  break;                                                        
+//                          case 2: degrees[data.src_edge[i]][3]++;                                                                    
+//                                  degrees[data.dest_edge[i]][2]++;                                  
+//                                  break;                                  
+//                          case 3: degrees[data.src_edge[i]][4]++;
+//                                  degrees[data.dest_edge[i]][4]++;
+//                                  degrees[data.src_edge[i]][5]++;
+//                                  degrees[data.dest_edge[i]][5]++;                                  
+//                                  break;                                 
+//                      }
+//                      g.addEdge(src, dest);
+//                      g.addEdge(dest, src);                      
+//                      g.total_edges++;
+//                      g.directed=false;                      
+//                      
+//                  }
+//                  if (type==1&&data.type_edge[i]==1) {
+//                      int src=g.addNode(data.src_edge[i]);
+//                      int dest=g.addNode(data.dest_edge[i]);
+//                      g.addEdge(src, dest);
+//                      g.addEdge(dest, src);                      
+//                      g.total_edges++;
+//                      g.directed=false;            
+//                     
+//                  }
+//                  if (type==2&&data.type_edge[i]==2) {
+//                      int src=g.addNode(data.src_edge[i]);
+//                      int dest=g.addNode(data.dest_edge[i]);
+//                      g.addEdge(src, dest);
+//                      g.total_edges++;
+//                      g.directed=true;
+//                  } 
+//                  if (type==3&&data.type_edge[i]==3) {
+//                      int src=g.addNode(data.src_edge[i]);
+//                      int dest=g.addNode(data.dest_edge[i]);
+//                      g.addEdge(src, dest);
+//                      g.addEdge(dest, src);   
+//                      g.total_edges++;
+//                      g.directed=false;                        
+//                  } 
+//              }
+//              g.total_nodes=g.id_to_old_id.size();
+//                            
+//              //System.out.println(""+(type==0?"complete    \t":type+"           \t")+g.total_nodes+"\t"+g.total_edges+" \t"+g.density());
+//              //--calculate_network_statistics some statistic on each graph                           
+//              if (type==0) {
+//                   for (int i=0; i<g.total_nodes;i++) {                          
+//                     Triplets[0][g.id_to_old_id.get(i)]=g.find_triplet(i, false);                     
+//                    total_triplet_complete+= Triplets[0][g.id_to_old_id.get(i)];
+//                    if (Triplets[0][g.id_to_old_id.get(i)]==0)Triplets[0][g.id_to_old_id.get(i)]=null; //--for display purpose
+//                     local_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
+//                     global_articulation_point_complete[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
+//                   }
+//                   ArrayList<ArrayList<Integer>>tmp=g.getCC();
+//                    total_CC_complete=tmp.size();
+//                    for (int i=0; i<tmp.size();i++) {
+//                      ArrayList<Integer>cc=tmp.get(i);
+//                      for (int w:cc) CC_info_complete[g.id_to_old_id.get(w)]=i+1;
+//                  }
+//                   
+//              }
+//              
+//              if (type==1) {
+//                  CC=g.getCC();
+//                  total_CC_type1=CC.size();
+//                  //--REname each node in cc
 //                  for (int i=0; i<CC.size();i++) {
 //                      ArrayList<Integer>cc=CC.get(i);
-//                      for (int w:cc) CC_info_type2[g.id_to_old_id.get(w)]=i+1;
+//                      for (int w:cc) CC_info_type1[g.id_to_old_id.get(w)]=i+1;
 //                  }
-              }
-            
-              if (type==3) {
-                  float[] tmp=g.Betweenness();
-                  float[] tmp_c=g.Closeness();
-                  CC=g.getCC();
-                  total_CC_type3=CC.size();
-                  //--REname each node in cc
-                  for (int i=0; i<CC.size();i++) {
-                      ArrayList<Integer>cc=CC.get(i);
-                      for (int w:cc) CC_info_type3[g.id_to_old_id.get(w)]=i+1;
-                  }
-                  for (int i=0; i<g.total_nodes;i++) {
-                      betweenness[g.id_to_old_id.get(i)]=tmp[i];
-                      closeness[g.id_to_old_id.get(i)]=tmp_c[i];
-                      local_articulation_point[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
-                      global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
-                      graph.results r=g.findLoops(i,false);
-                      path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
-                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;                                    
-                      Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false); //--Normal Triplet
-                      total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
-                }
-              }
-               
-              data.MessageResult("("+(type+1)*10+"%) Phase ["+(type+1)+"/4] ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
-          } // End for type
-          
-         data.MessageResult("(50%) Creating and analyzing intermediate networks ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
-          //--Test for transitive progress (Shortpath>2 in type 3 but never smaller in complete
-          //--Note: the graph is mixed
-          graph g3=new graph();
-          graph gc=new graph();
-          for (int i=0; i<data.current_total_edge;i++) {
-                      int type=data.type_edge[i];
-                      int src=gc.addNode(data.src_edge[i]);
-                      int dest=gc.addNode(data.dest_edge[i]);                      
-                      gc.addEdge(src, dest);
-                      if (type!=2)gc.addEdge(dest, src);                                              
-                      src=g3.addNode(data.src_edge[i]);
-                      dest=g3.addNode(data.dest_edge[i]); 
-                      if (type==3) {
-                          g3.addEdge(dest, src);
-                          g3.addEdge(src, dest);
-                      }
-                      
-                     
-         }
-          g3.directed=false; 
-          gc.directed=true;
-          g3.total_nodes=g3.id_to_old_id.size();
-          gc.total_nodes=gc.id_to_old_id.size();
-          //--Now execute Floyd
-          data.MessageResult("(60%) Shortest paths complete network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
-          int[][] gcf= gc.Floyd();
-          data.MessageResult("(80%) Shortest paths type 3 network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
-          int[][] g3f=g3.Floyd();
-         
-          //--Search for progressive_tr
-          for (int i=0; i<g3.total_nodes;i++) {
-              int original_id=g3.id_to_old_id.get(i);
-              max_sp_type3[original_id]=-1; 
-              max_sp_complete[original_id]=-1;
-              int original_id_gc=gc.old_id_to_id.get(original_id);
-              for (int j=0; j<g3.total_nodes;j++) {
-              if (i!=j) {
-                int original_id_j=g3.id_to_old_id.get(j);
-                //int nodeid_g3=i;
-                int nodeid_gc=gc.old_id_to_id.get(original_id_j);
-                Integer len_g3=g3f[i][j];
-                Integer len_gc=gcf[original_id_gc][nodeid_gc];
-                    if (len_g3<graph.infinity) {
-                        if (len_g3>2&&len_gc>=len_g3) {
-                            Progressive_transition[original_id].add(data.nodes.get(original_id_j).complete_name);
-                        }
-                    }
-                   if (len_g3>max_sp_type3[original_id]&&len_g3<graph.infinity) max_sp_type3[original_id]=len_g3;
-                   if (len_gc>max_sp_complete[original_id]&&len_gc<graph.infinity) max_sp_complete[original_id]=len_gc;
-              }
-            }
-         }
-       this.total_time=System.currentTimeMillis()-timerunning;
-       st=calculate_node_statistics();
-       data.MessageResult("(100%) Done statistics ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
-        data.MessageResult("===============================================================================\n");
-        
-        return st;
-     }     
-       
+//              }           
+//              
+//              if (type==2) {
+////                   CC=g.getCC();
+////                  total_CC_type2=CC.size();
+//                 for (int i=0; i<g.total_nodes;i++) {                                             
+//                   in_degree2[g.id_to_old_id.get(i)]=g.in_degree(i);
+//                   out_degree2[g.id_to_old_id.get(i)]=g.out_degree(i);
+//                   in_degree2_norm[g.id_to_old_id.get(i)]=  in_degree2[g.id_to_old_id.get(i)]/(float)(g.total_nodes-1);
+//                }   
+////                  for (int i=0; i<CC.size();i++) {
+////                      ArrayList<Integer>cc=CC.get(i);
+////                      for (int w:cc) CC_info_type2[g.id_to_old_id.get(w)]=i+1;
+////                  }
+//              }
+//            
+//              if (type==3) {
+//                  float[] tmp=g.Betweenness();
+//                  float[] tmp_c=g.Closeness();
+//                  CC=g.getCC();
+//                  total_CC_type3=CC.size();
+//                  //--REname each node in cc
+//                  for (int i=0; i<CC.size();i++) {
+//                      ArrayList<Integer>cc=CC.get(i);
+//                      for (int w:cc) CC_info_type3[g.id_to_old_id.get(w)]=i+1;
+//                  }
+//                  for (int i=0; i<g.total_nodes;i++) {
+//                      betweenness[g.id_to_old_id.get(i)]=tmp[i];
+//                      closeness[g.id_to_old_id.get(i)]=tmp_c[i];
+//                      local_articulation_point[g.id_to_old_id.get(i)]=g.is_local_articulation_point(i);
+//                      global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
+//                      graph.results r=g.findLoops(i,false);
+//                      path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
+//                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;                                    
+//                      Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false); //--Normal Triplet
+//                      total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
+//                     
+//                      
+//                }
+//              }
+//               
+//              data.MessageResult("("+(type+1)*10+"%) Phase ["+(type+1)+"/4] ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+//          } // End for type
+//          
+//         data.MessageResult("(50%) Creating and analyzing intermediate networks ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+//          //--Test for transitive progress (Shortpath>2 in type 3 but never smaller in complete
+//          //--Note: the graph is mixed
+//          graph g3=new graph();
+//          graph gc=new graph();
+//          for (int i=0; i<data.current_total_edge;i++) {
+//                      int type=data.type_edge[i];
+//                      int src=gc.addNode(data.src_edge[i]);
+//                      int dest=gc.addNode(data.dest_edge[i]);                      
+//                      gc.addEdge(src, dest);
+//                      if (type!=2)gc.addEdge(dest, src);                                              
+//                      src=g3.addNode(data.src_edge[i]);
+//                      dest=g3.addNode(data.dest_edge[i]); 
+//                      if (type==3) {
+//                          g3.addEdge(dest, src);
+//                          g3.addEdge(src, dest);
+//                      }
+//                      
+//                     
+//         }
+//          g3.directed=false; 
+//          gc.directed=true;
+//          g3.total_nodes=g3.id_to_old_id.size();
+//          gc.total_nodes=gc.id_to_old_id.size();
+//          //--Now execute Floyd
+//          data.MessageResult("(60%) Shortest paths complete network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+//          int[][] gcf= gc.Floyd();
+//          data.MessageResult("(80%) Shortest paths type 3 network ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+//          int[][] g3f=g3.Floyd();
+//         
+//          //--Search for progressive_tr
+//          for (int i=0; i<g3.total_nodes;i++) {
+//              int original_id=g3.id_to_old_id.get(i);
+//              max_sp_type3[original_id]=-1; 
+//              max_sp_complete[original_id]=-1;
+//              int original_id_gc=gc.old_id_to_id.get(original_id);
+//              for (int j=0; j<g3.total_nodes;j++) {
+//              if (i!=j) {
+//                int original_id_j=g3.id_to_old_id.get(j);
+//                //int nodeid_g3=i;
+//                int nodeid_gc=gc.old_id_to_id.get(original_id_j);
+//                Integer len_g3=g3f[i][j];
+//                Integer len_gc=gcf[original_id_gc][nodeid_gc];
+//                    if (len_g3<graph.infinity) {
+//                        if (len_g3>2&&len_gc>=len_g3) {
+//                            Progressive_transition[original_id].add(data.nodes.get(original_id_j).complete_name);
+//                        }
+//                    }
+//                   if (len_g3>max_sp_type3[original_id]&&len_g3<graph.infinity) max_sp_type3[original_id]=len_g3;
+//                   if (len_gc>max_sp_complete[original_id]&&len_gc<graph.infinity) max_sp_complete[original_id]=len_gc;
+//              }
+//            }
+//         }
+//       this.total_time=System.currentTimeMillis()-timerunning;
+//       st=calculate_node_statistics();
+//       data.MessageResult("(100%) Done statistics ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
+//        data.MessageResult("===============================================================================\n");
+//        
+//        return st;
+//     }     
+//       
      /**
       * Main function to calculate_network_statistics 
       * This calculate the network statistics
@@ -443,6 +465,7 @@ public class summary_statistics implements Serializable {
       //--Calculate stats for different types of network
       //--Complete (type 0)          
                   graph g=networks.get(0);
+                  density[0]=g.density();
                    for (int i=0; i<g.total_nodes;i++) {                          
                      Triplets[0][g.id_to_old_id.get(i)]=g.find_triplet(i, false);                     
                     total_triplet_complete+= Triplets[0][g.id_to_old_id.get(i)];
@@ -459,7 +482,8 @@ public class summary_statistics implements Serializable {
                    
          //--Complete (type 1)        
               
-              g=networks.get(1);
+                  g=networks.get(1);
+                  density[1]=g.density();
                   CC=g.getCC();
                   total_CC_type1=CC.size();
                   //--REname each node in cc
@@ -470,6 +494,7 @@ public class summary_statistics implements Serializable {
                          
             //--Complete (type 2)     
                 g=networks.get(2);
+                density[2]=g.density();
                  for (int i=0; i<g.total_nodes;i++) {                                             
                    in_degree2[g.id_to_old_id.get(i)]=g.in_degree(i);
                    out_degree2[g.id_to_old_id.get(i)]=g.out_degree(i);
@@ -479,7 +504,7 @@ public class summary_statistics implements Serializable {
               
               //--Complete (type 3) 
                   g=networks.get(3);
-                  
+                  density[3]=g.density();
                   float[] tmp3=g.Betweenness();
                   float[] tmp_c3=g.Closeness();
                   CC=g.getCC();
@@ -503,10 +528,23 @@ public class summary_statistics implements Serializable {
                       Triplets[4][g.id_to_old_id.get(i)]=tri[1]; //--Type B
                       Triplets[5][g.id_to_old_id.get(i)]=tri[2]; //--Type C
                       Triplets[6][g.id_to_old_id.get(i)]=tri[3]; //--Type D
+                      Triplets[7][g.id_to_old_id.get(i)]=tri[4]; //--Type E
+                      total_triangle=g.get_nb_triangles_fast();
+                      total_possible_triangle=g.max_theorical_triangles(); 
+                      if (total_possible_triangle!=0) {
+                        prop_triangle=total_triangle/total_possible_triangle;
+                      }
                       
                       total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
+                      total_triplet_typeA+=Triplets[3][g.id_to_old_id.get(i)];
+                      total_triplet_typeB+=Triplets[4][g.id_to_old_id.get(i)];
+                      total_triplet_typeC+=Triplets[5][g.id_to_old_id.get(i)];
+                      total_triplet_typeD+=Triplets[6][g.id_to_old_id.get(i)];
+                      total_triplet_typeE+=Triplets[7][g.id_to_old_id.get(i)];
+                      
                  }
-              
+              //Type 4
+                 density[4]=networks.get(4).density();
                 //--End  
                
              // data.MessageResult("("+(type+1)*10+"%) Phase ["+(type+1)+"/4] ( "+util.msToString(System.currentTimeMillis()-timerunning)+").\n");
@@ -674,6 +712,7 @@ public class summary_statistics implements Serializable {
                      n.stats.put("triplet_typeB",Triplets[4][n.id]);
                      n.stats.put("triplet_typeC",Triplets[5][n.id]);
                      n.stats.put("triplet_typeD",Triplets[6][n.id]);
+                     n.stats.put("triplet_typeE",Triplets[7][n.id]);
                     
                     triplet_type3+= n.stats.getFloat("triplet_type3");                    
                     n.stats.put("triplet_complete",Triplets[0][n.id]);                                        
@@ -707,6 +746,7 @@ public class summary_statistics implements Serializable {
           this.total_edges_type1=+data.total_type1;
           this.total_edges_type2=+data.total_type2;
           this.total_edges_type3=+data.total_type3;
+          this.total_edges_type4=+data.total_type4;
           this.total_edges_complete=+data.total_type0;
               //System.out.println("Total\t"+total_taxa+"\t"+data.node_id_type.get(1).size()+"\t"+data.node_id_type.get(2).size()+"\t"+data.node_id_type.get(3).size()+"\t"+data.node_id_type.get(0).size()+"\tNA\tNA\tNA\t"+total_CC_type1+"\t"+total_CC_complete+"\t"+total_ap_local_type3+"\t"+total_ap_global_type3+"\t"+total_ap_local_complete+"\t"+total_ap_global_complete+"\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t"+total_progressive+"\t\t"+total_taxa);
               //System.out.println("Note: 'x' indicates presence, CC stands for Connected Components, local_ap stands for Local Articulation points, global_ap stands for Global Articulation points, Triplets stands for linear series of 3 nodes where the terminal nodes are not connected, Convergence stands for the ratio of loops found in paths of length 3 or 4 from the starting nodes, Progressive convergence stands for short paths of length>2 in type 3 network that are not smaller in the complete network.");
@@ -842,17 +882,17 @@ public class summary_statistics implements Serializable {
     }
     
     public void copy(summary_statistics su) {
-        this.init();
-        this.data=su.data;
+        this.data=new datasets(su.data);        
+        this.init();       
          for (ArrayList<Integer>cc : su.CC) {
              ArrayList<Integer> tmp=new ArrayList<Integer>();
              for (Integer i:cc) tmp.add(i);
              this.CC.add(tmp);
          }  
-         for (int i=0; i<su.CC_info_complete.length;i++) this.CC_info_complete[i]=su.CC_info_complete[i];
-         for (int i=0; i<su.CC_info_type1.length;i++) this.CC_info_type1[i]=su.CC_info_type1[i];
-         for (int i=0; i<su.CC_info_type2.length;i++) this.CC_info_type2[i]=su.CC_info_type2[i];
-         for (int i=0; i<su.CC_info_type3.length;i++) this.CC_info_type3[i]=su.CC_info_type3[i];
+          if (su.CC_info_complete!=null) for (int i=0; i<su.CC_info_complete.length;i++) this.CC_info_complete[i]=su.CC_info_complete[i];
+         if (su.CC_info_type1!=null) for (int i=0; i<su.CC_info_type1.length;i++) this.CC_info_type1[i]=su.CC_info_type1[i];         
+         if (su.CC_info_type2!=null) for (int i=0; i<su.CC_info_type2.length;i++) this.CC_info_type2[i]=su.CC_info_type2[i];
+         if (su.CC_info_type3!=null) for (int i=0; i<su.CC_info_type3.length;i++) this.CC_info_type3[i]=su.CC_info_type3[i];
          for (int i=0; i<su.local_articulation_point.length;i++) this.local_articulation_point[i]=su.local_articulation_point[i];
          for (int i=0; i<su.global_articulation_point.length;i++) this.global_articulation_point[i]=su.global_articulation_point[i];
          for (int i=0; i<su.local_articulation_point_complete.length;i++) this.local_articulation_point_complete[i]=su.local_articulation_point_complete[i];
@@ -872,17 +912,23 @@ public class summary_statistics implements Serializable {
           for (int i=0; i<su.max_sp_type3.length;i++) this.max_sp_type3[i]=su.max_sp_type3[i];
           for (int i=0; i<su.max_sp_complete.length;i++) this.max_sp_complete[i]=su.max_sp_complete[i];
           
-          for (int i=0; i<Triplets.length;i++) {
+          for (int i=0; i<su.Triplets.length;i++) {
               for (int j=0;j<Triplets[i].length;j++) Triplets[i][j]=su.Triplets[i][j];
           }
          
-          for (int i=0; i<degrees.length;i++) {
+          for (int i=0; i<su.degrees.length;i++) {
               for (int j=0;j<degrees[i].length;j++) degrees[i][j]=su.degrees[i][j];
           }
-
+          for (int i=0; i<su.density.length;i++) density[i]=su.density[i];
+          
         this.total_triplet_type3=su.total_triplet_type3;
         this.total_triplet_complete=su.total_triplet_complete;
         this.total_triplet_type2=su.total_triplet_type2;
+        this.total_triplet_typeA=su.total_triplet_typeA;
+        this.total_triplet_typeB=su.total_triplet_typeB;
+        this.total_triplet_typeC=su.total_triplet_typeC;
+        this.total_triplet_typeD=su.total_triplet_typeD;
+        this.total_triplet_typeE=su.total_triplet_typeE;        
         this.total_CC_type1=su.total_CC_type1;
         this.total_CC_type2=su.total_CC_type2;
         this.total_CC_type3=su.total_CC_type3;
@@ -896,7 +942,8 @@ public class summary_statistics implements Serializable {
          this.total_node=su.total_node;         
          this.total_node_type1=su.total_node_type1;
          this.total_node_type2=su.total_CC_type2;
-         this.total_node_type3=su.total_node_type3;
+         this.total_node_type3=su.total_node_type3; //--Note, uused...
+         this.total_node_type4=su.total_node_type4;
          this.total_node_type0=su.total_node_type0;
          this.total_edges_complete=su.total_edges_complete;
          this.total_edges_type1=su.total_edges_type1;
@@ -921,6 +968,11 @@ public class summary_statistics implements Serializable {
          this.convergence=su.convergence;
          this.max_spc=su.max_spc;         
          this.max_sp3=su.max_sp3;
+         this.total_triangle=su.total_triangle;
+         this.prop_triangle=su.prop_triangle;
+         this.total_possible_triangle=su.total_possible_triangle;        
+         
+         
     }
     
     public boolean serialize(String filename) {
@@ -932,7 +984,21 @@ public class summary_statistics implements Serializable {
             js.flush();
             js.close();
          } catch(Exception e) {
-             e.printStackTrace();
+             //e.printStackTrace();
+          try {
+              System.out.println("seriallize error for "+filename);
+              GsonBuilder gsonBuilder = new GsonBuilder();
+          
+             gsonBuilder.serializeSpecialFloatingPointValues();  
+            Gson gson = gsonBuilder.setPrettyPrinting().create(); 
+              JsonWriter js = new JsonWriter(new FileWriter(new File(filename)));
+            gson.toJson(this,summary_statistics.class,js);
+            js.flush();
+            js.close();
+          } catch(Exception e2) {
+              System.out.println("seriallize");
+          }
+             //--This might failed for NaN
              Config.log("Error in serialize "+filename+":" + e.getMessage());
              return false;
          }
@@ -942,12 +1008,13 @@ public class summary_statistics implements Serializable {
     public boolean deserialize(String filename) {
          try {   
             Gson gson = new Gson();
-            summary_statistics su=gson.fromJson(gson.newJsonReader(new FileReader(new File(filename))),summary_statistics.class);
+            summary_statistics su=gson.fromJson(gson.newJsonReader(new FileReader(new File(filename))),summary_statistics.class);            
             copy(su);
            
         } catch(Exception e) {
-             Config.log("Error in deserialize "+filename+":" + e.getMessage());
-             
+           // e.printStackTrace();
+            Config.log("Error in deserialize "+filename+":" + e.getMessage());
+             return false;
          }
         return true;
     }
@@ -958,20 +1025,25 @@ public class summary_statistics implements Serializable {
      */
      public static void main(String[] args) {
            Locale.setDefault(new Locale("en", "US"));
-         datasets data=new datasets();
-         data.replicate=5;
-         data.load_simple("sample\\sample_4.txt");
-         datasets data2=new datasets(data);
-         data.compute();
-         data2.compute();
-         System.out.println(data);
-         System.out.println(data2);
-         
-        // for (int i=0; i<10;i++) {
-            summary_statistics su=new summary_statistics(data);
-            summary_statistics su2=new summary_statistics(new datasets());
-            su.calculate_network_statistics();
-            su.calculate_node_statistics();
+           summary_statistics su=new summary_statistics();
+           su.deserialize("C:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\results\\sample_4_nex\\reference.json");
+//         datasets data=new datasets();
+//         data.replicate=5;
+//         data.load_morphobank_nexus("sample\\Smith_Caron_wo_absent_trait.nex");
+//         datasets data2=new datasets(data);
+//         data.compute();
+//         data2.compute();
+//         //System.out.println(data);
+//         //System.out.println(data2);
+//         
+//        // for (int i=0; i<10;i++) {
+//            summary_statistics su=new summary_statistics(data);
+//            summary_statistics su2=new summary_statistics(new datasets());
+//            //System.out.println("here");
+//            su.calculate_network_statistics();
+//           // System.out.println("here2");
+//            su.calculate_node_statistics();
+//            su.serialize("test.json");
             //su2.calculate_network_statistics();
          //}
 //            System.out.println(su);

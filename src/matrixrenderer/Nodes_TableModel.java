@@ -79,6 +79,7 @@ public class Nodes_TableModel extends AbstractTableModel {
        calculate_stats();
    }
    
+   //--This should be in permutation_statistics
    void calculate_stats() {
        stats.clear();
        pvalues.clear();

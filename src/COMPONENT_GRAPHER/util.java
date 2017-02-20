@@ -66,7 +66,13 @@ public class util {
                 list.add(t);
             }
         }
-
+        return list;
+    }
+     
+      public static <T> List<T> fast_intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+        list.addAll(list1);
+        list.retainAll(list2);
         return list;
     }
      

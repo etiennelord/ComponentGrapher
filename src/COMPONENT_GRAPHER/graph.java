@@ -21,8 +21,11 @@ package COMPONENT_GRAPHER;
 import java.util.HashMap;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.Stack;
+import static org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficient;
+
 import umontreal.iro.lecuyer.rng.LFSR258;
 
 /**
@@ -41,6 +44,7 @@ public class graph {
    public int total_nodes=0;
    public int total_edges=0;
    public boolean directed=false;
+
    public static int infinity=9997999;
    /////////////////////////////////////////////////////////////////////////////
    /// Epath
@@ -51,12 +55,12 @@ public class graph {
    /////////////////////////////////////////////////////////////////////////////
    /// Class result
    public class results {
-       public float total_len3=0;
+       public float total_len3=0; //triples i--s--j, i--j maybe
        public float total_len4=0;
-       public float total_loop3=0;
+       public float total_loop3=0; //triangle i--s--j, i--j 
        public float total_loop4=0;
-       
-       
+       public float simple_len3=0; //simple path i--s--j, i not connected to j
+       public float simple_len4=0; //simple path i--s--j--k, i not connected to k, etc.
        
 
         @Override
@@ -66,7 +70,7 @@ public class graph {
         }
         @Override
         public String toString() {
-            return "len3:"+total_len3+" len4:"+total_len4+" loop3:"+total_loop3+" loop4:"+total_loop4; 
+            return "len3:"+total_len3+" len4:"+total_len4+" loop3:"+total_loop3+" loop4:"+total_loop4+ " simple3:"+simple_len3+" simple4:"+simple_len4; 
         }
    }
    /////////////////////////////////////////////////////////////////////////////
@@ -190,6 +194,15 @@ public class graph {
        return result;
    }
     
+    /**
+     * Return the number of paths and loop of len 3 and 4
+     * A path is a triples i.e. i--s--j where i and j might be connected, or not
+     * A loop is i--s--j where i--j are connected
+     * A simple path: i--s--j is a path where i--j are not connected
+     * @param s
+     * @param verbose
+     * @return 
+     */
    public results findLoops(int s, boolean verbose) {       
        results result=new results(); 
        Set<Integer> vv=get_adj(s).keySet();
@@ -200,11 +213,14 @@ public class graph {
                  if (is_valid3(s,v,w)) {
                     
                      result.total_len3++;                    
-                     if (vv.contains(w))  {                         
+                     if (vv.contains(w))  {   //--i is a neighbor of j                      
                          result.total_loop3++;
                          if (verbose) System.out.print("* ");
-                     }   
-                     if (verbose) System.out.println(id_to_node.get(s)+" "+id_to_node.get(v)+" "+id_to_node.get(w));
+                     } else {
+                         result.simple_len3++; //--i is NOT a neighbor of j
+                     }  
+                    // if (verbose) System.out.println(id_to_node.get(s)+" "+id_to_node.get(v)+" "+id_to_node.get(w));
+                     if (verbose) System.out.println(s+" "+v+" "+w);
                      Set<Integer> zz=get_adj(w).keySet();
                      for (int z:zz) {
                            // Loop and paths of len 4
@@ -214,8 +230,11 @@ public class graph {
                                if (vv.contains(z)) {                        
                                     result.total_loop4++;
                                    if (verbose) System.out.print("* ");
-                                } 
-                                if (verbose)  System.out.println(id_to_node.get(s)+" "+id_to_node.get(v)+" "+id_to_node.get(w)+" "+id_to_node.get(z));
+                                } else {
+                                   result.simple_len4++; //--the path is not closed
+                               }
+                                //if (verbose)  System.out.println(id_to_node.get(s)+" "+id_to_node.get(v)+" "+id_to_node.get(w)+" "+id_to_node.get(z));
+                                if (verbose) System.out.println(s+" "+v+" "+w+" "+z);
                             }                    
                        }
                  }
@@ -297,7 +316,7 @@ public class graph {
        for (int i=0; i<len;i++)
            for (int j=0;j<len;j++) {
                if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
-                   //if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
+                   if (verbose) System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
                    total++;
                }
            }
@@ -305,6 +324,121 @@ public class graph {
        return total;
    } 
    
+   /**
+    * Get triangle for a source node s
+    * @param s source node
+    * @return 
+    */
+   public ArrayList<triplets> get_triangles(int s) {
+       ArrayList<triplets>tmp=new ArrayList<triplets>();
+       
+           //System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);
+               if (i>j&&get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
+                triplets t=new triplets(i_id, s, j_id);
+                //--Not, we test with eqals
+                if (!tmp.contains(t)) tmp.add(t);
+               }
+           }    
+       return tmp;
+   }
+   
+   /**
+    * Get triangles (not repeted) for this graph
+    * @return 
+    */
+    public ArrayList<triplets> get_triangles() {
+       ArrayList<triplets>tmp=new ArrayList<triplets>();
+       for (int s=0;s<this.total_nodes;s++) {
+           //System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);
+               if (i>j&&get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
+                triplets t=new triplets(i_id, s, j_id);
+                //--Not, we test with eqals
+                if (!tmp.contains(t)) tmp.add(t);
+               }
+           }    
+       }     
+       
+       return tmp;
+   }
+    
+    /**
+    * Get triangles (not repeted) for this graph
+    * Schank, Thomas, and Dorothea Wagner. "Finding, counting and listing all triangles in large graphs, an experimental study." International Workshop on Experimental and Efficient Algorithms. Springer Berlin Heidelberg, 2005.
+    * @return 
+    */
+    public ArrayList<triplets> get_triangles_fast() {
+        ArrayList<triplets>tmp=new ArrayList((int) max_theorical_triangles());
+        //--
+        HashMap<Integer,ArrayList<Integer>> A=new HashMap<Integer,ArrayList<Integer>>();
+         for (int s=0;s<this.total_nodes;s++) {
+             A.put(s,new ArrayList<Integer>());
+         }
+             
+       for (int s=0;s<this.total_nodes;s++) {
+           //System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
+           ArrayList<Integer> neighbor=new ArrayList<Integer>();
+           for (int t:get_adj(s).keySet()) neighbor.add(t);
+           int len=neighbor.size();       
+           for (int t=0; t<len;t++) {
+               if (s < t) {
+                   for (int v:util.intersection(A.get(s), A.get(t))) {
+                       //System.out.println(v+" "+s+" "+t);
+                       triplets tri=new triplets(v,s,t);
+                       tmp.add(tri);
+                   }
+                   ArrayList<Integer> tp=A.get(t);
+                   if (!tp.contains(s)) tp.add(s);
+                   A.put(t,tp);
+               }
+           }       
+       }
+       return tmp;
+   }
+   
+    public float get_nb_triangles_fast() {
+       float total=0.0f;
+        //--
+        HashMap<Integer,ArrayList<Integer>> A=new HashMap<Integer,ArrayList<Integer>>();
+         for (int s=0;s<this.total_nodes;s++) {
+             A.put(s,new ArrayList<Integer>());
+         }
+             
+       for (int s=0;s<this.total_nodes;s++) {
+           //System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
+           ArrayList<Integer> neighbor=new ArrayList<Integer>();
+           for (int t:get_adj(s).keySet()) neighbor.add(t);
+           int len=neighbor.size();       
+           for (int t=0; t<len;t++) {
+               if (s < t) {
+                   for (int v:util.intersection(A.get(s), A.get(t))) {
+                       //System.out.println(v+" "+s+" "+t);
+                       //triplets tri=new triplets(v,s,t);
+                      total++; 
+                      //tmp.add(tri);
+                   }
+                   ArrayList<Integer> tp=A.get(t);
+                   if (!tp.contains(s)) tp.add(s);
+                   A.put(t,tp);
+               }
+           }       
+       }
+       return total;
+   }
+    
     /**
      * This return the number of time s is in a middle of a triplet i --- s --- j 
      * when i is not connected to j
@@ -314,16 +448,18 @@ public class graph {
      */
    public Float[] find_triplet(int s, boolean verbose, ArrayList<graph> others) {
        
-       Float[] total=new Float[4];
+       Float[] total=new Float[5];
        total[0]=0.0f;
        total[1]=0.0f;
        total[2]=0.0f;
        total[3]=0.0f;
+       total[4]=0.0f;
        
 //       0: Type A: i -3- n -3- j 
 //       1: Type B: i -3- n -3- j ,i-1-j
 //       2: Type C: i -3- n -3- j ,i-2-j
 //       3: Type D: i -3- n -3- j ,i-4-j 
+//       4: Type E: i -3- n -3- j ,i-3-j 
              
        ArrayList<Integer> neighbor=new ArrayList<Integer>();
        for (int i:get_adj(s).keySet()) neighbor.add(i);
@@ -352,7 +488,11 @@ public class graph {
                    if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
                        //System.out.println(id_to_old_id.get(i_id)+"\t"+id_to_old_id.get(s)+"\t"+id_to_old_id.get(j_id)+"\tType D");
                        total[3]++;
-                   } //--Edge of type 4                  
+                   } //--Edge of type 4 
+                   
+               } else if (i>j) {
+                   //type E, triangle i is neighbor of j
+                   total[4]++;                   
                }
            }              
        return total;
@@ -367,29 +507,31 @@ public class graph {
      */
    public boolean export_triplet(String filename, ArrayList<graph> others, String sep) {
        
-       Float[] total=new Float[4];
+       Float[] total=new Float[5];
        total[0]=0.0f;
        total[1]=0.0f;
        total[2]=0.0f;
        total[3]=0.0f;
-       
+       total[4]=0.0f;
+        
 //       0: Type A: i -3- n -3- j 
 //       1: Type B: i -3- n -3- j ,i-1-j
 //       2: Type C: i -3- n -3- j ,i-2-j
 //       3: Type D: i -3- n -3- j ,i-4-j 
       util u=new util();
       u.open(filename);
-       for (int s=0;s<this.total_nodes;s++) {
+      u.println("#node1\tcentral_node\tnode3\ttype"); 
+      for (int s=0;s<this.total_nodes;s++) {
            System.out.println("[ Computing triplet for node "+(s+1)+"/"+this.total_nodes+" ]");
        ArrayList<Integer> neighbor=new ArrayList<Integer>();
        for (int i:get_adj(s).keySet()) neighbor.add(i);
-       int len=neighbor.size();
-       u.println("#node1\tcentral_node\tnode3\ttype");
+       int len=neighbor.size();       
        for (int i=0; i<len;i++)
            for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);
                if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
-                   int i_id=neighbor.get(i);
-                   int j_id=neighbor.get(j);
+                   
                 //if (verbose) 
                  // System.out.println(id_to_node.get(neighbor.get(i))+"\t"+id_to_node.get(s)+"\t"+id_to_node.get(neighbor.get(j)));
                    u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type A");
@@ -410,12 +552,16 @@ public class graph {
                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type D");
                        total[3]++;
                    } //--Edge of type 4                  
+               } else if (i>j) {
+                   //--Type E                   
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type E");
+                   total[4]++;
                }
            }    
        }     
        u.close();
-       System.out.println("Total triplets\tType A\tType B\tType C\tType D");
-       System.out.println("\t\t"+total[0]+"\t"+total[1]+"\t"+total[2]+"\t"+total[3]);
+       System.out.println("Total triplets\tType A\tType B\tType C\tType D\tType E");
+       System.out.println("\t\t"+total[0]+"\t"+total[1]+"\t"+total[2]+"\t"+total[3]+"\t"+total[4]);
        //--ouput 
        return true;
    } 
@@ -437,11 +583,12 @@ public class graph {
       
    }
    
-  //http://stackoverflow.com/questions/10226251/how-to-find-the-number-of-different-shortest-paths-between-two-vertices-in-dire
-   public int[] BFS_count(int s) {
-      int[] tmp=new int[total_nodes+1];
-      return tmp;
-  } 
+   
+//  //http://stackoverflow.com/questions/10226251/how-to-find-the-number-of-different-shortest-paths-between-two-vertices-in-dire
+//   public int[] BFS_count(int s) {
+//      int[] tmp=new int[total_nodes+1];
+//      return tmp;
+//  } 
    
    public int[] DFS(int s,int ignore) {
        int[] tmp=new int[total_nodes+1];
@@ -825,8 +972,10 @@ public class graph {
    }
   
   float density() {
-      float d=this.total_edges;     
+      float d=this.total_edges;          
       float total_possible=(this.total_nodes*(this.total_nodes-1))/2;
+      if (d==0) return 0;
+      if (total_possible==0) return 0;
       return d/total_possible;
    }
 
@@ -855,6 +1004,57 @@ public class graph {
   }
   
 
+  /**
+   * Create a complete graph of k nodes
+   * @param k 
+   */
+  void complete_graph(int k, boolean directed) {
+      for (int i=0;i<k;i++) {
+          this.total_nodes++;
+          this.addNode(i);
+      }
+      for (int i=0;i<k; i++) {
+          for (int j=0; j<k;j++) {
+              if (!directed) {
+                   if (i!=j) {
+                      this.total_edges++;
+                      this.addEdge(i, j);
+                  }
+              } else {
+                  if (i>j) {
+                      this.total_edges++;
+                      this.addEdge(i, j);
+                  }
+              }
+          }
+      }
+      System.out.println(total_nodes);
+      System.out.println(this.total_edges);
+      System.out.println((total_nodes*(total_nodes-1))/2);
+  }
+  
+  /**
+   * Return the total number of triangles in a graph of total_nodes
+   * Note: in this calculation u--v--w == v--w--v i.e. we have 6 time less triangles
+   * @param total_node
+   * @return 
+   */
+  float max_theorical_triangles() {
+      return binomialCoefficient(this.total_nodes,3);
+  }
+  
+  /**
+   * Return this graph total triangles 
+   * --Possible implementations might be Trace of Adj matrix multiplication by 3 (A^3), somme of diag.
+   * --my findloops (llop len3)
+   * --find_triplets(Type A)
+   * @return 
+   */
+//  float total_triangles() {
+//      return 0;
+//  }
+//  
+  
     @Override
     public String toString() {        
         String str=(directed?"Directed ":"Undirected ")+"Nodes:"+total_nodes+" Edges:"+total_edges+"\n";
@@ -868,24 +1068,36 @@ public class graph {
    * @param args 
    */
    public static void main(String[] args) {
+        graph g=new graph();
+        g.complete_graph(500,false);
+//        float total=0;
+//        for (int i=0; i<g.total_nodes;i++) {
+//            results r=g.findLoops(i, false);
+//            total+=r.total_loop3;
+//            
+//        }
+//        //for (int i=0; i<g.total_edges;i++) System.out.println();
+//        System.out.println(g.max_theorical_triangles());
+//        System.out.println(total); //--6 times more because for me, u--v--w is not equivalent to v--u--w
+        System.out.println(g.get_nb_triangles_fast());
         
        //g.load_graph("example\\Smith_Caron_wo_absent_trait.nex__3.txt", false);
        //g.load_graph("graph.txt", false);
-       for (int j=0; j<100;j++) {
-            System.out.println(j); 
-           graph g=new graph();      
-           g.load_graph("example\\Smith_Caron_wo_absent_trait.nex__3.txt", false);      
-            System.out.println(g); 
-            for (int i=0; i<g.total_nodes;i++) {
-               g.findLoops(i,false);
-//                if(!g.findLoops(i,false).equals(g.findLoops_old(i,false))) {
-//                    System.out.println("false");
-//                    System.out.println(g.findLoops(i,false));
-//                   System.out.println(g.findLoops_old(i,false));
-//                            
-//                }
-            }
-       }
+//       for (int j=0; j<100;j++) {
+//            System.out.println(j); 
+//           graph g=new graph();      
+//           g.load_graph("example\\Smith_Caron_wo_absent_trait.nex__3.txt", false);      
+//            System.out.println(g); 
+//            for (int i=0; i<g.total_nodes;i++) {
+//               g.findLoops(i,false);
+////                if(!g.findLoops(i,false).equals(g.findLoops_old(i,false))) {
+////                    System.out.println("false");
+////                    System.out.println(g.findLoops(i,false));
+////                   System.out.println(g.findLoops_old(i,false));
+////                            
+////                }
+//            }
+//       }
    }
   
 }

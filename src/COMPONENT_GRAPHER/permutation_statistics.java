@@ -32,6 +32,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -69,7 +70,12 @@ public class permutation_statistics implements Serializable {
     
     String[] pvalue_fields={
                     "total_CC_type1",
+                    "total_edges_type1",
+                    "total_edges_type2",
                     "total_edges_type3",
+                    "total_edges_type4",
+                    "triangle_type3",
+                    "prop_triangle",
                     "total_ap_global_complete", 
                     "total_ap_local_complete",
                     "total_ap_local_type3",
@@ -77,15 +83,47 @@ public class permutation_statistics implements Serializable {
                      "convergence",                   
       };
     
+    String[] complete_pv={
+                "total_CC_type1",
+               "total_CC_type3",
+               "total_CC_complete",
+               "total_ap_global_complete",
+               "total_edges_type1",
+               "total_edges_type2",
+               "total_edges_type3",
+               "total_edges_type4",
+               "total_edges_complete",
+               "total_ap_global_type3",
+               "total_ap_local_type3",
+               "total_ap_local_complete",
+               "triplet_type3",
+               "convergence",
+               "per_loop4_type3",
+               "per_len4_type3",
+               "density_complete",
+               "density_type1",
+               "density_type2",
+               "density_type3",
+               "density_type4",
+               "triangle_type3",
+               "prop_triangle",
+               "triplet_typeA",
+               "triplet_typeB",
+               "triplet_typeC",
+               "triplet_typeD",
+               "triplet_typeE",
+               "time"
+      };
+    
     
       String[] pvalue_fields_description={
-              "Number of connected component (type 1 network)",
+             "Number of connected component (type 1 network)",
              "Number of edges (type 3 network)",
              "Number of global articulation points (complete network) ", 
              "Number of local articulation points (complete network)",
              "Number of global articulation points (type 3 network) ",
              "Number of Non-transitive triplet (type 3 network)", 
-             "Ratio of cycle of length 4 (type 3 network)",           
+             "Ratio of cycle of length 4 (type 3 network)",              
           
       };
     
@@ -100,7 +138,10 @@ public class permutation_statistics implements Serializable {
        public stats() {}       
    }
    
-    
+   /////////////////////////////////////////////////////////////////////////////
+   /// CONSTRUCTOR
+   
+    public permutation_statistics(){}
 //    /**
 //     * Note: call after the current_state_matrix is generated in datasets.prepare_current_state_matrix
 //     * @param data 
@@ -201,8 +242,10 @@ public class permutation_statistics implements Serializable {
          //int one_percent=(int)Math.ceil(replicate/100)+1; //Not used
          
          ExecutorService pool=Executors.newFixedThreadPool(datasets.maxthreads);
-         final ArrayList<Callable<summary_statistics>>partitions=new ArrayList<Callable<summary_statistics>>();
+         
         if (data.replicate<=1) return;
+        //--Pre=allocate
+        final ArrayList<Callable<summary_statistics>>partitions=new ArrayList(data.replicate);
          for (int i=0; i<replicate;i++) {
              partitions.add(new Callable<summary_statistics>(){
              public summary_statistics call() {
@@ -211,12 +254,7 @@ public class permutation_statistics implements Serializable {
                    System.out.println(this_replicate+" / "+replicate +" [started]");
                    data.MessageResult(this_replicate+" / "+replicate +" [started]\n");
                    logfile.println(this_replicate+" / "+replicate +" [started]");
-//                     try {
-//                        if (callback!=null) callback.call();
-//                         
-//                    } catch(Exception e) {
-//                        e.printStackTrace();
-//                   }
+
                    datasets t=new datasets(data);
                    if (data.permutation) {
                        t.generate_permutation();
@@ -368,12 +406,13 @@ public class permutation_statistics implements Serializable {
               }
               double P1=((csup+ceg)+1)/((1.0*replicate)+1.0);
               double P2=((cinf+ceg)+1)/((1.0*replicate)+1.0);
-              Double[] d=new Double[5];
-              d[0]=P1;
-              d[1]=P2;
-              d[2]=ceg;    
-              d[3]=cinf;
-              d[4]=csup;
+              Double[] d=new Double[6];
+              d[0]=Math.min(P2, P1);
+              d[1]=P1;
+              d[2]=P2;
+              d[3]=ceg;    
+              d[4]=cinf;
+              d[5]=csup;
               return d;
                       //"P1: "+P1+" P2:"+P2+" (creg:"+ceg+" csup:"+csup+" cinf:"+cinf+")";
     }
@@ -395,6 +434,8 @@ public class permutation_statistics implements Serializable {
               return d;                   
     }
     
+     
+     
       public static Double[] getPvalue_bilateral(double[] values, double ref, double total_nodes) {              
               double csup_eg=0.0;    
               double cinf_eg=0.0;    
@@ -790,21 +831,35 @@ public class permutation_statistics implements Serializable {
    };
     
     String[] complete_pv={
-                    "total_CC_type1",
-                    "total_CC_type3",
-                    "total_CC_complete",
-                    "total_ap_global_complete",
-                    "total_edges_type1",
-                    "total_edges_type2",
-                    "total_edges_type3",
-                    "total_edges_complete",
-                    "total_ap_global_type3",
-                    "total_ap_local_type3",
-                    "total_ap_local_complete",
-                    "triplet_type3",
-                    "convergence",
-                    "per_loop4_type3",
-                    "per_len4_type3"
+                "total_CC_type1",
+               "total_CC_type3",
+               "total_CC_complete",
+               "total_ap_global_complete",
+               "total_edges_type1",
+               "total_edges_type2",
+               "total_edges_type3",
+               "total_edges_type4",
+               "total_edges_complete",
+               "total_ap_global_type3",
+               "total_ap_local_type3",
+               "total_ap_local_complete",
+               "triplet_type3",
+               "convergence",
+               "per_loop4_type3",
+               "per_len4_type3",
+               "density_complete",
+               "density_type1",
+               "density_type2",
+               "density_type3",
+               "density_type4",
+               "triangle_type3",
+               "prop_triangle",
+               "triplet_typeA",
+               "triplet_typeB",
+               "triplet_typeC",
+               "triplet_typeD",
+               "triplet_typeE",
+               "time"
       };
   
       String[] decription={
@@ -824,7 +879,9 @@ public class permutation_statistics implements Serializable {
                     "total_ap_local_complete",
                     "total_ap_local_type3",
                      "triplet_type3", 
-                     "convergence",                   
+                     "convergence",
+                     "density", //--New
+                     "nb_triplet_D",
       };
       String[] decription2={
              "Number of connected component        (type 1 network)",
@@ -833,7 +890,7 @@ public class permutation_statistics implements Serializable {
              "Number of local articulation points  (complete network)",
              "Number of global articulation points (type 3 network)",
              "Number of non-transitive triplets    (type 3 network)", 
-             " Ratio of length 4 cycles            (type 3 network)",                  
+             "Ratio of length 4 cycles             (type 3 network)",                  
       };
       
        String[] qualifier2={"Statistics","Reference","p-value","Significance","N","Mean","STD","Min","Max","5%","95%"};
@@ -873,6 +930,7 @@ public class permutation_statistics implements Serializable {
 //                       u.print("randomization "+(rep+1)+",");
 //                   }
             u.println();
+            //--Iterate over the pv2 (network statistic)
             for (int r=0; r<pv2.length;r++) {
                  for (int c=0;c<qualifier2.length;c++) {
                      u.print(getNetworkValue(datas,r, c)+",");
@@ -985,12 +1043,12 @@ public class permutation_statistics implements Serializable {
      public ArrayList<stats> calculate_stat() {
        ArrayList<stats> datas=new ArrayList<stats>();
        if (!data.permutation) return datas; //--No pvalue_fieldsplicate
-       for (int p=0; p<pvalue_fields.length;p++) {
-           String node_field=pvalue_fields[p];           
+       for (int p=0; p<complete_pv.length;p++) {
+           //String node_field=pvalue_fields[p];           
             stats s=new stats();
-             s.node_field=pvalue_fields[p];
-             s.title=pvalue_fields_description[p];
-           
+             s.node_field=complete_pv[p];
+             //s.title=pvalue_fields_description[p]; //--TO replace
+            s.title=complete_pv[p];
             double[] values=new double[replicates.size()];
             double refvalue=0.0f;            
          
@@ -1005,6 +1063,7 @@ public class permutation_statistics implements Serializable {
                 case "total_edges_type1": values[i]=replicates.get(i).total_edges_type1; refvalue=reference.total_edges_type1;break;
                 case "total_edges_type2": values[i]=replicates.get(i).total_edges_type2; refvalue=reference.total_edges_type2;break;
                 case "total_edges_type3": values[i]=replicates.get(i).total_edges_type3; refvalue=reference.total_edges_type3;break;
+                case "total_edges_type4": values[i]=replicates.get(i).total_edges_type4; refvalue=reference.total_edges_type4;break;
                 case "total_edges_complete": values[i]=replicates.get(i).total_edges_complete; refvalue=reference.total_edges_complete;break;
                 case "total_ap_global_type3": values[i]=replicates.get(i).total_ap_global_type3; refvalue=reference.total_ap_global_type3;break;
                 case "total_ap_local_type3": values[i]=replicates.get(i).total_ap_local_type3; refvalue=reference.total_ap_local_type3;break;
@@ -1012,7 +1071,20 @@ public class permutation_statistics implements Serializable {
                 case "triplet_type3": values[i]=replicates.get(i).triplet_type3; refvalue=reference.triplet_type3;break;
                 case "convergence": values[i]=replicates.get(i).convergence; refvalue=reference.convergence;break;
                 case "per_loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;                        
+                case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "density_complete": values[i]=replicates.get(i).density[0]; refvalue=reference.density[0];break;      
+                case "density_type1": values[i]=replicates.get(i).density[1]; refvalue=reference.density[1];break;      
+                case "density_type2": values[i]=replicates.get(i).density[2]; refvalue=reference.density[2];break;      
+                case "density_type3": values[i]=replicates.get(i).density[3]; refvalue=reference.density[3];break;      
+                case "density_type4": values[i]=replicates.get(i).density[4]; refvalue=reference.density[4];break;      
+                case "triangle_type3":    values[i]=replicates.get(i).total_triangle; refvalue=reference.total_triangle;break;      
+                case "prop_triangle":    values[i]=replicates.get(i).prop_triangle; refvalue=reference.prop_triangle;break;  
+                case "triplet_typeA": values[i]=replicates.get(i).total_triplet_typeA; refvalue=reference.total_triplet_typeA;break;     
+                case "triplet_typeB": values[i]=replicates.get(i).total_triplet_typeB; refvalue=reference.total_triplet_typeB;break;     
+                case "triplet_typeC": values[i]=replicates.get(i).total_triplet_typeC; refvalue=reference.total_triplet_typeC;break;     
+                case "triplet_typeD": values[i]=replicates.get(i).total_triplet_typeD; refvalue=reference.total_triplet_typeD;break;         
+                case "triplet_typeE": values[i]=replicates.get(i).total_triplet_typeE; refvalue=reference.total_triplet_typeE;break;  
+                case "time":    values[i]=replicates.get(i).total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
             s.stat.addValue(values[i]);
@@ -1033,9 +1105,74 @@ public class permutation_statistics implements Serializable {
 //        st.append(hist(values, TOTALBINS)+"\n");
 //        st.append("Values:\n");       
        }
+         System.out.println(datas.size());
        return datas;
    }
     
+    public ArrayList<stats> calculate_stats_for_node(int nodeid) {
+        ArrayList<stats> stats=new ArrayList<stats>();
+       String[] pv2={
+                    "in_degree2",
+                    "out_degree2",
+                    "in_degree3",
+                    "in_degree1",                   
+                    "closeness_type3",
+                    "betweenness_type3",
+                    "percent_triplet_type3",     
+                    "triplet_typeA",
+                    "triplet_typeB",
+                    "triplet_typeC",
+                    "triplet_typeD",
+                    "triplet_typeE", //--Triangle       
+      };
+       
+       for (int selected_index=0; selected_index<pv2.length;selected_index++) {
+              String identifier=pv2[selected_index];
+              stats node_stat=new stats();        
+              node_stat.title=identifier;
+              
+              node n=reference.data.nodes.get(nodeid);
+              double ref=0;
+              if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+                        ref=reference.data.nodes.get(nodeid).stats.getInt(identifier);
+                    } else {             
+                       ref=reference.data.nodes.get(nodeid).stats.getFloat(identifier);
+                     }
+                     node_stat.reference_value=ref;
+                     //--This is the array of values for this node
+                     double[] values=new double[replicates.size()];
+                    for (int i=0; i<replicates.size();i++) {
+                        node nr=replicates.get(i).data.nodes.get(nodeid);
+                        //System.out.println(nr.stats);
+                        values[i]=nr.stats.getFloat(identifier);
+                        if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+                        values[i]=nr.stats.getInt(identifier);
+                        }         
+                        //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
+                    }    
+                    //--Save statistics
+                    node_stat.stat=new DescriptiveStatistics(values);                        
+                    Double[] st;
+                     if (identifier.equals("closeness_type3")) {
+                         st=permutation_statistics.getPvalue_bilateral(values, ref,reference.data.nodes.size());
+                     } else {
+                         st=permutation_statistics.getPvalue_unilateral(values, ref,reference.data.nodes.size());
+                     }                    
+                     double pvalue=0.0;
+                     if (!identifier.equals("closeness_type3")) {
+                        pvalue=st[0];
+                     } else {
+                        pvalue=st[1]; //P-value (P1)                          
+                     }
+                     node_stat.pvalue=new Double[1];
+                     node_stat.pvalue[0]=pvalue;
+                     stats.add(node_stat);
+                     //--Add information for                    
+
+         } //--End identifier
+         return stats;
+   }  
+     
     /**
      * Save analysis the current analysis to a file (json)
      * @param filename
@@ -1128,7 +1265,7 @@ public class permutation_statistics implements Serializable {
                  permutation_statistics su=gson.fromJson(gson.newJsonReader(new FileReader(new File(data.serial_file+".json"))),permutation_statistics.class);
             this.total_permute=su.total_permute; //--Permutation of matrix             
             this.original_state_matrix=su.original_state_matrix;
-            this.data=su.data;
+           this.data=su.data;
            this.original_state_matrix=su.original_state_matrix;
            this.reference=su.reference;
            this.replicates=su.replicates;
@@ -1140,6 +1277,67 @@ public class permutation_statistics implements Serializable {
             e.printStackTrace();
         }
     }
+    
+    public void calculate_from_directory(String directory) {
+        System.out.println(directory);
+        //--1. list all the files
+        ArrayList<String> files=util.listDirWithFullPath(directory);
+        
+        //--1.1 
+        replicates.clear();        
+        replicates=new ArrayList(files.size());
+        System.out.println("Loading analysis.");
+        Collections.sort(files);
+        for (String f:files) {
+            if (f.contains("reference.json")) {
+                reference=new summary_statistics();
+                if (reference.deserialize(f)) {
+                     this.data=reference.data;
+                     this.reference_data=reference.data;
+                    
+                } 
+                    //this.data=reference.data;
+                //System.out.println(data);
+            }
+            
+            if (f.contains("randomization_")&&f.endsWith(".json")) {
+                
+                summary_statistics su=new summary_statistics();
+                boolean b=su.deserialize(f);
+                if (b) {
+                    replicates.add(su);
+                    System.out.println(f);
+                } else {
+                    System.out.println("Unable to load "+f);
+                }
+            }
+        }
+        
+        System.out.println(replicates.size());                
+        this.replicate=replicates.size();
+        if (replicates.size()>0) data.permutation=true;
+        //--3. Calculate statistics
+            
+            System.out.println("==============================================================================="); 
+             this.output_stats(this.calculate_stat());         
+             System.out.println("==============================================================================="); 
+             System.out.println("Nodes statistics");
+             System.out.println(reference_data.nodes);
+             for (int i=0; i<this.reference_data.nodes.size();i++) {
+                  System.out.println(i+"\t"+reference_data.nodes.get(i).complete_name+"\t");
+                 this.output_stats(this.calculate_stats_for_node(i));
+             }
+             
+        //--4. Enjoy
+        
+    }
+    
+    
+    public void output_stats(ArrayList<stats> st) {
+        for (stats s:st) {
+            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+s.stat.getN()+"\t"+s.stat.getMean()+"\t"+s.stat.getStandardDeviation()+"\t"+s.stat.getPercentile(5)+"\t"+s.stat.getPercentile(95));
+        }
+    }
      
       /**
      * Test serialization
@@ -1147,64 +1345,32 @@ public class permutation_statistics implements Serializable {
      */
      public static void main(String[] args) {
        Locale.setDefault(new Locale("en", "US"));    
-         datasets dummy=new datasets();        
-         //dummy.load_morphobank_nexus("sample\\Smith_Caron_wo_absent_trait.nex");         
-         dummy.load_simple("sample\\sample_5.txt");         
-         //dummy.compute();
-         
-         //dummy.display_result();
-         //System.out.println(dummy.st_option.toString());
-         //System.out.println(dummy.st_results.toString());
-         dummy.replicate=5;
-         
-         permutation_statistics su=new permutation_statistics(dummy);
-          permutation_statistics su2=new permutation_statistics(dummy);
-         su.generate_statistics();
-//         Gson gson = new Gson();
-//         String assert1=gson.toJson(su);         
-//         String assert2=gson.toJson(gson.fromJson(assert1, permutation_statistics.class));
-//         System.out.println(assert1.length());
-//         System.out.println(assert2.length());
-//         util u=new util();
-//         u.open("data.txt");
-//         u.println(assert1);
-//         u.println(assert2);
-//         u.close();
-         su.serialize();
-         
-//         System.out.println(su.replicates.size());
-         su2.deserialize();
-         System.out.println(su.calculate_stat());
-         System.out.println(su2.calculate_stat());
-//         String assert2=gson.toJson(su);
-//         System.out.println(assert1.equals(assert2));
-//         util u=new util();
-//         u.open("data.txt");
-//         u.println(assert1);
-//         u.println("*****");
-//         u.println(assert2);
-//         u.close();
-//         System.out.println(su.replicates.size());         
-          //permutation_statistics su=new permutation_statistics(dummy);
-           //  su.generate_statistics();
-           //   System.out.println(su);
-//         for (int i=0; i<5; i++) {
-//             System.out.println(dummy.get_info());
-////             summary_statistics s=new summary_statistics(dummy);
-////             s.calculate_network_statistics();
-//             //System.out.println(s);
-//             permutation_statistics su=new permutation_statistics(dummy);
-//             su.generate_stati();
-//             //System.out.println(su);
+//         datasets dummy=new datasets();        
+//         //dummy.load_morphobank_nexus("sample\\Smith_Caron_wo_absent_trait.nex");         
+//         dummy.load_simple("sample\\sample_5.txt");         
+//
+//         
+//         dummy.replicate=10;
+//         dummy.maxthreads=25;
+//         permutation_statistics su=new permutation_statistics(dummy);
+//         
+//// permutation_statistics su2=new permutation_statistics(dummy);
+//         su.generate_statistics();
+//         
+//         System.out.println("Networks statistics");
+//         su.output_stats(su.calculate_stat());         
+//         System.out.println("Nodes statistics");
+//         for (int i=0; i<su.reference_data.nodes.size();i++) {
+//             System.out.print(su.reference_data.nodes.get(i)+"\t");
+//             su.output_stats(su.calculate_stats_for_node(i));
 //         }
-//         for (summary_statistics ss:su.replicates) {
-//             System.out.println(ss.data.getCurrentCharMatrix());
-//         }
-////          su.serialize();
-////          su.deserialize();
-////          System.out.println(su);
-//         System.out.println(su.reference);
-         
+//         su.serialize();
+
+       //--Test new analysis
+       permutation_statistics pu=new permutation_statistics();
+       pu.calculate_from_directory("E:\\output2");
+       
+        // System.out.println(su.calculate_stat());
      }
      
 }

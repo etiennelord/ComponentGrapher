@@ -32,23 +32,26 @@ public class node implements Comparable,Serializable{
     
     ////////////////////////////////////////////////////////////////////////////
     /// VARIABLES
-    public String name="";    
-    public String complete_name="";
-    public String char_label="";  
-    public String state_label="";
-    public String state_matrix=""; //State in the matrix
-    
+    public String name="";        //--Short name version Char|state
+    public String complete_name=""; //--Long version e.g. leg|long leg
+    public String char_label="";  // e.g. name of the character e.g. leg
+    public String state_label="";  //e.g. adjective: long leg
+    public String state_matrix=""; //State in the matrix e.g. A, B, C, etc.
+        
     public int column=0; //--column (index starting at 1)
     public int id=0; //id in the vertex system
     public ArrayList<Integer>identification=new ArrayList<Integer>(); //taxa or node position    
     public ArrayList<Integer> source_ids=new ArrayList<Integer>(); //source taxa and count
-    
+        
     //public int count=0; //--Number of associated characted
     public int edgecount=0; //--Number of edges
-    public int in_edgecount=0; //--Number of edges
+    public int in_edgecount=0; //--Number of edges //--to put in properties
     public int out_edgecount=0; //--Number of edges
     
     public BitVector partition; //--This will be used in the processing of the partition
+    public BitVector partition_with_undefined; //--partition with undefined ? character (is the edge possible with ? caracters)
+    public BitVector partition_with_multistate; //--partition with undefined {0,1} characters i.e. take as much possible
+    
     public int total_taxa=0;    //--idem
     ////////////////////////////////////////////////////////////////////////////
     /// Internal data
@@ -66,6 +69,7 @@ public class node implements Comparable,Serializable{
     /// CONSTRUCTOR
     public node() {}
     
+    //--Note: We should put everything in the properties
     public node(node n) {        
         this.name=n.name;
         this.id=n.id;

@@ -68,6 +68,7 @@ public class main {
             String user_state_string="";//--passed user state string
             String node_information_filename="";
             String output_directory="";
+            String input_directory="";
             
             //--Main dataset to compute 
           datasets d=new datasets();
@@ -107,6 +108,7 @@ public class main {
             if (s.indexOf("-nooutput")>-1) nooutput=true;
             if (s.indexOf("-summary")>-1) save_summary=true; 
             if (s.indexOf("-triplets")>-1) save_triplets=true; 
+            if (s.indexOf("-input=")>-1) input_directory=st.substring(7);
             //--Given a graph, analyse it...
 //            if (s.indexOf("-analyse")>-1) {
 //                analyse1=true;
@@ -121,7 +123,13 @@ public class main {
              bipartite=true;
             }
         }         
-                 
+               
+         if (!input_directory.isEmpty()) {
+             permutation_statistics stat=new permutation_statistics();
+             stat.calculate_from_directory(input_directory);
+             System.exit(0);
+         }
+        
           boolean r=d.load_morphobank_nexus(args[0]);               
         
           if (!r||d.nchar==0||d.ntax==0) r=d.load_simple(filename);
@@ -166,7 +174,9 @@ public class main {
          
          //--If there is an associated character file, use it.
          d.load_charstate(node_information_filename);
-          
+         
+        
+         
          if (analyse1) {             
              System.out.println(d.get_info());
              System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
@@ -175,6 +185,16 @@ public class main {
              stat.generate_statistics();                                   
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
+             System.out.println("==============================================================================="); 
+             stat.output_stats(stat.calculate_stat());                      
+             System.out.println("==============================================================================="); 
+             System.out.println("Nodes statistics");
+             System.out.println("==============================================================================="); 
+             for (int i=0; i<stat.reference_data.nodes.size();i++) {
+                 System.out.println(i+"\t"+stat.reference_data.nodes.get(i)+"\t");
+                 stat.output_stats(stat.calculate_stats_for_node(i));
+             }
+             
               System.out.println("===============================================================================");
              System.out.println("done.");
              System.exit(0);

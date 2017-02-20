@@ -188,16 +188,17 @@ public class datasets extends Observable implements Serializable {
    public int type4_total_edge=0;
    
    public ArrayList<node> nodes=new ArrayList<node>(); //--The nodes of the networks
+   public ArrayList<node> undefined_nodes=new ArrayList<node>(); //--nodes with ? caracter for a column to remove type 4 edges
    
    //--Statistics
    public ConcurrentHashMap<String,Integer> identification=new ConcurrentHashMap<String,Integer>();
    public ConcurrentHashMap<Integer,String> inv_identification=new ConcurrentHashMap <Integer,String>();
    
-   int total_type0=0;
-   int total_type1=0;
-   int total_type2=0;
-   int total_type3=0;
-   int total_type4=0;
+   public int total_type0=0;
+   public int total_type1=0;
+   public int total_type2=0;
+   public int total_type3=0;
+   public int total_type4=0;
    
   transient Callable callback=null;
 
@@ -348,6 +349,9 @@ public class datasets extends Observable implements Serializable {
        
        for (node n:d.nodes) {
            this.nodes.add(new node(n));
+       }
+       for (node n:d.undefined_nodes) {
+           this.undefined_nodes.add(new node(n));
        }
        
        this.current_state_matrix=new String[d.ntax][d.nchar]; 
@@ -911,7 +915,7 @@ void print_state_label() {
             
         ntax=label.size();
         nchar=intmaxcol();
-        this.char_matrix=charmatrix();     
+        this.char_matrix=charmatrix();        
         this.build_charstate_label(); //--Ensure annotation
           try {
                 if (this.nchar!=0) {
@@ -968,6 +972,17 @@ void print_state_label() {
                }
                return (tmp);
        }
+        
+        //--Here, pos is the char position
+        //--This return the loaded matrix with possible polymorphic char.
+        ArrayList<String> extract_original_char(int pos) {
+                ArrayList<String> tmp=new ArrayList<String>();
+               int l=this.ntax;
+               for (int i=0; i<l;i++) {		
+                       tmp.add(this.char_matrix[i][pos]);
+               }
+               return (tmp);
+       } 
 
           //Here pos is the tax position  
           ArrayList<String> extract_char_taxa(int pos) {
@@ -1222,6 +1237,7 @@ void print_state_label() {
        }
       //state_strings.clear();
       nodes.clear();
+      undefined_nodes.clear();
       identification.clear();
       inv_identification.clear();    
       ///////////////////////////////
@@ -1233,12 +1249,12 @@ void print_state_label() {
       if (!(remove_multiple_column&&multiple_column.contains(i))&&!(remove_undefined_column&&undefined_column.contains(i))) {
          total_valid_column++;
           ArrayList<String>d=get_states_column(i);
-          //--ebug System.out.println(d);
+          //--debug System.out.println(d);
           HashMap<String,String> st=null;
           try {
             st=this.statelabels.get(i);
           } catch(Exception e) {}
-          //-- Iterate over possible states
+          //-- Iterate over possible states s (see get_states_column)
           for (String s:d) {            
              //--Skip undefined state
               if (!s.equals("?")&&!s.equals("-")&&!s.equals("*")) {
@@ -1261,12 +1277,37 @@ void print_state_label() {
                     n.state_label=state;                                           
                     n.state_matrix=s;     
                     n.column=(i+1);
-                    n.multistate=get_node_multistate(n);
+                    n.multistate=get_node_multistate(n);                   
                     nodes.add(n);                    
                     identification.put(n.name,n.id);
                     inv_identification.put(n.id, n.name);
                 }                
-            }            
+            } 
+//              else {
+//                  //--We found an invalid caracter ?,*,-
+//                  if (s.equals("?")) {
+//                       String node_name=""+(i+1)+"_"+s;
+//                  String state=s;
+//                   if (st!=null) {
+//                       state=""+st.get(state);
+//                   }
+//                    node n=new node(node_name,undefined_nodes.size());
+//                    if (this.charlabels.size()>0) {                        
+//                        n.complete_name=charlabels.get(i)+"|"+state;
+//                        n.char_label=charlabels.get(i);                                                
+//                    } else {
+//                        n.complete_name="char. "+(i+1)+"|"+state;
+//                        n.char_label="char. "+(i+1);
+//                    }
+//                    n.state_label=state;                                           
+//                    n.state_matrix=s;     
+//                    n.column=(i+1);
+//                    n.multistate=get_node_multistate(n);
+//                    undefined_nodes.add(n);                    
+//                    //identification.put(n.name,n.id);
+//                    //inv_identification.put(n.id, n.name);                             
+//                 }                  
+//            }           
            }  
          }
       }
@@ -1277,7 +1318,7 @@ void print_state_label() {
       //--Set the statistic values
       this.p05=0.05/(float)nodes.size(); //--critical values
       this.p01=0.01/(float)nodes.size();
-      this.p001=0.001/(float)nodes.size();   
+      this.p001=0.001/(float)nodes.size();          
   }
   
   private void allocate_edges_memory() {
@@ -1341,15 +1382,27 @@ void print_state_label() {
       for (int i=0; i<nodes.size();i++) {                       
               //--This is new, we do it for the node
               node n=nodes.get(i);                            
-              ArrayList<String> stris=extract_char(n.column-1);        
+              ArrayList<String> stris=extract_char(n.column-1);  
+              ArrayList<String> ori_stris=extract_original_char(n.column-1);
               n.identification.clear();
               n.partition=new BitVector(stris.size());
+              n.partition_with_undefined=new BitVector(stris.size()); //--Include ? char
+              n.partition_with_multistate=new BitVector(stris.size()); //--TO DO
               for (int j=0; j<stris.size();j++) {
                   if (stris.get(j).equals(n.state_matrix)) {
                       n.identification.add(j+1); //To have the taxa numbering starting at 1
                       n.partition.setBool(j, true);
+                      n.partition_with_undefined.setBool(j, true); //--undefined
+                  }
+                  if (stris.get(j).equals("?")) {
+                       n.partition_with_undefined.setBool(j, true); //--undefined (test of type 4)
+                  }
+                  if (ori_stris.get(j).contains(n.state_matrix)) {
+                      n.partition_with_multistate.setBool(j, true); //--polymorphics
                   }
               }
+              
+              
               n.total_taxa=util.total_bitset(n.partition);
               nodes.set(i, n);
              }                  
@@ -2227,9 +2280,14 @@ void print_state_label() {
                         } 
                         
                         ArrayList<Integer> tmp=util.intersectBitResult(node1.partition,node2.partition);
+                        ArrayList<Integer> tmp_undefined=util.intersectBitResult(node1.partition_with_undefined,node2.partition_with_undefined);
+                        ArrayList<Integer> tmp_multistate=util.intersectBitResult(node1.partition_with_multistate,node2.partition_with_multistate);
                         int total=tmp.size();
+                        int total_undefined=tmp_undefined.size();
+                        int total_multistate=tmp_multistate.size();
+                        
                         //--Get the type here
-                        int type=4; //--defaut
+                        int type=4; //--default
                         if (total==0) {
                             type=4;
                         } else if (total==node1.total_taxa&&total==node2.total_taxa) {
@@ -2303,8 +2361,9 @@ void print_state_label() {
                                  node_id_type.get(0).put(dest_index, type);                                 
                     } else if (type==4) {
                        //--Type 4  --we need to ensure that this is not the same characters (column)
-                       if (node1.column!=node2.column) {
-                         
+                        // We furter ensure that this is not because of undefined char.
+                        //--Aded February 2017 - total_undefined=0 to account for ? char.
+                       if (node1.column!=node2.column&&total_undefined==0) {                         
                            type4_src_edge[type4_total_edge]=node1.id;
                            type4_dest_edge[type4_total_edge]=node2.id;
                             node_id_type.get(4).put(node1.id, 4);
@@ -2404,55 +2463,55 @@ void print_state_label() {
     
     //-- TO DO: only generate the node once
     //--WARNING: in development, NOT functionnal!
-    public int estimate_link_likelyhood(node node1, node node2) {
-        int total=0;
-        int len=node1.partition.size();
-        //1. Take the possible sate
-        if (node1.multistate==1&&node2.multistate==1) return 0;
-        // 2. compute each bitvector to estimate the number of time a link can be done.
-        // ... we don't care now what kind of link...
-        ArrayList<BitVector>node1_bit= new  ArrayList<BitVector>();
-        ArrayList<BitVector>node2_bit= new  ArrayList<BitVector>();
-        if (node1.multistate==1) {
-            node1_bit.add(node1.partition);
-        } else {             
-            
-              ArrayList<String> s1=util.combinations(get_column(node1.column-1));
-              for (String p:s1) {
-                BitVector tmp= new BitVector(len);
-                 for (int j=0; j<len;j++) {
-                   String p2=""+p.charAt(j);
-                   if (p2.equals(node1.state_matrix)) {                      
-                      tmp.setBool(j, true);
-                  }
-                }
-                node1_bit.add(tmp);
-              }
-        }
-        
-         if (node2.multistate==1) {
-        node2_bit.add(node2.partition);
-        } else {
-            ArrayList<String> s2=util.combinations(get_column(node2.column-1));
-              for (String p:s2) {
-                BitVector tmp= new BitVector(len);
-                 for (int j=0; j<len;j++) {
-                   String p2=""+p.charAt(j);
-                   if (p2.equals(node2.state_matrix)) {                      
-                      tmp.setBool(j, true);
-                  }
-                }
-                node2_bit.add(tmp);
-              }              
-        }
-       ///--Now, calculate the correspondance
-       int total_possible=(node1_bit.size()*node2_bit.size());
-//         for (BitVector b1:node1_bit) 
-//           for (BitVector b2:node2_bit) 
-//            if (util.intersectBitResult(b1,b2).size()>0) total++;
-//            total=(100*total)/total_possible; //--compute the score
-        return total;
-    }
+//    public int estimate_link_likelyhood(node node1, node node2) {
+//        int total=0;
+//        int len=node1.partition.size();
+//        //1. Take the possible sate
+//        if (node1.multistate==1&&node2.multistate==1) return 0;
+//        // 2. compute each bitvector to estimate the number of time a link can be done.
+//        // ... we don't care now what kind of link...
+//        ArrayList<BitVector>node1_bit= new  ArrayList<BitVector>();
+//        ArrayList<BitVector>node2_bit= new  ArrayList<BitVector>();
+//        if (node1.multistate==1) {
+//            node1_bit.add(node1.partition);
+//        } else {             
+//            
+//              ArrayList<String> s1=util.combinations(get_column(node1.column-1));
+//              for (String p:s1) {
+//                BitVector tmp= new BitVector(len);
+//                 for (int j=0; j<len;j++) {
+//                   String p2=""+p.charAt(j);
+//                   if (p2.equals(node1.state_matrix)) {                      
+//                      tmp.setBool(j, true);
+//                  }
+//                }
+//                node1_bit.add(tmp);
+//              }
+//        }
+//        
+//         if (node2.multistate==1) {
+//        node2_bit.add(node2.partition);
+//        } else {
+//            ArrayList<String> s2=util.combinations(get_column(node2.column-1));
+//              for (String p:s2) {
+//                BitVector tmp= new BitVector(len);
+//                 for (int j=0; j<len;j++) {
+//                   String p2=""+p.charAt(j);
+//                   if (p2.equals(node2.state_matrix)) {                      
+//                      tmp.setBool(j, true);
+//                  }
+//                }
+//                node2_bit.add(tmp);
+//              }              
+//        }
+//       ///--Now, calculate the correspondance
+//       int total_possible=(node1_bit.size()*node2_bit.size());
+////         for (BitVector b1:node1_bit) 
+////           for (BitVector b2:node2_bit) 
+////            if (util.intersectBitResult(b1,b2).size()>0) total++;
+////            total=(100*total)/total_possible; //--compute the score
+//        return total;
+//    }
     
     /**
      * Given a node with a state s, evaluate the number of bitvector state

@@ -23,7 +23,6 @@ package matrixrenderer;
 import COMPONENT_GRAPHER.permutation_statistics.stats;
 import javax.swing.table.*;
 import java.util.ArrayList;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class PermutationStatistics_TableModel extends AbstractTableModel {
    public COMPONENT_GRAPHER.permutation_statistics data;

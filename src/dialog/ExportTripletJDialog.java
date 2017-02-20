@@ -18,6 +18,7 @@
 package dialog;
 
 import COMPONENT_GRAPHER.datasets;
+import COMPONENT_GRAPHER.summary_statistics;
 import COMPONENT_GRAPHER.util;
 import config.Config;
 import java.awt.Color;
@@ -35,23 +36,21 @@ import javax.swing.JOptionPane;
  */
 public class ExportTripletJDialog extends javax.swing.JDialog {
 
-    datasets data=null;
+    summary_statistics data=null;
     Config config=new Config();
-    public boolean status_save=false;
-    public String filename="";
+    public boolean status_save=false;    
     Frame parent;
     
     /**
      * Creates new form ExportNetworkJDialog
      */
-    public ExportTripletJDialog(java.awt.Frame parent, datasets data_) {
+    public ExportTripletJDialog(java.awt.Frame parent, summary_statistics data_) {
         super(parent, true);
         this.parent=parent;
         this.data=data_;
         initComponents();
-        this.Filename_jTextField.setText(data.filename);    
-        this.filename=data.filename;
-          this.setTitle("Save matrix");
+        this.Filename_jTextField.setText(data.data.result_directory+File.separator+"triplets.txt");            
+          this.setTitle("Export triplets");
           MessageText("Save matrix to file","");
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();         
         Dimension d = getSize();
@@ -62,11 +61,13 @@ public class ExportTripletJDialog extends javax.swing.JDialog {
 
     
     public void saveFile() {
-          filename=this.Filename_jTextField.getText();
-         switch(format_jComboBox.getSelectedIndex()) {
-             
+          String filename=this.Filename_jTextField.getText();
+         String sep="\t";
+          switch(format_jComboBox.getSelectedIndex()) {
+              case 0: sep="\t"; break;
+              case 1: sep=","; break;
          }        
-         
+         data.export_triplets(filename, sep);
          this.setVisible(false);
     }
     
@@ -257,7 +258,7 @@ public class ExportTripletJDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Save_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Save_jButtonActionPerformed
-        filename=this.Filename_jTextField.getText();
+        String filename=this.Filename_jTextField.getText();
         if (util.FileExists(filename)) {
           int n = JOptionPane.showConfirmDialog(parent,
                 "Warning!\n" +
@@ -277,7 +278,6 @@ public class ExportTripletJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_Save_jButtonActionPerformed
 
     private void Cancel_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cancel_jButtonActionPerformed
-        this.filename=data.filename;
         this.status_save=false;
         this.setVisible(false);
     }//GEN-LAST:event_Cancel_jButtonActionPerformed
@@ -295,12 +295,7 @@ public class ExportTripletJDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void format_jComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_format_jComboBoxActionPerformed
-        if (this.format_jComboBox.getSelectedIndex()==2&&data.info_total_multistate>0) {
-            MessageErreur("Phylip doesn't accept multistate characters.", "");
-            this.Save_jButton.setEnabled(false);
-        } else {
-            this.Save_jButton.setEnabled(true);
-        }
+       
     }//GEN-LAST:event_format_jComboBoxActionPerformed
 
   

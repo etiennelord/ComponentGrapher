@@ -28,6 +28,7 @@ import dialog.CreateNewMatrix;
 import dialog.CreateNewMatrix_JDialog;
 import dialog.ExportMatrixJDialog1;
 import dialog.ExportNetworkJDialog;
+import dialog.ExportTripletJDialog;
 import dialog.HelpJDialog;
 import dialog.InformationJDialog;
 import dialog.MatrixInfoJDialog;
@@ -35,6 +36,7 @@ import dialog.MatrixOptions;
 import dialog.NodeView_JDialog;
 import dialog.PolymorphicChar_EditorJDialog;
 import dialog.RenameTaxaJDialog;
+import dialog.ResultExplorer_JDialog;
 import dialog.TaxaEditorJDialog;
 
 import matrixrenderer.VerticalTableHeaderCellRendered;
@@ -294,7 +296,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
            if(!LoadTable(config.get("last_matrix"))) {
              config.remove("last_matrix");             
              config.Save();
-             MessageError("Unable to load pri", null);
+             MessageError("Unable to load the analysed matrix", null);
            }
        }         
     }
@@ -415,6 +417,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         jMenu4 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem7 = new javax.swing.JMenuItem();
         PolymorphicChar_jMenu = new javax.swing.JMenu();
         EditCharacter_jMenuItem = new javax.swing.JMenuItem();
         EditTaxa_jMenuItem = new javax.swing.JMenuItem();
@@ -1012,6 +1015,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         });
         jMenu4.add(jMenuItem4);
 
+        jMenuItem7.setText("Results explorer");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem7);
+
         jMenuBar1.add(jMenu4);
 
         PolymorphicChar_jMenu.setText("Edit");
@@ -1381,8 +1392,13 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        statistics.reference.export_triplets("triplets.txt", "\t");
+        ExportTripletJDialog etj=new ExportTripletJDialog(that, summary);
+        //statistics.reference.export_triplets("triplets.txt", "\t");
     }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        ResultExplorer_JDialog re=new ResultExplorer_JDialog(that,summary);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     
     
@@ -1849,6 +1865,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel12;
