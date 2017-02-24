@@ -131,13 +131,13 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         jTabbedPane.setEnabledAt(2, false);
         jTabbedPane.setEnabledAt(3, false);
         
-        jInfo.setFont(Config.glyphicon);
+        jInfo.setFont(Config.getGlyphicon());
         jInfo.setText("\uf129");
 //        CopyAll2_jButton.setFont(Config.glyphicon);
 //        CopyAll2_jButton.setText("\uf0c5");
-        CopyMainAll_jButton.setFont(Config.glyphicon);
+        CopyMainAll_jButton.setFont(Config.getGlyphicon());
         CopyMainAll_jButton.setText("\uf0c5");
-        CopySummary_jButton.setFont(Config.glyphicon);
+        CopySummary_jButton.setFont(Config.getGlyphicon());
         CopySummary_jButton.setText("\uf0c5");
 //        VisualNetwork=new NetworkExplorer(); --to do
 //        VisualNetwork.init();

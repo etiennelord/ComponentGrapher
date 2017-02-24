@@ -60,7 +60,7 @@ public class ConfigureAnalysis_JDialog1 extends javax.swing.JDialog {
         this.remove_multiple_column_jCheckBox.setSelected(data.remove_multiple_column);
         this.remove_undefined_column_jCheckBox.setSelected(data.remove_undefined_column);
         this.Directory_jTextField.setText(data.result_directory);
-        this.Solution_jButton.setFont(Config.glyphicon);
+        this.Solution_jButton.setFont(Config.getGlyphicon());
         this.Solution_jTextField.setEditable(false);
         
         this.Solution_jButton.setText("\uf01e");

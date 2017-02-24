@@ -393,10 +393,10 @@ public class graph {
            ArrayList<Integer> neighbor=new ArrayList<Integer>();
            for (int t:get_adj(s).keySet()) neighbor.add(t);
            int len=neighbor.size();       
-           for (int t=0; t<len;t++) {
-               if (s < t) {
+           for (int t:neighbor) {
+               if (s < t) { //--Need equality also
                    for (int v:util.intersection(A.get(s), A.get(t))) {
-                       //System.out.println(v+" "+s+" "+t);
+                       System.out.println(v+" "+s+" "+t);
                        triplets tri=new triplets(v,s,t);
                        tmp.add(tri);
                    }
@@ -411,7 +411,8 @@ public class graph {
    
     public float get_nb_triangles_fast() {
        float total=0.0f;
-        //--
+      
+       //--
         HashMap<Integer,ArrayList<Integer>> A=new HashMap<Integer,ArrayList<Integer>>();
          for (int s=0;s<this.total_nodes;s++) {
              A.put(s,new ArrayList<Integer>());
@@ -422,7 +423,7 @@ public class graph {
            ArrayList<Integer> neighbor=new ArrayList<Integer>();
            for (int t:get_adj(s).keySet()) neighbor.add(t);
            int len=neighbor.size();       
-           for (int t=0; t<len;t++) {
+           for (int t:neighbor) {
                if (s < t) {
                    for (int v:util.intersection(A.get(s), A.get(t))) {
                        //System.out.println(v+" "+s+" "+t);
@@ -1028,9 +1029,9 @@ public class graph {
               }
           }
       }
-      System.out.println(total_nodes);
-      System.out.println(this.total_edges);
-      System.out.println((total_nodes*(total_nodes-1))/2);
+//      System.out.println(total_nodes);
+//      System.out.println(this.total_edges);
+//      System.out.println((total_nodes*(total_nodes-1))/2);
   }
   
   /**
@@ -1068,8 +1069,14 @@ public class graph {
    * @param args 
    */
    public static void main(String[] args) {
-        graph g=new graph();
-        g.complete_graph(500,false);
+        
+        for (int k=4; k<5;k++) {
+            graph g=new graph();
+            g.complete_graph(k,false);
+            System.out.println(k+"\t"+g.get_triangles_fast());
+    }
+        
+        
 //        float total=0;
 //        for (int i=0; i<g.total_nodes;i++) {
 //            results r=g.findLoops(i, false);
@@ -1079,7 +1086,7 @@ public class graph {
 //        //for (int i=0; i<g.total_edges;i++) System.out.println();
 //        System.out.println(g.max_theorical_triangles());
 //        System.out.println(total); //--6 times more because for me, u--v--w is not equivalent to v--u--w
-        System.out.println(g.get_nb_triangles_fast());
+        //System.out.println(g.get_nb_triangles_fast());
         
        //g.load_graph("example\\Smith_Caron_wo_absent_trait.nex__3.txt", false);
        //g.load_graph("graph.txt", false);

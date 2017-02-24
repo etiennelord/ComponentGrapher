@@ -65,7 +65,7 @@ public class NodeView_JDialog extends javax.swing.JDialog {
         nvt.fireTableStructureChanged();
        this.jTable1.setModel(nvt);
        table1=new ExcelResultAdapter(jTable1);
-        CopyAll_jButton.setFont(Config.glyphicon);
+        CopyAll_jButton.setFont(Config.getGlyphicon());
         CopyAll_jButton.setText("\uf0c5");
         //this.new_jTextField.setText(oldColName);
         Message("Noteid:"+nodeid+" "+nvt.current_node.complete_name,"");

@@ -69,7 +69,7 @@ public class ResultExplorer_JDialog extends javax.swing.JDialog {
         this.Result_jTable.setModel(tm);
          sorter = new TableRowSorter<ResultExplorer_TableModel>(tm);
           Result_jTable.setRowSorter(sorter);
-        this.Copy_jButton.setFont(Config.glyphicon);
+        this.Copy_jButton.setFont(Config.getGlyphicon());
         this.Copy_jButton.setText("\uf0c5");
         this.setTitle("Edit character and state labels");
         //StateMatrixTable = new ExcelResultAdapter(this.Result_jTable);StateCharTableModel tm2=(StateCharTableModel)this.Result_jTable.getModel();

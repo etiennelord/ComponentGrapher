@@ -1089,21 +1089,11 @@ public class permutation_statistics implements Serializable {
            //System.out.println(node_field+" "+i+" :"+values[i]);
             s.stat.addValue(values[i]);
         }            
-         s.stat.addValue(refvalue);        
+         //s.stat.addValue(refvalue);  //--Add reference to get the real Min and max      
         s.reference_value=refvalue;
         s.pvalue=getPvalue1(values, refvalue);
         datas.add(s);
-//        st.append(node_field+":\n");
-//        st.append("Min     : "+stats.getMin()+"\n");
-//        st.append("Max     : "+stats.getMax()+"\n");
-//        st.append("Mean    : "+stats.getMean()+"\n");
-//        st.append("5%      : "+stats.getPercentile(5)+"\n");
-//        st.append("95%     : "+stats.getPercentile(95)+"\n");
-//        st.append("Ref     : "+refvalue+"\n");
-//        st.append("P-value : "+getPvalue1(values,refvalue)+"\n");
-//        st.append("Histogram:\n");
-//        st.append(hist(values, TOTALBINS)+"\n");
-//        st.append("Values:\n");       
+    
        }
          System.out.println(datas.size());
        return datas;
@@ -1335,7 +1325,7 @@ public class permutation_statistics implements Serializable {
     
     public void output_stats(ArrayList<stats> st) {
         for (stats s:st) {
-            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+s.stat.getN()+"\t"+s.stat.getMean()+"\t"+s.stat.getStandardDeviation()+"\t"+s.stat.getPercentile(5)+"\t"+s.stat.getPercentile(95));
+            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+s.stat.getN()+"\t"+s.stat.getMean()+"\t"+s.stat.getStandardDeviation()+"\t"+s.stat.getMin()+"\t"+s.stat.getMax()+"\t"+s.stat.getPercentile(5)+"\t"+s.stat.getPercentile(95));
         }
     }
      

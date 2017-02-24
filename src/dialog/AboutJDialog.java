@@ -21,7 +21,7 @@ public class AboutJDialog extends javax.swing.JDialog {
         this.setTitle("ConpositeGrapher version "+config.get("version"));
         //this.jTextArea1.setText(PrintMemory());
          //ArrayList<String> stri=util.loadString("data"+File.separator+"about.html");
-        this.setIconImage(Config.image);
+        this.setIconImage(Config.getImage());
         try { 
             
             File f=new File("data"+File.separator+"about.html");            

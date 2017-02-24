@@ -44,7 +44,7 @@ public class TaxaEditorJDialog extends javax.swing.JDialog {
         this.CharState_jTable.setModel(tm);
           //sorter = new TableRowSorter<StateCharTableModel>(tm);
           //CharState_jTable.setRowSorter(sorter);
-        this.Copy_jButton.setFont(Config.glyphicon);
+        this.Copy_jButton.setFont(Config.getGlyphicon());
         this.Copy_jButton.setText("\uf0c5");
         this.setTitle("Edit character and state labels");
         StateMatrixTable = new ExcelResultAdapter(this.CharState_jTable);

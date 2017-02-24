@@ -45,9 +45,9 @@ public class InformationJDialog extends javax.swing.JDialog {
         super(parent, false);
         //Initialise the SwingWorker Object if we need to cancel           
         initComponents();
-        this.setIconImage(Config.image);
+        this.setIconImage(Config.getImage());
         this.setTitle(title);
-        this.setIconImage(Config.image);       
+              
         //this.jLabel1.setIcon(Config.loading_icon);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension d = getSize();

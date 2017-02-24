@@ -38,6 +38,7 @@ import umontreal.iro.lecuyer.rng.LFSR258;
 import umontreal.iro.lecuyer.util.BitVector;
 import config.Config;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Set;
 
@@ -324,11 +325,14 @@ public class datasets extends Observable implements Serializable {
 //   public static ConcurrentHashMap<Integer,String> inv_identification=new ConcurrentHashMap <Integer,String>();
    
         //--Deep Copy with memory allocation
-       for (String k:d.identification.keySet()) {
+       Enumeration<String> kk=d.identification.keys();
+       while(kk.hasMoreElements()) {
+           String k=kk.nextElement();
            this.identification.put(k, d.identification.get(k));
        }
-        
-       for (Integer k:d.inv_identification.keySet()) {
+        Enumeration<Integer> kkk= d.inv_identification.keys();
+       while(kkk.hasMoreElements()) {
+           Integer k=kkk.nextElement();
            this.inv_identification.put(k, d.inv_identification.get(k));
        }
        for (state s:d.states) {

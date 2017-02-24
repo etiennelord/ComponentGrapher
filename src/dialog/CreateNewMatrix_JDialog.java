@@ -23,7 +23,7 @@ public class CreateNewMatrix_JDialog extends javax.swing.JDialog {
        
         //this.jTextArea1.setText(PrintMemory());
          //ArrayList<String> stri=util.loadString("data"+File.separator+"about.html");
-        this.setIconImage(Config.image);
+        this.setIconImage(Config.getImage());
         
          //this.jEditorPane1.setText();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

@@ -76,7 +76,7 @@ public class Config {
     ////////////////////////////////////////////////////////////////////////////
     /// Application icon
     
-    public static Image image=null;
+     static Image image=null;
     public static ImageIcon icon=null;
     public static ImageIcon loading_icon=null;
     public String defaultSaveFile="config.dat";
@@ -94,8 +94,7 @@ public class Config {
                  setDefaultProperties();
                 Save();
             } 
-            // -- Load the icons
-           if (image==null) loadIcon();
+            // -- Load the icons           
             if (log==null) {
                 try {
                 log=new PrintWriter(new FileWriter(new File(log_file),true));
@@ -111,14 +110,7 @@ public class Config {
        }
        //--Bet sure to create the results directory
        createDir(get("resultsDir"));
-       if (glyphicon==null) {
-            try {                   
-                    glyphicon = Font.createFont(Font.TRUETYPE_FONT, new File("data"+File.separator+"fontawesome-webfont.ttf"));                    
-                    glyphicon = glyphicon.deriveFont(Font.PLAIN, 12f);                                       
-         } catch(Exception e2) {
-             Config.log("Unable to load glyphicon font.");
-         }
-       }
+      
     }
  
     /**
@@ -174,6 +166,25 @@ public class Config {
         } catch(Exception e) {}
     } 
   
+    public static Font getGlyphicon() {
+         if (glyphicon==null) {
+            try {                   
+                    glyphicon = Font.createFont(Font.TRUETYPE_FONT, new File("data"+File.separator+"fontawesome-webfont.ttf"));                    
+                    glyphicon = glyphicon.deriveFont(Font.PLAIN, 12f);                                       
+         } catch(Exception e2) {
+             Config.log("Unable to load glyphicon font.");
+         }
+       }
+         return glyphicon;
+    }
+    
+    public static Image getImage() {
+        if (image==null) {
+            Config c=new Config();
+            c.loadIcon();
+        }
+        return image;
+    }
      /**
      * Load a properties file
      * Note: The Name of this properties will be set to the key("Name")

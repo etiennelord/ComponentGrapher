@@ -782,6 +782,7 @@ public class summary_statistics implements Serializable {
         st.append("Node type 2 (inclusion)           : "+data.node_id_type.get(2).size()+"\n");
         st.append("Node type 3 (overlap)             : "+data.node_id_type.get(3).size()+"\n");
         st.append("Node type 4 (disjoint)            : "+data.node_id_type.get(4).size()+"\n");
+        st.append("triangle                          : "+this.total_triangle+"\n");
         st.append("===============================================================================\n");
            
         if (data.total_states>1&&data.state_strings.size()!=0) {
