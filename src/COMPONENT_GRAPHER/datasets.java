@@ -222,10 +222,7 @@ public class datasets extends Observable implements Serializable {
          //--Allocate memory
        allocate_edges_memory();
        
-       //--Critical values
-        this.p05=d.p05;
-        this.p01=d.p01;
-        this.p001=d.p001;
+       
         
         this.current_state_variation=d.current_state_variation;
         this.callback=d.callback;
@@ -301,28 +298,27 @@ public class datasets extends Observable implements Serializable {
        for (String k:d.index_label.keySet()) {
            this.index_label.put(k, d.index_label.get(k));
        }
-       
-       for (HashMap<Integer,Integer> ni:d.node_id_type) {
+       this.node_id_type.clear();
+        //System.out.println(d.node_id_type);
+      try {
+        for (int i=0; i<=4; i++) {
+         HashMap<Integer,Integer> ni=d.node_id_type.get(i);
            HashMap<Integer,Integer> tmp=new HashMap<Integer,Integer>();
            for (int k:ni.keySet()) {
                tmp.put(k, ni.get(k));               
            }
            this.node_id_type.add(tmp);
        }
+      } catch(Exception ea) {
+        //--This might failed?
+    }
+       
        this.undefined_column.addAll(d.undefined_column);
        this.multiple_column.addAll(d.multiple_column);
        for (String s:d.bipartite_node_id.keySet()) {
            this.bipartite_node_id.put(s, d.bipartite_node_id.get(s));
        }
        
-       
-       
-//   public static ArrayList<ArrayList<Integer>>precomp_partitions[]; //Precalculated partition   
-//  
-
-//   //--Statistics
-   //public static ConcurrentHashMap<String,Integer> identification=new ConcurrentHashMap<String,Integer>();
-//   public static ConcurrentHashMap<Integer,String> inv_identification=new ConcurrentHashMap <Integer,String>();
    
         //--Deep Copy with memory allocation
        Enumeration<String> kk=d.identification.keys();
@@ -354,6 +350,12 @@ public class datasets extends Observable implements Serializable {
        for (node n:d.nodes) {
            this.nodes.add(new node(n));
        }
+       
+      //--Critical values
+         this.p05=0.05/(double)d.nodes.size(); //--critical values
+         this.p01=0.01/(double)d.nodes.size();
+         this.p001=0.001/(double)d.nodes.size();      
+         
        for (node n:d.undefined_nodes) {
            this.undefined_nodes.add(new node(n));
        }
@@ -379,6 +381,8 @@ public class datasets extends Observable implements Serializable {
            this.taxa_edge[i]=d.taxa_edge[i];
            this.count_edge[i]=d.count_edge[i];
         }
+        
+        
         
     }
    
@@ -1951,8 +1955,8 @@ void print_state_label() {
                             "\n" +
                             "  container: document.getElementById('cy'), // container to render in\n" +
                             "\n" +                           
-                            "  elements: [ // list of graph elements to start with\n");                            
-                            HashMap<Integer,Integer> nodes_id=node_id_type.get(type);
+                            "  elements: [ // list of graph elements to start with\n");                                           
+               HashMap<Integer,Integer> nodes_id=node_id_type.get(type);
                for (node n:nodes) {                   
                    if (nodes_id.containsKey(n.id)) {
                        pw.println("{data: {id: '"+n.id+"', vname:\""+n.complete_name+"\" } },");
@@ -2054,7 +2058,7 @@ void print_state_label() {
                //pw.println("<key id='r1' for='edge' attr.name='randindex' attr.type='double'/>");
                pw.println("<key id='k1' for='edge' attr.name='total_shared_taxa' attr.type='double'/>");
                
-               pw.println("<key id='k0' for='node' attr.name='nodeid' attr.type='string'/>");             
+               //pw.println("<key id='k0' for='node' attr.name='nodeid' attr.type='string'/>");             
                pw.println("<key id='k3' for='node' attr.name='fullname' attr.type='string'/>");
                pw.println("<key id='k4' for='node' attr.name='number_of_taxa' attr.type='double'/>");               
                pw.println("<key id='k5' for='node' attr.name='partition' attr.type='string'/>");
@@ -2078,21 +2082,22 @@ void print_state_label() {
                for (node n:nodes) {                   
                    if (nodes_id.containsKey(n.id)) {
                     pw.println("<node id='"+n.name+"'>");
-                    pw.println("<data key='k3'>"+n.complete_name+"</data>");
-                     pw.println("<data key='k0'>"+n.id+"</data>");
+                    pw.println("<data key='k0'>"+n.id+"</data>");
+                    pw.println("<data key='k3'>"+util.removeBadGraphmlChar(n.complete_name)+"</data>");
+                     
                     //pw.println("<data key='k4'>"+n.count+"</data>");                    
                    if (type!=4) {
                     pw.println("<data key='k6'>"+n.edgecount+"</data>");
                     pw.println("<data key='k7'>"+n.column+"</data>");
-                    pw.println("<data key='k8'>"+n.char_label+"</data>");
-                    pw.println("<data key='k9'>"+n.state_label+"</data>");
+                    pw.println("<data key='k8'>"+util.removeBadGraphmlChar(n.char_label)+"</data>");
+                    pw.println("<data key='k9'>"+util.removeBadGraphmlChar(n.state_label)+"</data>");
                     pw.println("<data key='k10'>"+n.state_matrix+"</data>");
                     pw.println("<data key='k61'>"+n.in_edgecount+"</data>");
                     pw.println("<data key='k62'>"+n.out_edgecount+"</data>");
                     pw.println("<data key='k11'>"+n.total_taxa+"</data>");
                    } else {
-                     pw.println("<data key='k8'>"+n.char_label+"</data>");
-                     pw.println("<data key='k9'>"+n.state_label+"</data>");
+                     pw.println("<data key='k8'>"+util.removeBadGraphmlChar(n.char_label)+"</data>");
+                     pw.println("<data key='k9'>"+util.removeBadGraphmlChar(n.state_label)+"</data>");
                      pw.println("<data key='k10'>"+n.state_matrix+"</data>");
                    }
                     pw.println("</node>");

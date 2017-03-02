@@ -22,7 +22,9 @@ package matrixrenderer;
 
 import COMPONENT_GRAPHER.node;
 import COMPONENT_GRAPHER.permutation_statistics;
+import COMPONENT_GRAPHER.permutation_statistics.stats;
 import COMPONENT_GRAPHER.summary_statistics;
+import COMPONENT_GRAPHER.util;
 import matrix.DataMatrix;
 import java.awt.Component;
 import javax.swing.table.*;
@@ -71,58 +73,60 @@ public class Nodes_TableModel extends AbstractTableModel {
     */
    public void setDisplayedStatistic(int number) {
        selected_index=number;
-       calculate_stats();
+       if (number<0) number=0;
+       //calculate_stats();
    }
    
    public void setData(COMPONENT_GRAPHER.permutation_statistics data) {
        this.data=data;
-       calculate_stats();
+       selected_index=0;
+       //calculate_stats();
    }
    
    //--This should be in permutation_statistics
-   void calculate_stats() {
-       stats.clear();
-       pvalues.clear();
-       references.clear();
-       String identifier=pv2[selected_index];
-         for (int nodeid=0; nodeid<data.reference_data.nodes.size();nodeid++) {
-              node n=data.reference.data.nodes.get(nodeid);
-              double ref=0;
-              if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
-                        ref=data.reference.data.nodes.get(nodeid).stats.getInt(identifier);
-                    } else {             
-                       ref=data.reference.data.nodes.get(nodeid).stats.getFloat(identifier);
-                     }
-                     references.add(ref);
-                     //--This is the array of values for this node
-                     double[] values=new double[data.replicates.size()];
-                    for (int i=0; i<data.replicates.size();i++) {
-                        node nr=data.replicates.get(i).data.nodes.get(nodeid);
-                        //System.out.println(nr.stats);
-                        values[i]=nr.stats.getFloat(identifier);
-                        if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
-                        values[i]=nr.stats.getInt(identifier);
-                        }         
-                        //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
-                    }            
-                        DescriptiveStatistics node_stat=new DescriptiveStatistics(values);                        
-                    Double[] st;
-                     if (identifier.equals("closeness_type3")) {
-                         st=permutation_statistics.getPvalue_bilateral(values, ref,data.reference.data.nodes.size());
-                     } else {
-                         st=permutation_statistics.getPvalue_unilateral(values, ref,data.reference.data.nodes.size());
-                     }                    
-                     double pvalue=0.0;
-                     if (!identifier.equals("closeness_type3")) {
-                        pvalue=st[0];
-                     } else {
-                        pvalue=st[1]; //P-value (P1)                          
-                     }
-                     pvalues.add(pvalue);
-                     stats.add(node_stat);
-                     //--Add information for                    
-                } //--End nodes
-   }
+//   void calculate_stats() {
+//       stats.clear();
+//       pvalues.clear();
+//       references.clear();
+//       String identifier=pv2[selected_index];
+//         for (int nodeid=0; nodeid<data.reference_data.nodes.size();nodeid++) {
+//              node n=data.reference.data.nodes.get(nodeid);
+//              double ref=0;
+//              if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+//                        ref=data.reference.data.nodes.get(nodeid).stats.getInt(identifier);
+//                    } else {             
+//                       ref=data.reference.data.nodes.get(nodeid).stats.getFloat(identifier);
+//                     }
+//                     references.add(ref);
+//                     //--This is the array of values for this node
+//                     double[] values=new double[data.replicates.size()];
+//                    for (int i=0; i<data.replicates.size();i++) {
+//                        node nr=data.replicates.get(i).data.nodes.get(nodeid);
+//                        //System.out.println(nr.stats);
+//                        values[i]=nr.stats.getFloat(identifier);
+//                        if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+//                        values[i]=nr.stats.getInt(identifier);
+//                        }         
+//                        //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
+//                    }            
+//                        DescriptiveStatistics node_stat=new DescriptiveStatistics(values);                        
+//                    Double[] st;
+//                     if (identifier.equals("closeness_type3")) {
+//                         st=permutation_statistics.getPvalue_bilateral(values, ref,data.reference.data.nodes.size());
+//                     } else {
+//                         st=permutation_statistics.getPvalue_unilateral(values, ref,data.reference.data.nodes.size());
+//                     }                    
+//                     double pvalue=0.0;
+//                     if (!identifier.equals("closeness_type3")) {
+//                        pvalue=st[0];
+//                     } else {
+//                        pvalue=st[1]; //P-value (P1)                          
+//                     }
+//                     pvalues.add(pvalue);
+//                     stats.add(node_stat);
+//                     //--Add information for                    
+//                } //--End nodes
+//   }
 
    @Override
     public int getRowCount() {
@@ -148,15 +152,15 @@ public class Nodes_TableModel extends AbstractTableModel {
     }
     
 
- public String getSignificance(double value, double reference) {
-         if (data.replicate<100) return " ";         
-         if (value<=0.0||reference<=0.0) return " ";
-         if (value>0.05) return " ";
-         if (value<data.reference_data.p001) return "***";
-         if (value<data.reference_data.p01) return "**";
-         if (value<data.reference_data.p05) return "*";
-         return " ";
-     } 
+// public String getSignificance(double value, double reference) {
+//         if (data.replicate<100) return " ";         
+//         if (value<=0.0||reference<=0.0) return " ";
+//         if (value>0.05) return " ";
+//         if (value<data.reference_data.p001) return "***";
+//         if (value<data.reference_data.p01) return "**";
+//         if (value<data.reference_data.p05) return "*";
+//         return " ";
+//     } 
 
    @Override
     public Object getValueAt(int row, int col) {
@@ -164,16 +168,18 @@ public class Nodes_TableModel extends AbstractTableModel {
         if (data==null) return "";
         try {
            node n=data.reference_data.nodes.get(row);
-           double pvalue=pvalues.get(row);
-           double reference=references.get(row);
-           DescriptiveStatistics stat=stats.get(row);
+           stats statn=data.Node_stats.get(row).get(selected_index);
+           
+           double pvalue=statn.pvalue[0];
+           double reference=statn.reference_value;           
+           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(statn.values));             
            //--For the moment, all strings...
            switch(col) {
                case 0: return ""+n.id;
                case 1: return ""+n.complete_name;
                case 2: return ""+reference;
                case 3: return ""+(reference<=0?"NA":pvalue);
-               case 4: return ""+getSignificance(pvalue, reference); //--significance
+               case 4: return ""+data.getSignificance(pvalue, reference); //--significance
                case 5: return ""+stat.getN();
                case 6: return ""+stat.getMin();
                case 7: return ""+stat.getMax();

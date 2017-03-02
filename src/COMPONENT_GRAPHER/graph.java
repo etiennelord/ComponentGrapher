@@ -22,8 +22,10 @@ import java.util.HashMap;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import org.apache.commons.math3.ode.sampling.StepNormalizerBounds;
 import static org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficient;
 
 import umontreal.iro.lecuyer.rng.LFSR258;
@@ -39,7 +41,7 @@ public class graph {
    HashMap<String,Integer> node_to_id=new HashMap<String,Integer>();
    HashMap<Integer,String> id_to_node=new  HashMap<Integer,String>(); 
    HashMap<Integer,Integer> old_id_to_id=new  HashMap<Integer,Integer>(); 
-   HashMap<Integer,Integer> id_to_old_id=new  HashMap<Integer,Integer>(); 
+   public HashMap<Integer,Integer> id_to_old_id=new  HashMap<Integer,Integer>(); 
    public String name="";
    public int total_nodes=0;
    public int total_edges=0;
@@ -215,7 +217,7 @@ public class graph {
                      result.total_len3++;                    
                      if (vv.contains(w))  {   //--i is a neighbor of j                      
                          result.total_loop3++;
-                         if (verbose) System.out.print("* ");
+                        // if (verbose) System.out.print("* ");
                      } else {
                          result.simple_len3++; //--i is NOT a neighbor of j
                      }  
@@ -229,12 +231,12 @@ public class graph {
                                 result.total_len4++; 
                                if (vv.contains(z)) {                        
                                     result.total_loop4++;
-                                   if (verbose) System.out.print("* ");
+                                  // if (verbose) System.out.print("* ");
                                 } else {
                                    result.simple_len4++; //--the path is not closed
                                }
                                 //if (verbose)  System.out.println(id_to_node.get(s)+" "+id_to_node.get(v)+" "+id_to_node.get(w)+" "+id_to_node.get(z));
-                                if (verbose) System.out.println(s+" "+v+" "+w+" "+z);
+                               // if (verbose) System.out.println(s+" "+v+" "+w+" "+z);
                             }                    
                        }
                  }
@@ -248,10 +250,21 @@ public class graph {
        return result;
    }
    
-   HashMap<Integer,Boolean> get_adj(int node) {
+   public HashMap<Integer,Boolean> get_adj(int node) {
        HashMap<Integer,Boolean> tmp=this.adjlist.get(node);
        if (tmp==null) return new  HashMap<Integer,Boolean>();
        return tmp;
+   }
+   
+   public ArrayList<Integer> get_neighbors(int old_id) {
+       Integer id=this.old_id_to_id.get(old_id);       
+       ArrayList<Integer> a=new ArrayList<Integer>();
+       if (id==null) return a;
+       for (int i:get_adj(id).keySet()) {
+           a.add(this.id_to_old_id.get(i));
+       }
+       
+       return a;
    }
    
    /**
@@ -395,8 +408,7 @@ public class graph {
            int len=neighbor.size();       
            for (int t:neighbor) {
                if (s < t) { //--Need equality also
-                   for (int v:util.intersection(A.get(s), A.get(t))) {
-                       System.out.println(v+" "+s+" "+t);
+                   for (int v:util.intersection(A.get(s), A.get(t))) {                       
                        triplets tri=new triplets(v,s,t);
                        tmp.add(tri);
                    }
@@ -409,6 +421,7 @@ public class graph {
        return tmp;
    }
    
+    
     public float get_nb_triangles_fast() {
        float total=0.0f;
       
@@ -425,11 +438,8 @@ public class graph {
            int len=neighbor.size();       
            for (int t:neighbor) {
                if (s < t) {
-                   for (int v:util.intersection(A.get(s), A.get(t))) {
-                       //System.out.println(v+" "+s+" "+t);
-                       //triplets tri=new triplets(v,s,t);
-                      total++; 
-                      //tmp.add(tri);
+                   for (int v:util.intersection(A.get(s), A.get(t))) {                      
+                      total++;                       
                    }
                    ArrayList<Integer> tp=A.get(t);
                    if (!tp.contains(s)) tp.add(s);
@@ -567,6 +577,202 @@ public class graph {
        return true;
    } 
    
+     /**
+     * This return the number of time s is in a middle of a triplet i --- s --- j 
+     * when i is not connected to j
+     * @param s
+     * @param verbose
+     * @return 
+     */
+   public boolean export_triplet(int nodeid, String filename, ArrayList<graph> others, String sep) {        
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+      util u=new util();
+      u.open(filename);
+      u.println("#node1\tcentral_node\tnode3\ttype"); 
+       int s=old_id_to_id.get(nodeid);       
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);
+               if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {                   
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type A");                          
+                   if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type B");
+                   } //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type C");
+                   } //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                      u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type D");                   
+                   } //--Edge of type 4                  
+               } else if (i>j) {
+                   //--Type E                   
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type E");                   
+               }
+           }                
+       u.close();
+       return true;
+   } 
+   
+    public boolean export_triangle(int nodeid, String filename, ArrayList<graph> others, String sep) {        
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+      util u=new util();
+      u.open(filename);
+     // u.println("#node1\tcentral_node\tnode3\ttype"); 
+       int s=old_id_to_id.get(nodeid);       
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);
+               if (i>j&&get_adj(neighbor.get(i)).containsKey(neighbor.get(j))) {
+                   //--Type E (triangle)                 
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Triangle");                   
+               }
+           }                
+       u.close();
+       return true;
+   } 
+   
+    /**
+     * This return the number of time s is in a middle of a triplet i --- s --- j 
+     * when i is not connected to j
+     * @param s
+     * @param verbose
+     * @return 
+     */
+   public boolean export_triplet(int nodeid1, int nodeid2, String filename, ArrayList<graph> others, String sep) {
+        
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+       int n_nodeid1=this.old_id_to_id.get(nodeid1);
+       int n_nodeid2=this.old_id_to_id.get(nodeid2);
+       ArrayList<Integer> ss=new ArrayList<Integer>();
+      
+       ss.add(nodeid1);
+       ss.add(nodeid2);
+       util u=new util();
+      u.open(filename);
+      u.println("#node1\tcentral_node\tnode3\ttype"); 
+   
+      for (int as:ss) {
+      int s=this.old_id_to_id.get(as);      
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);               
+               if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))&&(i_id==n_nodeid2||j_id==n_nodeid2||i_id==n_nodeid1||j_id==n_nodeid2)) {                   
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type A");
+                   if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type B");
+                   } //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {
+                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type C");
+                   } //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                      u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type D");                 
+                   } //--Edge of type 4                  
+               } 
+           }   
+      }
+         u.close();
+       //--ouput 
+       return true;
+   } 
+   
+     /**
+     * This return the number of time s is in a middle of a triplet i --- s --- j 
+     * when i is not connected to j
+     * @param s
+     * @param verbose
+     * @return 
+     */
+   public boolean export_triplet(int nodeid1, int nodeid2,int nodeid3, String filename, ArrayList<graph> others, String sep) {
+        
+//       0: Type A: i -3- n -3- j 
+//       1: Type B: i -3- n -3- j ,i-1-j
+//       2: Type C: i -3- n -3- j ,i-2-j
+//       3: Type D: i -3- n -3- j ,i-4-j 
+       util u=new util();
+       u.open(filename);
+       try {
+       int n_nodeid1=this.old_id_to_id.get(nodeid1);
+       int n_nodeid2=this.old_id_to_id.get(nodeid2);
+       int n_nodeid3=this.old_id_to_id.get(nodeid3);
+       ArrayList<Integer> ss=new ArrayList<Integer>();
+      
+       ss.add(nodeid1);
+       ss.add(nodeid2);
+       ss.add(nodeid3);
+       
+      //u.println("#node1\tcentral_node\tnode3\ttype"); 
+   
+      for (int as:ss) {
+      int s=this.old_id_to_id.get(as);    
+      
+      
+       ArrayList<Integer> neighbor=new ArrayList<Integer>();
+       for (int i:get_adj(s).keySet()) neighbor.add(i);
+       int len=neighbor.size();       
+       for (int i=0; i<len;i++)
+           for (int j=0;j<len;j++) {
+               int i_id=neighbor.get(i);
+               int j_id=neighbor.get(j);               
+               if (i>j&&!get_adj(neighbor.get(i)).containsKey(neighbor.get(j))&&tvalid(s,i_id, j_id, ss)) {                   
+                   u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type A");
+                   if (others.get(1).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type B");
+                   } //--Edge of type 1
+                   if (others.get(2).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))||others.get(2).edge_exists(id_to_old_id.get(j_id), id_to_old_id.get(i_id))) {                  
+                       u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type C");
+                   } //--Edge of type 2
+                   if (others.get(4).edge_exists(id_to_old_id.get(i_id), id_to_old_id.get(j_id))) {
+                      u.println(id_to_old_id.get(i_id)+sep+id_to_old_id.get(s)+sep+id_to_old_id.get(j_id)+sep+"Type D");                 
+                   } //--Edge of type 4                  
+               } 
+           }   
+      }
+         u.close();
+       //--ouput 
+       } catch(Exception e) {
+        u.close();
+       }
+       return true;
+   } 
+   
+   /**
+    * 
+    * @param old_s
+    * @param new_i
+    * @param new_j
+    * @param nodeids (old id of node)
+    * @return 
+    */
+  public boolean tvalid(int new_s, int new_i, int new_j, ArrayList<Integer> nodeids) {
+      ArrayList<Integer> aa=new ArrayList<Integer>();
+      aa.add(id_to_old_id.get(new_s));
+      aa.add(id_to_old_id.get(new_i));
+      aa.add(id_to_old_id.get(new_j));      
+      List<Integer> tmp=util.intersection(aa, nodeids);    
+      return (tmp.size()==3);      
+  }
    
    /**
     * This find if a particular edge exists from the old_id
@@ -580,8 +786,19 @@ public class graph {
         int new_id_src=this.old_id_to_id.get(old_id_src);
         int new_id_dest=this.old_id_to_id.get(old_id_dest);
         return get_adj(new_id_src).containsKey(new_id_dest);
-     
-      
+   }
+   
+   public boolean triangle_exists(int old_i, int old_j, int old_k) {
+       int n1=old_id_to_id.get(old_i);
+       int n2=old_id_to_id.get(old_j);
+       int n3=old_id_to_id.get(old_k);
+       if (!this.is_valid3(n1, n2, n3)) return false;
+       ArrayList<Integer> n=get_neighbors(n1);
+       if (!(n.contains(n2)&&n.contains(n3))) {
+           return false;
+       }
+       if (!get_neighbors(n2).contains(n3)) return false;
+       return true;
    }
    
    
@@ -1041,7 +1258,10 @@ public class graph {
    * @return 
    */
   float max_theorical_triangles() {
+      if (this.total_nodes==0) return 0;
+      try {
       return binomialCoefficient(this.total_nodes,3);
+      } catch(Exception e){return 0;}
   }
   
   /**

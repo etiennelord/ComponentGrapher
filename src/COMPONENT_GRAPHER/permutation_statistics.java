@@ -20,6 +20,7 @@
 package COMPONENT_GRAPHER;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import config.Config;
 import java.io.File;
@@ -68,6 +69,11 @@ public class permutation_statistics implements Serializable {
     long starttime=0;
     long endtime=0;
     
+    //--New 24 february 2017
+   public ArrayList<stats> Network_stats=new ArrayList<stats> (); //--Networks    
+   public ArrayList<ArrayList<stats>> Node_stats=new ArrayList<ArrayList<stats>> (); //Nodes
+    
+    
     String[] pvalue_fields={
                     "total_CC_type1",
                     "total_edges_type1",
@@ -115,25 +121,56 @@ public class permutation_statistics implements Serializable {
                "time"
       };
     
-    
-      String[] pvalue_fields_description={
-             "Number of connected component (type 1 network)",
-             "Number of edges (type 3 network)",
-             "Number of global articulation points (complete network) ", 
-             "Number of local articulation points (complete network)",
-             "Number of global articulation points (type 3 network) ",
-             "Number of Non-transitive triplet (type 3 network)", 
-             "Ratio of cycle of length 4 (type 3 network)",              
-          
+        String[] node_pvalue_fields={
+                    "in_degree2",
+                    "out_degree2",
+                    "in_degree3",
+                    "in_degree1",                   
+                    "closeness_type3",
+                    "betweenness_type3",
+                    "percent_triplet_type3",     
+                    "triplet_typeA",
+                    "triplet_typeB",
+                    "triplet_typeC",
+                    "triplet_typeD",
+                    "triplet_typeE", //--Triangle       
       };
     
+//      String[] node_pvalue_fields={
+//                    "total_CC_type1",
+//                    "total_edges_type3",
+//                    "total_ap_global_complete", 
+//                    "total_ap_local_complete",
+//                    "total_ap_local_type3",
+//                     "triplet_type3",                     
+//                     "density", //--New
+//                     "nb_triplet_D",
+//                     "triangle"
+//      };
+    
+//      String[] node_pvalue_fields_description={
+//             "Number of connected component (type 1 network)",
+//             "Number of edges (type 3 network)",
+//             "Number of global articulation points (complete network) ", 
+//             "Number of local articulation points (complete network)",
+//             "Number of global articulation points (type 3 network) ",
+//             "Number of Non-transitive triplet (type 3 network)", 
+//             "Density (type 3 network)",
+//             "Triplet-D (type 3 network)",
+//             "Triangle  (type 3 network)",
+//          
+//      };
+      
+      
+    
    //--Helper class 
-   public class stats {
+   public class stats implements Serializable {
        public String title="";
        public String node_field="";
        public Double reference_value=0.0;       
-       public DescriptiveStatistics stat=new DescriptiveStatistics();    
+       //public DescriptiveStatistics stat=new DescriptiveStatistics();    
        public Double[] pvalue;  
+       public ArrayList<Double> values=new ArrayList<Double>();
        
        public stats() {}       
    }
@@ -182,11 +219,12 @@ public class permutation_statistics implements Serializable {
         
     }
     
-    public void saveReplicateStatistics(int replicate, summary_statistics su) {
+    public String saveReplicateStatistics(int replicate, summary_statistics su) {
          String directory=reference_data.result_directory;
          if (!util.DirExists(directory)) util.CreateDir(directory);       
          String serial=directory+File.separator+"randomization_"+replicate+".json";
          su.serialize(serial);
+         return serial;
          //reference.data.save_CurrentPhylipMatrix(directory+File.separator+"replicate_"+replicate+".phy", true);
     }
     
@@ -245,8 +283,11 @@ public class permutation_statistics implements Serializable {
          
         if (data.replicate<=1) return;
         //--Pre=allocate
+        //--Here, we need to only create the statistics but not save them to and array...
+        
         final ArrayList<Callable<summary_statistics>>partitions=new ArrayList(data.replicate);
-         for (int i=0; i<replicate;i++) {
+         
+        for (int i=0; i<replicate;i++) {
              partitions.add(new Callable<summary_statistics>(){
              public summary_statistics call() {
                   final int this_replicate= current_replicate++;
@@ -287,6 +328,149 @@ public class permutation_statistics implements Serializable {
             }
             
          } catch(Exception e){
+             logfile.println("Job was stopped. "+e.getMessage());
+            // e.printStackTrace();
+         }
+         endtime=System.currentTimeMillis();
+         System.out.println("Total time: "+util.msToString(endtime-starttime));
+         System.out.println("===============================================================================");
+         logfile.println("Total time: "+util.msToString(endtime-starttime));
+        //--done in the mainframe now...data=reference_data;
+       logfile.close();
+       } catch(Exception pp) {
+           
+       }
+       
+}
+    
+     /**
+     * Main function to call to generate statistics
+     */
+    public void generate_statistics_new() {
+       try {
+         String directory=reference_data.result_directory;
+         if (!util.DirExists(directory)) {
+             util.CreateDir(directory);
+         }   else {
+             //--Remove current randomization
+             for (String f:util.listDirWithFullPath(directory)) {
+                 if (f.endsWith(".json")) {
+                     try {
+                         File rf=new File(f);
+                         rf.delete();
+                     } catch(Exception e3) {
+                         
+                     }
+                     
+                 }
+             }
+         }
+        //--Log to the current directory
+           final util logfile=new util();
+            String log_filename=directory+File.separator+"log.txt";
+           logfile.open(log_filename);
+           this.replicate=reference_data.replicate;
+       // System.out.println(reference_data.result_directory);
+       reference_data.compute();
+       data.MessageOption(data.get_info());
+       //data.MessageOption("Saving to "+reference_data.result_directory);
+       //data.MessageOption("* This is set in the Run analysis menu.");
+       logfile.println(data.get_info());
+       starttime=System.currentTimeMillis();
+       reference=new summary_statistics(reference_data);
+        data.MessageResult("Calculating reference");
+        data.MessageResult("Analyzing :"+reference.data.filename);        
+        //System.out.println("Calculating reference\n");
+        logfile.println("Analyzing :"+reference.data.filename);
+        reference.calculate_network_statistics();
+        //--Save the reference and statistics to results directory
+        saveReferenceStatistics();
+        data.MessageResult(reference.get_info().toString()); 
+        logfile.println(reference.get_info().toString());
+         try {
+                        if (callback!=null) callback.call();
+                         
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                   }
+        //--Test if we are doing replicate here
+                
+        long estimate=System.currentTimeMillis()-starttime;
+        System.out.println("Total time for reference :"+util.msToString(estimate));
+        logfile.println("Total time for reference :"+util.msToString(estimate));
+        data.MessageResult("Total time for reference :"+util.msToString(estimate)+"\n"); 
+        if (data.replicate<=1 || !data.permutation) {
+            //--No replicate
+            logfile.close();
+            return;
+        }
+        //System.out.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));      
+        //logfile.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));
+         //long timerunning=System.currentTimeMillis();  //--We will estimate 1%
+         //int one_percent=(int)Math.ceil(replicate/100)+1; //Not used
+         
+         ExecutorService pool=Executors.newFixedThreadPool(datasets.maxthreads);
+         
+        if (data.replicate<=1) return;
+        //--Pre=allocate
+        //--Here, we need to only create the statistics but not save them to and array...
+        
+        final ArrayList<Callable<String>>partitions=new ArrayList(data.replicate);
+         
+        for (int i=0; i<replicate;i++) {
+             partitions.add(new Callable<String>(){
+             public String call() {
+                  final int this_replicate= current_replicate++;
+                  final long this_start_time=System.currentTimeMillis();
+                   System.out.println(this_replicate+" / "+replicate +" [started]");
+                   data.MessageResult(this_replicate+" / "+replicate +" [started]\n");
+                   logfile.println(this_replicate+" / "+replicate +" [started]");
+
+                   datasets t=new datasets(data);
+                   if (data.permutation) {
+                       t.generate_permutation();
+                   } else if (data.bootstrap) {
+                        t.generate_bootstrap();
+                   }
+                   t.compute();
+                   summary_statistics s=new summary_statistics(t);            
+                    s.calculate_network_statistics();           
+                    String fileresult=saveReplicateStatistics(this_replicate, s);
+                    String dt=this_replicate+" / "+replicate +" [done in "+util.msToString(System.currentTimeMillis()-this_start_time)+"]";
+                    System.out.println(dt);
+                    logfile.println(dt);
+                    data.MessageResult(dt+"\n");
+                    try {
+                        if (callback!=null) callback.call();
+                         
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                   }
+                    //--Return the filename 
+                    return fileresult;
+             }             
+            });
+         }
+         try {
+            final List<Future<String>> results_partition=pool.invokeAll(partitions);
+           
+            ArrayList<String> rfile=new ArrayList<String>();
+            for (final Future<String> file:results_partition) {
+                rfile.add(file.get());
+            }
+            pool.shutdown();
+            //--Done
+             System.out.println(rfile.size());
+            this.calculate_from_directory_new(directory);
+            //--Here, we load and call the new statistic function
+//            for (final Future<String> file:results_partition) {
+//                replicates.add(r.get());
+//            }
+            //--Load the results 
+           
+            
+         } catch(Exception e){
+             //e.printStackTrace();
              logfile.println("Job was stopped. "+e.getMessage());
             // e.printStackTrace();
          }
@@ -656,19 +840,21 @@ public class permutation_statistics implements Serializable {
            
            stats s=datas.get(row);
            double pvalue=Math.min(s.pvalue[0],s.pvalue[1]);    
+           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));  
+           
            switch (col) {
                case 0: return s.title;
                case 1: return s.reference_value;
                case 2: return pvalue; //P1
                case 3: return getSignificance(pvalue,s.reference_value);                
-               case 4: return s.stat.getN()-1; //--Remove ref
-               case 5: return s.stat.getMean();
-               case 6: return s.stat.getStandardDeviation();
-               case 7: return s.stat.getMin();
-               case 8: return s.stat.getMax();
-               case 9: return s.stat.getPercentile(5);
-               case 10: return s.stat.getPercentile(95);
-               default: return s.stat.getElement(col-11);
+               case 4: return stat.getN()-1; //--Remove ref
+               case 5: return stat.getMean();
+               case 6: return stat.getStandardDeviation();
+               case 7: return stat.getMin();
+               case 8: return stat.getMax();
+               case 9: return stat.getPercentile(5);
+               case 10: return stat.getPercentile(95);
+               default: return stat.getElement(col-11);
            }
            
 //return data.char_matrix[col][row];
@@ -1025,11 +1211,10 @@ public class permutation_statistics implements Serializable {
       
     }
      
-     public String getSignificance(double value, double reference) {
-         if (data.replicate<100) return " ";
+     public String getSignificance(double value, double reference) {         
          if (reference==0) return " "; 
          if (value<=0.0) return " ";
-         if (value>0.05) return " ";
+         if (value>0.05) return " ";        
          if (value<data.p001) return "***";
          if (value<data.p01) return "**";
          if (value<data.p05) return "*";
@@ -1047,7 +1232,7 @@ public class permutation_statistics implements Serializable {
            //String node_field=pvalue_fields[p];           
             stats s=new stats();
              s.node_field=complete_pv[p];
-             //s.title=pvalue_fields_description[p]; //--TO replace
+             //s.title=node_pvalue_fields_description[p]; //--TO replace
             s.title=complete_pv[p];
             double[] values=new double[replicates.size()];
             double refvalue=0.0f;            
@@ -1087,7 +1272,7 @@ public class permutation_statistics implements Serializable {
                 case "time":    values[i]=replicates.get(i).total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
-            s.stat.addValue(values[i]);
+            s.values.add(values[i]);
         }            
          //s.stat.addValue(refvalue);  //--Add reference to get the real Min and max      
         s.reference_value=refvalue;
@@ -1099,6 +1284,62 @@ public class permutation_statistics implements Serializable {
        return datas;
    }
     
+     
+      /**
+      * This calculate global statistic (general)
+      * New feb2017 (low memory)
+      * @return 
+      */
+     public void calculate_network_stat_wo_array(summary_statistics su) {
+       
+       for (int p=0; p<complete_pv.length;p++) {
+           //String node_field=pvalue_fields[p];           
+            stats s=Network_stats.get(p);
+            double values=0;
+            double refvalue=0;            
+            switch (s.node_field) {
+                case "total_CC_type1": values=su.total_CC_type1; refvalue=reference.total_CC_type1; break;
+               case "total_CC_type3": values=su.total_CC_type3; refvalue=reference.total_CC_type3; break;
+                case "total_CC_complete": values=su.total_CC_complete; refvalue=reference.total_CC_complete;break;
+                case "total_ap_global_complete": values=su.total_ap_global_complete; refvalue=reference.total_ap_global_complete; break;
+                case "total_edges_type1": values=su.total_edges_type1; refvalue=reference.total_edges_type1;break;
+                case "total_edges_type2": values=su.total_edges_type2; refvalue=reference.total_edges_type2;break;
+                case "total_edges_type3": values=su.total_edges_type3; refvalue=reference.total_edges_type3;break;
+                case "total_edges_type4": values=su.total_edges_type4; refvalue=reference.total_edges_type4;break;
+                case "total_edges_complete": values=su.total_edges_complete; refvalue=reference.total_edges_complete;break;
+                case "total_ap_global_type3": values=su.total_ap_global_type3; refvalue=reference.total_ap_global_type3;break;
+                case "total_ap_local_type3": values=su.total_ap_local_type3; refvalue=reference.total_ap_local_type3;break;
+                case "total_ap_local_complete": values=su.total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
+                case "triplet_type3": values=su.triplet_type3; refvalue=reference.triplet_type3;break;
+                case "convergence": values=su.convergence; refvalue=reference.convergence;break;
+                case "per_loop4_type3": values=su.per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                case "per_len4_type3": values=su.per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "density_complete": values=su.density[0]; refvalue=reference.density[0];break;      
+                case "density_type1": values=su.density[1]; refvalue=reference.density[1];break;      
+                case "density_type2": values=su.density[2]; refvalue=reference.density[2];break;      
+                case "density_type3": values=su.density[3]; refvalue=reference.density[3];break;      
+                case "density_type4": values=su.density[4]; refvalue=reference.density[4];break;      
+                case "triangle_type3":    values=su.total_triangle; refvalue=reference.total_triangle;break;      
+                case "prop_triangle":    values=su.prop_triangle; refvalue=reference.prop_triangle;break;  
+                case "triplet_typeA": values=su.total_triplet_typeA; refvalue=reference.total_triplet_typeA;break;     
+                case "triplet_typeB": values=su.total_triplet_typeB; refvalue=reference.total_triplet_typeB;break;     
+                case "triplet_typeC": values=su.total_triplet_typeC; refvalue=reference.total_triplet_typeC;break;     
+                case "triplet_typeD": values=su.total_triplet_typeD; refvalue=reference.total_triplet_typeD;break;         
+                case "triplet_typeE": values=su.total_triplet_typeE; refvalue=reference.total_triplet_typeE;break;  
+                case "time":    values=su.total_time; refvalue=reference.total_time;break;  
+            }            
+           //System.out.println(node_field+" "+i+" :"+values[i]);
+            s.values.add(values);
+            s.reference_value=refvalue;
+            //--Recalculate the stats
+            s.pvalue=getPvalue1(util.getDoubles(s.values), refvalue);
+        }            
+         //s.stat.addValue(refvalue);  //--Add reference to get the real Min and max      
+       
+        
+      
+   }
+     
     public ArrayList<stats> calculate_stats_for_node(int nodeid) {
         ArrayList<stats> stats=new ArrayList<stats>();
        String[] pv2={
@@ -1141,7 +1382,11 @@ public class permutation_statistics implements Serializable {
                         //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
                     }    
                     //--Save statistics
-                    node_stat.stat=new DescriptiveStatistics(values);                        
+                    node_stat.values=new ArrayList<Double>();
+                    for (double d:values) node_stat.values.add(d);
+                    //de_stat.values.addAll(values);
+                            //new DescriptiveStatistics(values);  
+                    
                     Double[] st;
                      if (identifier.equals("closeness_type3")) {
                          st=permutation_statistics.getPvalue_bilateral(values, ref,reference.data.nodes.size());
@@ -1162,7 +1407,57 @@ public class permutation_statistics implements Serializable {
          } //--End identifier
          return stats;
    }  
+    
+    public void calculate_stats_for_node_ws_array(summary_statistics su) {
+       // ArrayList<stats> stats=new ArrayList<stats>();
      
+       
+       for (int selected_index=0; selected_index<node_pvalue_fields.length;selected_index++) {
+              String identifier=node_pvalue_fields[selected_index];
+              for (int nodeid=0; nodeid<reference.data.nodes.size();nodeid++) {
+                  node n=reference.data.nodes.get(nodeid);
+                  stats node_stat=Node_stats.get(nodeid).get(selected_index);
+                  
+                  double ref=0;
+                  if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+                            ref=reference.data.nodes.get(nodeid).stats.getInt(identifier);
+                        } else {             
+                           ref=reference.data.nodes.get(nodeid).stats.getFloat(identifier);
+                         }
+                         node_stat.reference_value=ref;
+                         //--This is the array of values for this node
+                         node nr=su.data.nodes.get(nodeid);
+                         double values=nr.stats.getFloat(identifier);
+                         if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+                                values=nr.stats.getInt(identifier);
+                         }         
+                         node_stat.values.add(values);
+                         
+                        Double[] st;
+                         if (identifier.equals("closeness_type3")) {
+                             st=permutation_statistics.getPvalue_bilateral( util.getDoubles(node_stat.values), ref,reference.data.nodes.size());
+                         } else {
+                             st=permutation_statistics.getPvalue_unilateral(util.getDoubles(node_stat.values), ref,reference.data.nodes.size());
+                         }                    
+                         double pvalue=0.0;
+                         if (!identifier.equals("closeness_type3")) {
+                            pvalue=st[0];
+                         } else {
+                            pvalue=st[1]; //P-value (P1)                          
+                         }
+                         node_stat.pvalue=new Double[1];
+                         node_stat.pvalue[0]=pvalue;
+                         //--Replace the statistics in the array
+                         ArrayList<stats> tmp=Node_stats.get(nodeid);
+                         tmp.set(selected_index, node_stat);
+                         Node_stats.set(nodeid, tmp);
+                         //stats.add(node_stat);
+                     //--Add information for                    
+              } //--End node
+         } //--End identifier
+   }  
+     
+    
     /**
      * Save analysis the current analysis to a file (json)
      * @param filename
@@ -1182,8 +1477,11 @@ public class permutation_statistics implements Serializable {
 //            u.open(data.serial_file);
 //            u.println(gson.toJson(this));
 //            u.close();
-               Gson gson = new Gson();
-             JsonWriter js = new JsonWriter(new FileWriter(new File(filename)));
+             GsonBuilder gsonBuilder = new GsonBuilder();
+          
+             gsonBuilder.serializeSpecialFloatingPointValues();  
+            Gson gson = gsonBuilder.setPrettyPrinting().create(); 
+              JsonWriter js = new JsonWriter(new FileWriter(new File(filename)));
             gson.toJson(this,permutation_statistics.class,js);
             js.flush();
             js.close();
@@ -1196,7 +1494,7 @@ public class permutation_statistics implements Serializable {
     
      public boolean loadAnalysis(String datafile) {
          if (util.DirExists(datafile)) {
-             
+             this.calculate_from_directory_new(datafile);
          } else {
              
              try {
@@ -1218,8 +1516,16 @@ public class permutation_statistics implements Serializable {
            this.current_replicate=su.current_replicate;           
            this.starttime=su.starttime;
            this.endtime=su.endtime;
+           this.Network_stats=su.Network_stats;
+           this.Node_stats=su.Node_stats;
+            //--We nned to get the statistics if       
+                
                  
-             } catch(Exception e) {
+//           if (this.replicates.size()>0) {
+//               System.out.println("here2");
+//               calculate_from_deserialization();
+//           }
+          } catch(Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -1230,10 +1536,16 @@ public class permutation_statistics implements Serializable {
     
     public void serialize() {
         try {
-             Gson gson = new Gson();
+             //Gson gson = new Gson();
             util u=new util();
             //System.out.println("ser:"+data.serial_file);
+            
+            GsonBuilder gsonBuilder = new GsonBuilder();          
+            gsonBuilder.serializeSpecialFloatingPointValues();  
+            Gson gson = gsonBuilder.setPrettyPrinting().create(); 
             JsonWriter js = new JsonWriter(new FileWriter(new File(data.serial_file+".json")));
+            //gson.toJson(this,summary_statistics.class,js);
+            
             gson.toJson(this,permutation_statistics.class,js);
             js.flush();
             js.close();
@@ -1269,7 +1581,7 @@ public class permutation_statistics implements Serializable {
     }
     
     public void calculate_from_directory(String directory) {
-        System.out.println(directory);
+        System.out.println("Analysing "+directory);
         //--1. list all the files
         ArrayList<String> files=util.listDirWithFullPath(directory);
         
@@ -1290,6 +1602,7 @@ public class permutation_statistics implements Serializable {
                 //System.out.println(data);
             }
             
+            //--Here we need to add the statistics 
             if (f.contains("randomization_")&&f.endsWith(".json")) {
                 
                 summary_statistics su=new summary_statistics();
@@ -1302,6 +1615,17 @@ public class permutation_statistics implements Serializable {
                 }
             }
         }
+        //--Recalculate 
+        System.out.println("==============================================================================="); 
+        System.out.println("Reanalyze");
+        reference.calculate_network_statistics();     
+        for (int i=0; i<replicates.size();i++) {
+            System.out.println(i);
+            summary_statistics su2=replicates.get(i);
+            su2.calculate_some_network_statistics();
+            replicates.set(i, su2);
+        }
+        
         
         System.out.println(replicates.size());                
         this.replicate=replicates.size();
@@ -1309,7 +1633,8 @@ public class permutation_statistics implements Serializable {
         //--3. Calculate statistics
             
             System.out.println("==============================================================================="); 
-             this.output_stats(this.calculate_stat());         
+            
+            this.output_stats(this.calculate_stat());         
              System.out.println("==============================================================================="); 
              System.out.println("Nodes statistics");
              System.out.println(reference_data.nodes);
@@ -1323,9 +1648,149 @@ public class permutation_statistics implements Serializable {
     }
     
     
+    /**
+     * Calculate stats without file caching...
+     * @param directory 
+     */
+     public void calculate_from_deserialization() {
+      
+        Network_stats.clear();
+        Node_stats.clear();
+        for (int p=0; p<complete_pv.length;p++) {
+           //String node_field=pvalue_fields[p];           
+            stats s=new stats();            
+            s.node_field=complete_pv[p];             
+            s.title=complete_pv[p];            
+            Network_stats.add(s);
+        }
+        
+        //--1.1 
+        replicates.clear();        
+      
+         //-- Initialize node statistics array
+         for (int i=0; i<data.nodes.size();i++) {
+            ArrayList<stats> tmp=new ArrayList<stats>();
+             for (int p=0; p<node_pvalue_fields.length;p++) {
+                 stats s=new stats();
+                 s.node_field=node_pvalue_fields[p];
+                 s.title=node_pvalue_fields[p];
+                 tmp.add(s);                 
+            }
+             Node_stats.add(tmp);
+        }
+         //--Process randomization
+        for (summary_statistics su:this.replicates) {
+          this.calculate_network_stat_wo_array(su);
+          this.calculate_stats_for_node_ws_array(su);      
+        }  
+        
+    }
+     
+      /**
+     * Calculate stats without file caching...
+     * @param directory 
+     */
+     public void calculate_from_directory_new(String directory) {
+        System.out.println("Analysing "+directory);
+        //--1. list all the files
+        ArrayList<String> files=util.listDirWithFullPath(directory);
+        //       ArrayList<stats> datas=new ArrayList<stats>();       
+//       if (!data.permutation) return datas; //--No pvalue_fieldsplicate
+//--Create the statistis 
+        Network_stats.clear();
+        Node_stats.clear();
+        for (int p=0; p<complete_pv.length;p++) {
+           //String node_field=pvalue_fields[p];           
+            stats s=new stats();            
+            s.node_field=complete_pv[p];             
+            s.title=complete_pv[p];            
+            Network_stats.add(s);
+        }
+        
+        //--1.1 
+        replicates.clear();        
+        replicates=new ArrayList(files.size());
+        System.out.println("Loading analysis.");
+        Collections.sort(files);
+        //--get reference first
+         for (String f:files) {
+            if (f.contains("reference.json")) {
+                reference=new summary_statistics();
+                if (reference.deserialize(f)) {
+                     this.data=reference.data;
+                     this.reference_data=reference.data;     
+                      this.data.p05=0.05/(double)data.nodes.size(); //--critical values
+                     this.data.p01=0.01/(double)data.nodes.size();
+                     this.data.p001=0.001/(double)data.nodes.size();      
+                }     
+            }
+         }
+         //-- Initialize node statistics array
+         for (int i=0; i<data.nodes.size();i++) {
+            ArrayList<stats> tmp=new ArrayList<stats>();
+             for (int p=0; p<node_pvalue_fields.length;p++) {
+                 stats s=new stats();
+                 s.node_field=node_pvalue_fields[p];
+                 s.title=node_pvalue_fields[p];
+                 tmp.add(s);                 
+            }
+             Node_stats.add(tmp);
+        }
+         //--Process randomization
+        for (String f:files) {
+            
+            //--Here we need to add the statistics 
+            if (f.contains("randomization_")&&f.endsWith(".json")) {
+                
+                summary_statistics su=new summary_statistics();
+                boolean b=su.deserialize(f);                
+                if (b) {
+                    //--Add to network statistics
+                    this.calculate_network_stat_wo_array(su);
+                    this.calculate_stats_for_node_ws_array(su);
+                    //--Add to nodes statistisc
+                   // replicates.add(su);
+                    System.out.println(f);
+                } else {
+                    System.out.println("Unable to load "+f);
+                }
+            }
+        }
+        //--Recalculate 
+//        System.out.println("==============================================================================="); 
+//        System.out.println("Reanalyze");
+//        reference.calculate_network_statistics();     
+//        for (int i=0; i<replicates.size();i++) {
+//            System.out.println(i);
+//            summary_statistics su2=replicates.get(i);
+//            su2.calculate_some_network_statistics();
+//            replicates.set(i, su2);
+//        }
+        
+        
+        System.out.println("Total randomization:" + replicates.size());                
+        this.replicate=replicates.size();
+        if (replicates.size()>0) data.permutation=true;
+        //--3. Calculate statistics
+             System.out.println("Network statistics");
+             System.out.println("==============================================================================="); 
+             this.output_stats(this.Network_stats);     
+             System.out.println("==============================================================================="); 
+             System.out.println("Nodes statistics");
+             //System.out.println(reference_data.nodes);
+             for (int i=0; i<this.reference_data.nodes.size();i++) {
+                  System.out.println(i+"\t"+reference_data.nodes.get(i).complete_name+"\t");
+                 this.output_stats(this.Node_stats.get(i));
+             }
+             
+        //--4. Enjoy
+        
+    }
+    
     public void output_stats(ArrayList<stats> st) {
         for (stats s:st) {
-            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+s.stat.getN()+"\t"+s.stat.getMean()+"\t"+s.stat.getStandardDeviation()+"\t"+s.stat.getMin()+"\t"+s.stat.getMax()+"\t"+s.stat.getPercentile(5)+"\t"+s.stat.getPercentile(95));
+            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));
+            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+stat.getN()+"\t"+stat.getMean()+"\t"+stat.getStandardDeviation()+"\t"+stat.getMin()+"\t"+stat.getMax()+"\t"+stat.getPercentile(5)+"\t"+stat.getPercentile(95));
         }
     }
      

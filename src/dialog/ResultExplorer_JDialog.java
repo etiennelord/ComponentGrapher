@@ -7,6 +7,7 @@ package dialog;
 
 import COMPONENT_GRAPHER.datasets;
 import static COMPONENT_GRAPHER.datasets.config;
+import COMPONENT_GRAPHER.graph;
 import COMPONENT_GRAPHER.node;
 import COMPONENT_GRAPHER.summary_statistics;
 import config.Config;
@@ -42,6 +43,7 @@ import matrixrenderer.VerticalTableHeaderCellRendered;
 public class ResultExplorer_JDialog extends javax.swing.JDialog {
 
       summary_statistics data=null;                             // The dataset
+      ArrayList<graph> networks=new ArrayList<graph>();
     Frame frame;         
     ExcelResultAdapter StateMatrixTable;
      TableRowSorter sorter;

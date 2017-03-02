@@ -126,7 +126,7 @@ public class main {
                
          if (!input_directory.isEmpty()) {
              permutation_statistics stat=new permutation_statistics();
-             stat.calculate_from_directory(input_directory);
+             stat.calculate_from_directory_new(input_directory);
              System.exit(0);
          }
         
@@ -182,10 +182,10 @@ public class main {
              System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
              System.out.println("===============================================================================");
              permutation_statistics stat=new permutation_statistics(d);             
-             stat.generate_statistics();                                   
+             stat.generate_statistics_new();                                   
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
-             System.out.println("==============================================================================="); 
+             System.out.println("===============================================================================");              
              stat.output_stats(stat.calculate_stat());                      
              System.out.println("==============================================================================="); 
              System.out.println("Nodes statistics");

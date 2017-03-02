@@ -96,6 +96,20 @@ public class util {
          return 4; 
      }
     
+     
+     public static double[] getDoubles(ArrayList<Double> data) {
+        double[] tmp=new double[data.size()];    
+        for (int i=0; i<data.size();i++) tmp[i]=data.get(i); 
+        return tmp;
+     }
+
+     
+     public static String removeBadGraphmlChar(String s) {
+         s=s.replaceAll("'", "").replaceAll("<", "").replaceAll(">", "").replaceAll(":","");
+         s=s.replaceAll("/", "");
+         return s.trim();
+     }
+     
      public static ArrayList<ArrayList<Integer>> get_partition(String data) { 	
 	// Note, the first element is element 1 in the returned
 	// data.
@@ -207,6 +221,32 @@ public class util {
 	}       
 	return tmp;
  }
+    
+     public static ArrayList<Integer> k2combination(int[] data) {	 	
+        ArrayList<Integer> combinations=new ArrayList<Integer>();      
+ 	for (int i=0; i< data.length;i++) {
+ 		for (int j=i+1;j<data.length;j++) { 			 				
+ 				combinations.add(data[i]);
+ 				combinations.add(data[j]); 		
+ 		}
+ 	}
+ 	return combinations;
+ }
+  
+    public static ArrayList<Integer> k3combination(int[] data) {	 	
+        ArrayList<Integer> combinations=new ArrayList<Integer>();      
+ 	for (int i=0; i< data.length;i++) {
+ 		for (int j=i+1;j<data.length;j++) { 
+                    for (int k=j+1;k<data.length;k++) {
+ 				combinations.add(data[i]);
+ 				combinations.add(data[j]); 		
+                                combinations.add(data[k]); 		
+                    }
+ 		}
+ 	}
+ 	return combinations;
+    }
+     
      /**
       *  Return the binomial of number n by k
       * @param n

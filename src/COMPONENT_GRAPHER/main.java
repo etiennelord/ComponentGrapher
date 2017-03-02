@@ -151,7 +151,7 @@ public class main {
           
          
              permutation_statistics stat=new permutation_statistics(d);
-             stat.generate_statistics();
+             stat.generate_statistics_new();
          
       System.out.println("normal exit.");
       System.exit(0);

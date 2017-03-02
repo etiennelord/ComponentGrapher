@@ -29,40 +29,72 @@ public class Summary_TableModel extends AbstractTableModel {
 
    //--Column descriptions
    String[] qualifier_strings={
-   "<html>&nbsp;&nbsp;<b>Nodeid</b></html>",
-   "<html>&nbsp;&nbsp;<b>Name</b></html>",
-   "<html>&nbsp;&nbsp;<b>Found in type 1 network</b></html>",
-    "<html>&nbsp;&nbsp;<b>Found in type 2 network</b></html>",
-    "<html>&nbsp;&nbsp;<b>Found in type 3 network</b></html>",
-    "<html>&nbsp;&nbsp;<b>Found in complete network</b></html>",
-    "<html>&nbsp;&nbsp;<b>Column</b></html>",
-    "<html>&nbsp;&nbsp;<b>Encoded state</b></html>",
-    "<html>&nbsp;&nbsp;<b>Character</b></html>",
-    "<html>&nbsp;&nbsp;<b>Connected component type1</b></html>",    
-    "<html>&nbsp;&nbsp;<b>Connected component complete</b></html>",    
-    "<html>&nbsp;&nbsp;<b>Local articulation point type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>Global articulation point type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>Local articulation point complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>Global articulation point complete</b></html>",
-    "<html>&nbsp;&nbsp;<b>Indegree type2</b></html>",
-    "<html>&nbsp;&nbsp;<b>Normalized indegree type2</b></html>",
-    "<html>&nbsp;&nbsp;<b>Betweenness type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>Closeness type3</b></html>",
-    "<html>&nbsp;&nbsp;<b>Numbers of triplet type3 </b></html>",
-    "<html>&nbsp;&nbsp;<b>Percent(%) triplet type3</b></html>",   
-    "<html>&nbsp;&nbsp;<b>Convergence</b></html>",    
-    "<html>&nbsp;&nbsp;<b>Number of taxa</b></html>",    
-    "<html>&nbsp;&nbsp;<b>Taxa</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet type A</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet type B</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet type C</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triplet type D</b></html>",
-     "<html>&nbsp;&nbsp;<b>Triangles</b></html>",
-     "test"
+   "  Nodeid",
+   "  Name",
+   "  Found in type 1 network",
+   "  Found in type 2 network",
+   "  Found in type 3 network",
+   "  Found in complete network",
+   "  Column",
+   "  Encoded state",
+   "  Character",
+   "  Connected component type1",    
+   "  Connected component complete",    
+   "  Local articulation point type3",
+   "  Global articulation point type3",
+   "  Local articulation point complete",
+   "  Global articulation point complete",
+   "  Indegree type2",
+   "  Normalized indegree type2",
+   "  Betweenness type3",
+   "  Closeness type3",
+   "  Numbers of triplet type3 ",
+   "  Percent(%) triplet type3",   
+   "  Convergence",    
+   "  Triplet type A",
+   "  Triplet type B",
+   "  Triplet type C",
+   "  Triplet type D",
+   "  Triangles", 
+   "  Number of taxa",    
+   "  Taxa",
+      
            
    };
     
-
+// String[] qualifier_strings={
+//   "<html>&nbsp;&nbsp;<b>Nodeid</b></html>",
+//   "<html>&nbsp;&nbsp;<b>Name</b></html>",
+//   "<html>&nbsp;&nbsp;<b>Found in type 1 network</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Found in type 2 network</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Found in type 3 network</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Found in complete network</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Column</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Encoded state</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Character</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Connected component type1</b></html>",    
+//    "<html>&nbsp;&nbsp;<b>Connected component complete</b></html>",    
+//    "<html>&nbsp;&nbsp;<b>Local articulation point type3</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Global articulation point type3</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Local articulation point complete</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Global articulation point complete</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Indegree type2</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Normalized indegree type2</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Betweenness type3</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Closeness type3</b></html>",
+//    "<html>&nbsp;&nbsp;<b>Numbers of triplet type3 </b></html>",
+//    "<html>&nbsp;&nbsp;<b>Percent(%) triplet type3</b></html>",   
+//    "<html>&nbsp;&nbsp;<b>Convergence</b></html>",    
+//    "<html>&nbsp;&nbsp;<b>Number of taxa</b></html>",    
+//    "<html>&nbsp;&nbsp;<b>Taxa</b></html>",
+//     "<html>&nbsp;&nbsp;<b>Triplet type A</b></html>",
+//     "<html>&nbsp;&nbsp;<b>Triplet type B</b></html>",
+//     "<html>&nbsp;&nbsp;<b>Triplet type C</b></html>",
+//     "<html>&nbsp;&nbsp;<b>Triplet type D</b></html>",
+//     "<html>&nbsp;&nbsp;<b>Triangles</b></html>",     
+//           
+//   };
+    
      @Override
     public Object getValueAt(int row, int col) {
         // We need to get to the displayed sequence     
@@ -91,14 +123,14 @@ public class Summary_TableModel extends AbstractTableModel {
                case 19: return (n.stats.isSet("triplet_type3")?n.stats.getFloat("triplet_type3"):0.0f);
                case 20: return n.stats.getFloat("percent_triplet_type3");                        
                case 21: return (n.stats.isSet("convergence")?n.stats.getFloat("convergence"):0.0f);
-               case 22: return (n.stats.isSet("taxa_count")?n.stats.getInt("taxa_count"):0);
-               case 23: return n.stats.get("taxa");      
-               case 24: return (n.stats.isSet("triplet_typeA")?n.stats.get("triplet_typeA"):"-");      
-               case 25: return (n.stats.isSet("triplet_typeB")?n.stats.get("triplet_typeB"):"-");
-               case 26: return (n.stats.isSet("triplet_typeC")?n.stats.get("triplet_typeC"):"-");    
-               case 27: return (n.stats.isSet("triplet_typeD")?n.stats.get("triplet_typeD"):"-");          
-               case 28: return (n.stats.isSet("triplet_typeE")?n.stats.get("triplet_typeE"):"-");    
-               case 29: return "";
+               case 22: return (n.stats.isSet("triplet_typeA")?n.stats.get("triplet_typeA"):"-");      
+               case 23: return (n.stats.isSet("triplet_typeB")?n.stats.get("triplet_typeB"):"-");
+               case 24: return (n.stats.isSet("triplet_typeC")?n.stats.get("triplet_typeC"):"-");    
+               case 25: return (n.stats.isSet("triplet_typeD")?n.stats.get("triplet_typeD"):"-");          
+               case 26: return (n.stats.isSet("triplet_typeE")?n.stats.get("triplet_typeE"):"-");   
+               case 27: return (n.stats.isSet("taxa_count")?n.stats.getInt("taxa_count"):0);
+               case 28: return n.stats.get("taxa");      
+                             
            }
            
 //return data.char_matrix[col][row];
@@ -154,7 +186,8 @@ public class Summary_TableModel extends AbstractTableModel {
              case 19:return Float.class;   
              case 20:return Float.class;   
              case 21:return Integer.class;   
-             case 22:return Float.class;   
+             case 22:return String.class;   
+             case 27:return Float.class;   
              default: return String.class;
          }
     }

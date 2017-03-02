@@ -19,6 +19,7 @@
 
 import COMPONENT_GRAPHER.node;
 import COMPONENT_GRAPHER.permutation_statistics;
+import COMPONENT_GRAPHER.permutation_statistics.stats;
 import config.Config;
 import config.util;
 import dialog.AboutJDialog;
@@ -36,23 +37,28 @@ import dialog.MatrixOptions;
 import dialog.NodeView_JDialog;
 import dialog.PolymorphicChar_EditorJDialog;
 import dialog.RenameTaxaJDialog;
+import dialog.ResultExplorer2_JDialog;
 import dialog.ResultExplorer_JDialog;
 import dialog.TaxaEditorJDialog;
 
 import matrixrenderer.VerticalTableHeaderCellRendered;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
+import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -67,6 +73,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -265,6 +272,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                 if (!lse.getValueIsAdjusting()) {
                    setInfoSummaryNode();
                    nodeinfo_jButton.setEnabled(true);
+                   Find_jButton.setEnabled(true);
+                   Find_jComboBox.setEnabled(true);
                 }
             }
 
@@ -383,6 +392,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Summary_jTable = new javax.swing.JTable();
         nodeinfo_jButton = new javax.swing.JButton();
         nodeinfo_jlabel = new javax.swing.JLabel();
+        Find_jComboBox = new javax.swing.JComboBox();
+        Find_jButton = new javax.swing.JButton();
         Statistiques_jPanel = new javax.swing.JPanel();
         Statistics_jPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -678,6 +689,17 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
         nodeinfo_jlabel.setText(" ");
 
+        Find_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Edge", "Triplet", "Triangle" }));
+        Find_jComboBox.setEnabled(false);
+
+        Find_jButton.setText("Find");
+        Find_jButton.setEnabled(false);
+        Find_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Find_jButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout Summary_jPanelLayout = new javax.swing.GroupLayout(Summary_jPanel);
         Summary_jPanel.setLayout(Summary_jPanelLayout);
         Summary_jPanelLayout.setHorizontalGroup(
@@ -687,7 +709,11 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
             .addGroup(Summary_jPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(nodeinfo_jButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Find_jButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Find_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(60, 60, 60)
                 .addComponent(nodeinfo_jlabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -700,7 +726,9 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Summary_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nodeinfo_jButton)
-                    .addComponent(nodeinfo_jlabel))
+                    .addComponent(nodeinfo_jlabel)
+                    .addComponent(Find_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Find_jButton))
                 .addContainerGap())
         );
 
@@ -1375,14 +1403,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
     private void nodeinfo_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nodeinfo_jButtonActionPerformed
        int nodeid=this.Summary_jTable.getSelectedRow();
+       nodeid=Summary_jTable.convertRowIndexToModel(nodeid);
         NodeView_JDialog nv=new NodeView_JDialog(that, summary, nodeid);
     }//GEN-LAST:event_nodeinfo_jButtonActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
        CreateNewMatrix_JDialog nm=new CreateNewMatrix_JDialog(that);
-        System.out.println(nm.data);
-       if (nm.data!=null) {
-           System.out.println("here");
+        //System.out.println(nm.data);
+       if (nm.data!=null) {           
            this.data=nm.data;          
            updateMatrixTableInfo();          
            jTabbedPane.setEnabledAt(1, false);
@@ -1397,8 +1425,20 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        ResultExplorer_JDialog re=new ResultExplorer_JDialog(that,summary);
+       
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void Find_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Find_jButtonActionPerformed
+       int[] nodei=this.Summary_jTable.getSelectedRows();
+       int[] nodeids=new int[nodei.length];
+       int j=0;
+       for (int i:nodei) {
+           i=this.Summary_jTable.convertRowIndexToModel(i);
+           nodeids[j++]=i;
+       }
+       int mode=this.Find_jComboBox.getSelectedIndex();
+       ResultExplorer2_JDialog re=new ResultExplorer2_JDialog(that,summary,mode, nodeids);
+    }//GEN-LAST:event_Find_jButtonActionPerformed
 
     
     
@@ -1452,6 +1492,15 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                                    Message("Loaded analysis "+filename,""); 
                                    data=statistics.reference_data;
                                     SaveAnalysis_jMenuItem.setEnabled(true);
+                                     //--Update the combobox        
+                                    NodeStatistics_jComboBox.removeAllItems();
+                                    try {
+                                        ArrayList<stats> tmp=statistics.Node_stats.get(0);
+                                        for (stats s:tmp) {
+                                            NodeStatistics_jComboBox.addItem(s.title);
+                                        }
+                                    } catch(Exception e) {}
+          
                                     updateMatrixTableInfo();
                                     updateResultsTable();
                             } else {                                
@@ -1509,9 +1558,15 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                         tm.setData(data);        
                         tm.fireTableDataChanged();
                         tm.fireTableStructureChanged();
-                        //We need to update the model also
+                        //We need to update the model also                        
                          this.Matrix_jTable.setModel(tm);
-                          TableCellRenderer headerRenderer = new VerticalTableHeaderCellRendered(true);  
+                         //JTableHeader header = Matrix_jTable.getTableHeader();
+    //Dimension d = header.getPreferredSize();
+    //d.height = HEADER_HEIGHT;
+    //header.setPreferredSize(d); //addColumn case test
+                         //header.setPreferredSize(new Dimension(100, 200)); 
+                         TableCellRenderer headerRenderer = new VerticalTableHeaderCellRendered(true);  
+                          
                          Enumeration columns=this.Matrix_jTable.getColumnModel().getColumns();
                             while (columns.hasMoreElements()) {            
                                ((TableColumn)columns.nextElement()).setHeaderRenderer(headerRenderer);
@@ -1581,8 +1636,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
               this.Summary_jTable.getColumnModel().getColumn(i).setMinWidth(50);              
           }
           this.Summary_jTable.getColumnModel().getColumn(1).setPreferredWidth(200); //--Node name          
-          this.Summary_jTable.getColumnModel().getColumn(22).setMinWidth(50); //--Taxa_count             
-          this.Summary_jTable.getColumnModel().getColumn(23).setMinWidth(1000); //--Taxa           
+          this.Summary_jTable.getColumnModel().getColumn(27).setMinWidth(50); //--Taxa_count             
+          this.Summary_jTable.getColumnModel().getColumn(28).setMinWidth(1000); //--Taxa           
           
           DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
           leftRenderer.setHorizontalAlignment(JLabel.LEFT);  
@@ -1597,8 +1652,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
           this.Summary_jTable.getColumnModel().getColumn(9).setCellRenderer(centerRenderer);
           
           this.Summary_jTable.getColumnModel().getColumn(10).setCellRenderer(centerRenderer);
-          this.Summary_jTable.getColumnModel().getColumn(22).setCellRenderer(centerRenderer);
-          this.Summary_jTable.getColumnModel().getColumn(23).setCellRenderer(leftRenderer);
+          this.Summary_jTable.getColumnModel().getColumn(27).setCellRenderer(centerRenderer);
+          this.Summary_jTable.getColumnModel().getColumn(28).setCellRenderer(leftRenderer);
           
           this.Statistics_jTable.getColumnModel().getColumn(0).setPreferredWidth(300); //Statistiscs   
           this.Statistics_jTable.getColumnModel().getColumn(1).setPreferredWidth(50); //--Node id     
@@ -1606,18 +1661,20 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 //          for (int i=10; i<statistics.replicates.size()+10;i++) {              
 //              this.Statistics_jTable.getColumnModel().getColumn(i).setPreferredWidth(100);
 //              this.Statistics_jTable.getColumnModel().getColumn(i).setMinWidth(100);
-//          } //--Randomization
+//          } //--Randomization          
+          TableCellRenderer headerRenderer2 = new VerticalTableHeaderCellRendered(false, new Dimension(100,75));  
           columns=this.Statistics_jTable.getColumnModel().getColumns();
             while (columns.hasMoreElements()) {            
                TableColumn tmp=((TableColumn)columns.nextElement());
-               tmp.setHeaderRenderer(headerRenderer);
+               tmp.setHeaderRenderer(headerRenderer2);
             }
             columns=this.Nodes_jTable.getColumnModel().getColumns();
             while (columns.hasMoreElements()) {            
                TableColumn tmp=((TableColumn)columns.nextElement());
-               tmp.setHeaderRenderer(headerRenderer);
+               tmp.setHeaderRenderer(headerRenderer2);
             }
           
+            
 //          for (int i=5; i<statistics.replicates.size()+10;i++) {              
 //              this.Nodes_jTable.getColumnModel().getColumn(i).setPreferredWidth(100);
 //              this.Nodes_jTable.getColumnModel().getColumn(i).setMinWidth(100);
@@ -1653,6 +1710,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
             Message("Analyzing "+data.filename+"","");
             config.remove("analysis"); //--Analysis is not saved
             config.Save();
+            //--Test if the results directory exists
+             String directory=data.result_directory;
+            if (util.DirExists(directory)) {
+               int value =JOptionPane.showConfirmDialog(this,"Results directory "+directory+" exists.\nCurrent results will be deleted.\nDo you want to continue?","Results directory exists",JOptionPane.YES_NO_OPTION);
+                if (value == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }            
             Message("Log is found in: "+data.result_directory,"Analyzing "+data.filename);
             Stop_jButton.setEnabled(true);
              progress.setValue(0);
@@ -1713,7 +1778,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                         return true;
                      }
                     });
-                statistics.generate_statistics();                
+                statistics.generate_statistics_new();                
                 setProgress(100);
                 return true;
             }
@@ -1756,6 +1821,9 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                                 int prog=(Integer)evt.getNewValue();                                
                                 progress.setValue(prog);
                                 percent_jLabel.setText(prog+" %");
+                                //--Correct for +1
+                                if (statistics.current_replicate>statistics.replicate)statistics.current_replicate=statistics.replicate;
+                                
                                 progress.setToolTipText("Currently launched tasks ["+statistics.current_replicate+" / "+statistics.replicate+"]");
                             }
                             else if (o.isDone()&&!o.isCancelled()) {
@@ -1820,6 +1888,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private javax.swing.JMenuItem ExportMatrix_jMenuItem;
     private javax.swing.JTextField Filename_jTextField;
     private javax.swing.JComboBox Filter_ComboBox;
+    private javax.swing.JButton Find_jButton;
+    private javax.swing.JComboBox Find_jComboBox;
     private javax.swing.JMenuItem Help_Jitem;
     private javax.swing.JMenuItem ImportMatrix_jMenuItem;
     private javax.swing.JMenuItem ImportState_jMenuItem;

@@ -2,6 +2,7 @@ package matrixrenderer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -38,12 +39,24 @@ public class VerticalTableHeaderCellRendered extends DefaultTableCellRenderer  {
     setVerticalAlignment(CENTER);
     setVerticalTextPosition(TOP);    
     setFont( getFont().deriveFont(Font.BOLD) );
-    
+    this.setPreferredSize(new Dimension(100,200));
     setUI(new VerticalLabelUI(clockwise));   
+    
     //setBorder(BorderFactory.createCompoundBorder(this.getBorder(),BorderFactory.createBevelBorder(1)));
   }
   
-
+public VerticalTableHeaderCellRendered(boolean clockwise, Dimension d) {
+      
+      setHorizontalAlignment(LEFT);
+    setHorizontalTextPosition(CENTER);
+    setVerticalAlignment(CENTER);
+    setVerticalTextPosition(TOP);    
+    setFont( getFont().deriveFont(Font.BOLD) );
+    this.setPreferredSize(d);
+    setUI(new VerticalLabelUI(clockwise));   
+    
+    //setBorder(BorderFactory.createCompoundBorder(this.getBorder(),BorderFactory.createBevelBorder(1)));
+  }
 
     @Override
     public Component getTableCellRendererComponent(JTable table,Object value, boolean isSelected, boolean hasFocus,int row, int column) {       

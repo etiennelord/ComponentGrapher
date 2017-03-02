@@ -202,7 +202,14 @@ public class properties extends Properties implements Comparable {
         try {
         Object o=super.get(key);
         if (o.getClass()==String.class) {
-            return ""+Integer.valueOf((String)o);
+            //--Test if we have .
+            String s=(String)o;
+            if (s.contains(".")) {
+                Float f=Float.valueOf(s);
+                DecimalFormat myFormatter = new DecimalFormat("####");
+               return myFormatter.format(f);
+            } else 
+            return ""+Integer.valueOf(s);
         }
         if (o.getClass()==Integer.class) {
             return ""+(Integer)o;
@@ -214,7 +221,7 @@ public class properties extends Properties implements Comparable {
         }
         
         } catch(Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return super.get(key).toString();
       }

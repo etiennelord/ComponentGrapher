@@ -21,8 +21,10 @@ package matrixrenderer;
 
 
 import COMPONENT_GRAPHER.permutation_statistics.stats;
+import COMPONENT_GRAPHER.util;
 import javax.swing.table.*;
 import java.util.ArrayList;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 public class PermutationStatistics_TableModel extends AbstractTableModel {
    public COMPONENT_GRAPHER.permutation_statistics data;
@@ -34,7 +36,8 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
    
    public void setData(COMPONENT_GRAPHER.permutation_statistics data) {
        this.data=data;
-       this.datas=data.calculate_stat();
+       this.datas=data.Network_stats;
+//this.datas=data.calculate_stat();
         //--Calculate the different statistics
    }
    
@@ -44,20 +47,22 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
         try {
            
            stats s=datas.get(row);
-           double pvalue=Math.min(s.pvalue[0],s.pvalue[1]);
+           double pvalue=s.pvalue[0];
+           //--Bad but needed for serialization
+           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));  
            switch (col) {
                case 0: return s.title;
                case 1: return s.reference_value;
                case 2: return (s.reference_value==0?"NA":pvalue); //P1
-               case 3: return getSignificance(pvalue, s.reference_value);
+               case 3: return data.getSignificance(pvalue, s.reference_value);
                //case 3: return ; //P2
-               case 4: return s.stat.getMean();
-               case 5: return s.stat.getStandardDeviation();
-               case 6: return s.stat.getMin();
-               case 7: return s.stat.getMax();
-               case 8: return s.stat.getPercentile(5);
-               case 9: return s.stat.getPercentile(95);    
-               default: return s.stat.getElement(col-10);
+               case 4: return stat.getMean();
+               case 5: return stat.getStandardDeviation();
+               case 6: return stat.getMin();
+               case 7: return stat.getMax();
+               case 8: return stat.getPercentile(5);
+               case 9: return stat.getPercentile(95);    
+               default: return stat.getElement(col-10);
            }
            
 //return data.char_matrix[col][row];
@@ -70,16 +75,16 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
     
     
 
-      public String getSignificance(double value, double reference) {          
-          if (data.replicate<100) return " ";
-          if (reference==0) return " ";
-          if (value<=0.0) return " ";
-         if (value>0.05) return " ";
-         if (value<data.reference_data.p001) return "***";
-         if (value<data.reference_data.p01) return "**";
-         if (value<data.reference_data.p05) return "*";
-         return "";
-     }
+//      public String getSignificance(double value, double reference) {          
+//          if (data.replicate<100) return " ";
+//          if (reference==0) return " ";
+//          if (value<=0.0) return " ";
+//         if (value>0.05) return " ";
+//         if (value<data.reference_data.p001) return "***";
+//         if (value<data.reference_data.p01) return "**";
+//         if (value<data.reference_data.p05) return "*";
+//         return "";
+//     }
     
    @Override
     public int getRowCount() {              

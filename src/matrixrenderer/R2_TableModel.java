@@ -74,7 +74,7 @@ public class R2_TableModel extends AbstractTableModel {
 //           String node_field=pvalue_fields[p];
 //           
 //           s.node_field=pvalue_fields[p];
-//           s.title=pvalue_fields_description[p];
+//           s.title=node_pvalue_fields_description[p];
 //            double[] values=new double[data.replicates.size()];
 //            double refvalue=0.0f;            
 //         

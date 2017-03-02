@@ -514,6 +514,11 @@ public class summary_statistics implements Serializable {
                       ArrayList<Integer>cc=CC.get(i);
                       for (int w:cc) CC_info_type3[g.id_to_old_id.get(w)]=i+1;
                   }
+                  total_triangle=g.get_nb_triangles_fast();
+                      total_possible_triangle=g.max_theorical_triangles(); 
+                      if (total_possible_triangle!=0) {
+                        prop_triangle=total_triangle/total_possible_triangle;
+                      }
                   for (int i=0; i<g.total_nodes;i++) {
                       betweenness[g.id_to_old_id.get(i)]=tmp3[i];
                       closeness[g.id_to_old_id.get(i)]=tmp_c3[i];
@@ -529,11 +534,7 @@ public class summary_statistics implements Serializable {
                       Triplets[5][g.id_to_old_id.get(i)]=tri[2]; //--Type C
                       Triplets[6][g.id_to_old_id.get(i)]=tri[3]; //--Type D
                       Triplets[7][g.id_to_old_id.get(i)]=tri[4]; //--Type E
-                      total_triangle=g.get_nb_triangles_fast();
-                      total_possible_triangle=g.max_theorical_triangles(); 
-                      if (total_possible_triangle!=0) {
-                        prop_triangle=total_triangle/total_possible_triangle;
-                      }
+                      
                       
                       total_triplet_type3+= Triplets[3][g.id_to_old_id.get(i)];
                       total_triplet_typeA+=Triplets[3][g.id_to_old_id.get(i)];
@@ -610,6 +611,28 @@ public class summary_statistics implements Serializable {
         
         return st;
      }     
+     
+       public StringBuilder calculate_some_network_statistics() {
+      StringBuilder st=new StringBuilder();
+      //init();
+      data.MessageResult("===============================================================================\n");
+      data.MessageResult("Computing statistics:\n");
+      data.MessageResult("===============================================================================\n");
+      long timerunning=System.currentTimeMillis();                
+      ArrayList<graph> networks=getGraphs();
+     //    System.out.println(networks);
+         
+              //--Complete (type 3) 
+                  graph g=networks.get(3);
+                  total_triangle=g.get_nb_triangles_fast();
+                      total_possible_triangle=g.max_theorical_triangles(); 
+                      if (total_possible_triangle!=0) {
+                        prop_triangle=total_triangle/total_possible_triangle;
+                      }
+        
+        return st;
+     }     
+     
      
      /**
       * This calculate individual node statistics 

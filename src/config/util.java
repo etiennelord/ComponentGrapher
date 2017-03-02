@@ -493,7 +493,7 @@ public class util {
         public static String loadString(String filename) {
             String stri="";
             for (String s:loadStrings(filename)) {
-                stri+=s;
+                stri+=s+"\n";
             }
             return stri;
         }
