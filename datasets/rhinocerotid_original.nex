@@ -1,0 +1,719 @@
+#NEXUS
+
+[ File saved by NDE version 0.5.0, Wed Jan 04 14:23:32 2017 ]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX=21;
+	TAXLABELS
+		Tapte
+		Hyrex
+		Trios
+		Ronfi
+		Aegbe
+		Histu
+		Cersi
+		Dicbi
+		Dicsu
+		Brabr
+		Coean
+		Dicar
+		Menar
+		Telfo
+		Diaag
+		Larsa
+		Hopte
+		Acein
+		Diale
+		Rhiun
+		Rhiso
+		;
+ENDBLOCK;
+
+BEGIN CHARACTERS;
+	DIMENSIONS NCHAR=112;
+	FORMAT DATATYPE=STANDARD MISSING=? GAP=- SYMBOLS="0123";
+	CHARLABELS
+		[1] 'Skull: dorsal profile'
+		[2] 'External auditory pseudo-meatus'
+		[3] 'Skull: back of tooth row'
+		[4] Skull
+		[5] 'Nasal bones: rostral end'
+		[6] 'Nasal bones'
+		[7] 'Nasal bones'
+		[8] 'Nasal bones (median region): aspect'
+		[9] 'Nasal bones (lateral edges): aspect'
+		[10] 'Frontal bone: aspect'
+		[11] Orbit
+		[12] 'Zygomatic/frontal widths'
+		[13] 'Occipital crest'
+		[14] 'Maxilla: processus zygomaticus maxillari'
+		[15] 'Squamosal: processus zygomaticus'
+		[16] 'Occipital: foramen magnum'
+		[17] Symphysis
+		[18] 'Foramen mentale'
+		[19] 'Corpus mandibulae: base'
+		[20] Ramus
+		[21] 'Compared length of P-p/M-m'
+		[22] 'Cheek teeth'
+		[23] 'Cheek teeth: aspect of the enamel'
+		[24] 'Cheek teeth: crown'
+		[25] C
+		[26] i1
+		[27] i2
+		[28] i3
+		[29] c
+		[30] 'Upper premolars: labial cingulum'
+		[31] 'P2-4: crochet'
+		[32] 'P2-4: metaloph'
+		[33] 'P2-4: lingual cingulum'
+		[34] 'P2-4: postfossette'
+		[35] 'P2-3: antecrochet'
+		[36] 'P1 (in adults)'
+		[37] 'P3-4: crochet and crista'
+		[38] 'P3-4: constriction of the protocone'
+		[39] 'P3-4: protocone and hypocone'
+		[40] 'P3-4: metaloph'
+		[41] 'P3: protoloph'
+		[42] 'P3: crista'
+		[43] 'P4: antecrochet'
+		[44] 'P4: metacone and hypocone'
+		[45] 'Upper molars: labial cingulum'
+		[46] 'Upper molars: antecrochet'
+		[47] 'Upper molars: crochet'
+		[48] 'Upper molars: crista'
+		[49] 'Upper molars: crochet and crista'
+		[50] 'Upper molars: lingual cingulum'
+		[51] 'M1-2: protocone'
+		[52] 'M1-2: paracone'
+		[53] 'M1-2: metacone'
+		[54] 'M1-2: metastyle'
+		[55] 'M1-2: metaloph'
+		[56] 'M1-2: posterior part of the ectoloph'
+		[57] 'M1: metaloph'
+		[58] 'M2: metaloph'
+		[59] 'M2: mesostyle'
+		[60] 'M3: ectoloph and metaloph'
+		[61] 'M3: shape'
+		[62] 'M3: protocone'
+		[63] 'M3: protoloph'
+		[64] 'p2-3: vertical external rugosity'
+		[65] 'Lower cheek teeth: trigonid'
+		[66] 'Lower cheek teeth: trigonid'
+		[67] 'Lower cheek teeth: metaconid'
+		[68] 'Lower cheek teeth: entoconid'
+		[69] 'Lower premolars: lingual opening of the posterior valley (lingual view)'
+		[70] 'Lower premolars: lingual cingulum'
+		[71] 'Lower premolars: labial cingulum'
+		[72] p2
+		[73] 'p2: paralophid'
+		[74] 'p2: paraconid'
+		[75] 'p2: posterior valley'
+		[76] 'Lower molars: lingual cingulum'
+		[77] 'Lower molars: labial cingulum'
+		[78] 'Lower molars: hypolophid'
+		[79] 'Scaphoid: postero-proximal facet with semilunate'
+		[80] 'Scaphoid: magnum-facet in lateral view'
+		[81] 'Scaphoid: comparison between anterior and posterior heights'
+		[82] 'Semilunate: ulna-facet'
+		[83] 'Semilunate: distal border of the anterior side'
+		[84] 'Semilunate: anterior side'
+		[85] 'Pyramidal: distal facet for semilunate'
+		[86] 'Pyramidal: distal side'
+		[87] 'Trapezoid: proximal border in anterior view'
+		[88] 'Magnum: posterior tuberosity'
+		[89] 'McII: posterior McIII-facet'
+		[90] 'McII: trapezium-facet'
+		[91] 'McIII: magnum-facet in anterior view'
+		[92] McV
+		[93] 'Metacarpals: insertion of the m. extensor carpalis'
+		[94] 'Femur: trochanter major'
+		[95] 'Femur: third trochanter'
+		[96] 'Femur: proximal border of the patellar trochlea'
+		[97] 'Tibia: antero-distal surface'
+		[98] 'Tibia-fibula'
+		[99] 'Tibia: posterior apophysis'
+		[100] 'Tibia: posterior apophysis'
+		[101] 'Astragalus: TD/H'
+		[102] 'Astragalus: APD/H'
+		[103] 'Astragalus: orientation of the fibula-facet'
+		[104] 'Astragalus: fibula-facet'
+		[105] 'Astragalus: collum tali'
+		[106] 'Astragalus: posterior tip of the cuboid-facet'
+		[107] 'Astragalus: orientation trochlea/distal articulation'
+		[108] 'Astragalus: calcaneus-facet 1'
+		[109] 'Calcaneus: tuber calcanei'
+		[110] Limbs
+		[111] 'Metapodials: intermediate reliefs'
+		[112] 'Lateral metapodials: insertion of the m. interossei'
+		;
+	STATELABELS
+		1
+			'flat '
+			'concave '
+			'very concave ',
+		2
+			'open '
+			'partly closed '
+			'totally closed (circular) ',
+		3
+			'in the posterior half '
+			'in the anterior half ',
+		4
+			'dolichocephalic '
+			'brachycephalic ',
+		5
+			'narrow '
+			'broad '
+			' very broad',
+		6
+			'totally separated '
+			'anteriorly separated '
+			'fused ',
+		7
+			'long '
+			'short ',
+		8
+			smooth
+			rugose,
+		9
+			straight
+			'dilated (rugose ridges or bumps)',
+		10
+			smooth
+			'rugose ',
+		11
+			'not laterally projected'
+			'laterally projected',
+		12
+			'less than 1.5 '
+			'equals or more than 1.5 ',
+		13
+			'concave '
+			'straight '
+			'forked ',
+		14
+			'progressive '
+			'brutal ',
+		15
+			flat
+			'with a longitudinal groove',
+		16
+			'circular '
+			'subtriangular ',
+		17
+			'spindly '
+			'massive '
+			'very massive ',
+		18
+			'in front of p2 '
+			'at level of p2-4 ',
+		19
+			'straight '
+			'convex '
+			'very convex ',
+		20
+			'inclined forward and upward'
+			vertical
+			'inclined backward and upward',
+		21
+			'(100 * LP3-4/LM1-3)>50'
+			'42<(100 * LP3-4/LM1-3)<50 ',
+		22
+			'without cement'
+			'with cement ',
+		23
+			'wrinkled '
+			'wrinkled and corrugated '
+			'corrugated and arborescent',
+		24
+			'low '
+			'high ',
+		25
+			'present '
+			'absent ',
+		26
+			'present '
+			'absent ',
+		27
+			'present '
+			'absent ',
+		28
+			'present '
+			'absent ',
+		29
+			'present '
+			'absent ',
+		30
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		31
+			'always absent '
+			'usually absent '
+			'usually present '
+			'always present ',
+		32
+			unconstricted
+			constricted,
+		33
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		34
+			' narrow'
+			'wide ',
+		35
+			'always absent '
+			'usually absent '
+			'usually present ',
+		36
+			'always persistent '
+			'usually persistent '
+			'always persistent ',
+		37
+			'always separate'
+			'usually separate'
+			'usually joined'
+			'always joined',
+		38
+			'always absent '
+			' usually absent'
+			'usually present '
+			'always present ',
+		39
+			'fused '
+			'lingual bridge '
+			'separated '
+			'lingual wall ',
+		40
+			'transverse '
+			'hypocone posterior to metacone ',
+		41
+			'joined to the ectoloph '
+			'interrupted ',
+		42
+			'always absent '
+			'usually absent '
+			'usually present '
+			'always present ',
+		43
+			'always absent '
+			'usually absent '
+			'usually present '
+			'always present ',
+		44
+			' joined'
+			'separated ',
+		45
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		46
+			'always absent '
+			'usually absent '
+			'usually present '
+			'always present ',
+		47
+			'always absent  '
+			'usually absent '
+			'usually present '
+			'always present ',
+		48
+			'always absent '
+			'usually absent '
+			'usually present '
+			'always present ',
+		49
+			'always separate'
+			'usually separate'
+			'usually joined',
+		50
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		51
+			'always unconstricted'
+			'usually unconstricted'
+			'usually constricted'
+			'always constricted',
+		52
+			folded
+			unfolded,
+		53
+			folded
+			unfolded,
+		54
+			'short '
+			'long ',
+		55
+			'long '
+			'short ',
+		56
+			'straight '
+			'concave ',
+		57
+			unconstricted
+			'constricted (hypocone isolated)',
+		58
+			unconstricted
+			'constricted (hypocone isolated)',
+		59
+			'absent '
+			'present ',
+		60
+			'distinct '
+			'fused (ectometaloph) ',
+		61
+			'quadrangular '
+			'triangular ',
+		62
+			'always unconstricted'
+			'usually unconstricted'
+			'always constricted',
+		63
+			'transverse '
+			'mesiodistally elongated ',
+		64
+			'absent '
+			'present ',
+		65
+			'sharp-edged'
+			'rounded ',
+		66
+			'obtuse or right dihedron '
+			'acute dihedron ',
+		67
+			'joined to the metalophid '
+			'constricted ',
+		68
+			'joined to the hypolophid '
+			'constricted ',
+		69
+			'U-shaped '
+			'V-shaped ',
+		70
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		71
+			'present '
+			absent,
+		72
+			'always present '
+			'usually present ',
+		73
+			'isolated, spur-like '
+			'curved, without constriction ',
+		74
+			'developed '
+			'reduced ',
+		75
+			'lingually open '
+			'usually closed ',
+		76
+			'always present '
+			' usually present'
+			'usually absent '
+			'always absent ',
+		77
+			'always present '
+			'usually present '
+			'usually absent '
+			'always absent ',
+		78
+			'transverse '
+			'oblique '
+			'almost mesiodistally oriented ',
+		79
+			'present '
+			'usually absent or restricted to a contact '
+			'absent or restricted to a contact ',
+		80
+			'concave '
+			'straight ',
+		81
+			'equal '
+			'antH<postH ',
+		82
+			'absent '
+			'present ',
+		83
+			'sharp '
+			'rounded ',
+		84
+			'keeled '
+			'smooth ',
+		85
+			'symmetric '
+			'asymmetric '
+			'L-shaped ',
+		86
+			'triangular '
+			'elliptic ',
+		87
+			'symmetric '
+			'asymmetric ',
+		88
+			'short '
+			'long ',
+		89
+			'always absent '
+			'usually absent '
+			'always present ',
+		90
+			'present '
+			'absent ',
+		91
+			'visible '
+			'invisible ',
+		92
+			'functional '
+			'vestigial ',
+		93
+			'flat '
+			'salient ',
+		94
+			'high '
+			'low ',
+		95
+			'developed '
+			'very developed ',
+		96
+			'curved '
+			'straight ',
+		97
+			'proximo-distally concave (grooved)'
+			flat,
+		98
+			'independent '
+			'in contact or fused ',
+		99
+			'high '
+			'low ',
+		100
+			'sharp '
+			'rounded ',
+		101
+			'TD/H<1 '
+			'1<TD/H<1.2 '
+			'1.2<TD/H ',
+		102
+			'APD/H<0.65 '
+			'0.65<APD/H ',
+		103
+			'subvertical '
+			'oblique ',
+		104
+			'flat '
+			'concave ',
+		105
+			'high '
+			'low ',
+		106
+			salient
+			flat,
+		107
+			'very oblique '
+			'same axis ',
+		108
+			'very concave '
+			'nearly flat ',
+		109
+			'massive '
+			'slender ',
+		110
+			'slender '
+			'robust (brachypod) ',
+		111
+			'high and acute '
+			'low and smooth ',
+		112
+			'long '
+			'short ',
+	;
+	MATRIX
+		Tapte      0000001000 0100000001 0000000000 0000000020 0000000000 0000000000 0000110000 0010000001 0010000000 0000001000 0010000000 00
+		Hyrex      0100000000 0000000100 1000000001 0000000000 1001200000 0000100000 0000001003 0010030020 0111000000 0000000000 0000000000 00
+		Trios      0101000000 0000010101 1000000110 0000000020 0001010000 0000000000 0000001002 1000032000 0000100100 0000010000 1100000010 01
+		Ronfi      1001000000 0011000001 0000100110 0001000030 0210122200 0011000000 0000000001 0000100000 0000000101 0000000000 1100000010 01
+		Aegbe      1000000100 0001110011 1111100112 2011000331 1000133002 3001111111 0200011013 1010032121 1100101110 0101001111 2111101010 10
+		Histu      1000100100 1000110111 1121101113 2021000330 0201233103 3001101111 0200111113 1010032121 1110101100 010?001111 1110101010 10
+		Cersi      2000210101 1020000122 0121111113 2021022111 0200313222 1111100011 0010001113 1010132200 1111211121 0101101011 1111101000 11
+		Dicbi      2011210101 1010000122 0121111113 2000012121 0100312110 1011100001 1000100013 1010032100 0111211121 0101101011 1110101000 10
+		Dicsu      1000110101 0000011001 0110100113 2021011121 0100302102 3011100011 1000100003 1000032100 0100201021 0101010000 1100101000 00
+		Brabr      1101000000 0000012101 0010100111 2000000021 0010123000 2001001101 1000101003 0001030101 1000100000 1110111001 2110011101 01
+		Coean      1210220101 0010010022 1121111113 2021113021 0310313322 1011001111 0100001113 1010132100 1111210100 0101111101 1110011000 10
+		Dicar      1200000010 0000000001 0110100113 0000000011 0000031000 2000010101 0000010000 0000000120 0010100100 0100000001 1000010000 01
+		Menar      1000000010 0000110111 0110010113 2000002321 0300033200 3001110011 0000010010 0010002120 0010100120 0101000001 1110101010 00
+		Telfo      1101010000 0100011010 1011100113 2020020111 0030333003 3111101111 1200101010 1100032100 0010000120 1111011001 2110011101 01
+		Diaag      1201010000 0100111001 0010100112 1000000021 0000233000 3011001001 0200000000 0000000120 1011000020 1010011001 1010011100 01
+		Larsa      2101210100 0000101101 0010100113 2020000011 0100303002 2011001001 1200111013 1010032000 1101100120 0110100101 1100000000 10
+		Hopte      1101000000 0010001101 0000100111 2100011121 0220223101 3011001101 1201100012 0000020100 1011001021 0010101000 1100100010 00
+		Acein      0001001000 0101011101 0000100112 1100011221 0111223111 3011011101 1200100012 0000012120 1001001121 0010000100 1110000000 00
+		Diale      1101000000 0111111100 0100100112 2000200321 0130033100 3001010001 0200100000 0000000110 1001001010 1110000011 1000101010 01
+		Rhiun      2201110100 0100011100 0111100113 2030010221 0200302223 2011000001 1000101013 1010032100 1000001120 0110101011 1100101000 10
+		Rhiso      1201110100 0110011100 0110100113 2010011121 0100302002 0011100001 1000100013 1010122100 0000001120 0110101011 2100101000 10
+	;
+ENDBLOCK;
+
+BEGIN ASSUMPTIONS;
+	OPTIONS DEFTYPE=UNORD POLYTCOUNT=MINSTEPS;
+	TYPESET * default = ORD: 1 - 2 5 - 7 13 17 19 - 21 23 30 - 31 33 - 35 37 - 38 40 42 - 51 61 - 62 70 - 71 75 - 79 85 89 - 90 101;
+ENDBLOCK;
+
+BEGIN NOTES;
+	[Taxon comments]
+	TEXT TAXON=1 TEXT='Tapirus terrestris';
+	TEXT TAXON=2 TEXT='Hyrachyus eximius';
+	TEXT TAXON=3 TEXT='Trigonias osborni';
+	TEXT TAXON=4 TEXT='Ronzotherium filholi, scored after Osborn (1900), Brunet (1979) and pers. obs. by POA (IPHEP, Poitiers, Villebramar; MHN Montauban; Phosphorites of Quercy)';
+	TEXT TAXON=5 TEXT='Hispanotherium beonense';
+	TEXT TAXON=6 TEXT='Hispanotherium tungurense';
+	TEXT TAXON=7 TEXT='Ceratotherium simum';
+	TEXT TAXON=8 TEXT='Diceros bicornis';
+	TEXT TAXON=9 TEXT='Dicerorhinus sumatrensis';
+	TEXT TAXON=10 TEXT='Brachypotherium brachypus';
+	TEXT TAXON=11 TEXT='Coelodonta antiquitatis';
+	TEXT TAXON=12 TEXT='Diceratherium armatum';
+	TEXT TAXON=13 TEXT='Menoceras arikarense';
+	TEXT TAXON=14 TEXT='Teleoceras fossiger';
+	TEXT TAXON=15 TEXT='Diaceratherium aginense';
+	TEXT TAXON=16 TEXT='Lartetotherium sansaniense';
+	TEXT TAXON=17 TEXT='Hoploaceratherium tetradactylum';
+	TEXT TAXON=18 TEXT='Aceratherium incisivum';
+	TEXT TAXON=19 TEXT='Diaceratherium lemanenseScored after Boada Sana (2007, 2008) & Boada Sana et al. (2008)';
+	TEXT TAXON=20 TEXT='Rhinoceros unicornis';
+	TEXT TAXON=21 TEXT='Rhinoceros sondaicus';
+
+	[Character comments]
+	TEXT CHARACTER=1 TEXT='Character 15 of Antoine (2002, 2003)';
+	TEXT CHARACTER=2 TEXT='Character 18 of Antoine (2002, 2003)';
+	TEXT CHARACTER=3 TEXT='Character 21 of Antoine (2002, 2003)';
+	TEXT CHARACTER=4 TEXT='Character 23 of Antoine (2002, 2003)';
+	TEXT CHARACTER=5 TEXT='Character 24 of Antoine (2002, 2003)';
+	TEXT CHARACTER=6 TEXT='Character 25 of Antoine (2002, 2003)';
+	TEXT CHARACTER=7 TEXT='Character 26 of Antoine (2002, 2003)';
+	TEXT CHARACTER=8 TEXT='Modified from the character 27 of Antoine (2002, 2003): Median nasal horn = 0, absent; 1, present';
+	TEXT CHARACTER=9 TEXT='Modified from the character 29 of Antoine (2002, 2003): Paired nasal horns = 0, absent; 1, present';
+	TEXT CHARACTER=10 TEXT='Modified from the character 31 of Antoine (2002, 2003): Frontal horn = 0, absent; 1, present';
+	TEXT CHARACTER=11 TEXT='Modified from the character 33 of Antoine (2002, 2003):Orbit: lateral projection = 0, absent; 1, present';
+	TEXT CHARACTER=12 TEXT='Character 34 of Antoine (2002, 2003)';
+	TEXT CHARACTER=13 TEXT='Character 36 of Antoine (2002, 2003)';
+	TEXT CHARACTER=14 TEXT='Character 37 of Antoine (2002, 2003)';
+	TEXT CHARACTER=15 TEXT='Modified from the character 45 of Antoine (2002, 2003):Squamosal: posterior groove on the processus zygomaticus = 0, absent; 1, present';
+	TEXT CHARACTER=16 TEXT='Character 49 of Antoine (2002, 2003)';
+	TEXT CHARACTER=17 TEXT='Character 54 of Antoine (2002, 2003)';
+	TEXT CHARACTER=18 TEXT='Character 56 of Antoine (2002, 2003)';
+	TEXT CHARACTER=19 TEXT='Character 59 of Antoine (2002, 2003)';
+	TEXT CHARACTER=20 TEXT='Modified from the character 60 of Antoine (2002, 2003): states 0 and 1 inverted';
+	TEXT CHARACTER=21 TEXT='Character 63 of Antoine (2002, 2003)';
+	TEXT CHARACTER=22 TEXT='Modified from the character 65 of Antoine (2002, 2003): Cheekteeth: cement = 0, absent; 1, present';
+	TEXT CHARACTER=23 TEXT='Character 67 of Antoine (2002, 2003)';
+	TEXT CHARACTER=24 TEXT='Character 68 of Antoine (2002, 2003)';
+	TEXT CHARACTER=25 TEXT='Character 75 of Antoine (2002)';
+	TEXT CHARACTER=26 TEXT='Character 76 of Antoine (2002)';
+	TEXT CHARACTER=27 TEXT='Character 78 of Antoine (2002)';
+	TEXT CHARACTER=28 TEXT='Character 81 of Antoine (2002)';
+	TEXT CHARACTER=29 TEXT='Character 82 of Antoine (2002)';
+	TEXT CHARACTER=30 TEXT='Character 83 of Antoine (2002)';
+	TEXT CHARACTER=31 TEXT='Character 84 of Antoine (2002)';
+	TEXT CHARACTER=32 TEXT='Character 86 of Antoine (2002)';
+	TEXT CHARACTER=33 TEXT='Character 87 of Antoine (2002)';
+	TEXT CHARACTER=34 TEXT='Modified from the character 89 of Antoine (2002): state 2 erased';
+	TEXT CHARACTER=35 TEXT='Character 90 of Antoine (2002)';
+	TEXT CHARACTER=36 TEXT='Modified from the character 91 of Antoine (2002, 2003): P1 in adults = 0, always present; 1, usually present; 2, always absent';
+	TEXT CHARACTER=37 TEXT='Modified from the character 100 of Antoine (2002, 2003): states rephrased';
+	TEXT CHARACTER=38 TEXT='Character 101 of Antoine (2002)';
+	TEXT CHARACTER=39 TEXT='Character 102 of Antoine (2002)';
+	TEXT CHARACTER=40 TEXT='Character 103 of Antoine (2002)';
+	TEXT CHARACTER=41 TEXT='Character 104 of Antoine (2002)';
+	TEXT CHARACTER=42 TEXT='Character 105 of Antoine (2002)';
+	TEXT CHARACTER=43 TEXT='Character 107 of Antoine (2002)';
+	TEXT CHARACTER=44 TEXT='Character 108 of Antoine (2002)';
+	TEXT CHARACTER=45 TEXT='Character 109 of Antoine (2002)';
+	TEXT CHARACTER=46 TEXT='Character 110 of Antoine (2002)';
+	TEXT CHARACTER=47 TEXT='Character 111 of Antoine (2002)';
+	TEXT CHARACTER=48 TEXT='Character 112 of Antoine (2002)';
+	TEXT CHARACTER=49 TEXT='Modified from the character 113 of Antoine (2002, 2003): states rephrased';
+	TEXT CHARACTER=50 TEXT='Character 114 of Antoine (2002)';
+	TEXT CHARACTER=51 TEXT='Modified from the character 115 of Antoine (2002): states rephrased';
+	TEXT CHARACTER=52 TEXT='Modified from the character 117 of Antoine (2002, 2003): states rephrased';
+	TEXT CHARACTER=53 TEXT='Modified from the character 119 of Antoine (2002, 2003): states rephrased';
+	TEXT CHARACTER=54 TEXT='Character 120 of Antoine (2002)';
+	TEXT CHARACTER=55 TEXT='Character 121 of Antoine (2002)';
+	TEXT CHARACTER=56 TEXT='Character 122 of Antoine (2002)';
+	TEXT CHARACTER=57 TEXT='Modified from the character 125 of Antoine (2002, 2003)';
+	TEXT CHARACTER=58 TEXT='Modified from the character 129 of Antoine (2002, 2003)';
+	TEXT CHARACTER=59 TEXT='Character 130 of Antoine (2002)';
+	TEXT CHARACTER=60 TEXT='Character 133 of Antoine (2002)';
+	TEXT CHARACTER=61 TEXT='Character 134 of Antoine (2002)';
+	TEXT CHARACTER=62 TEXT='Modified from the character 135 of Antoine (2002): states rephrased';
+	TEXT CHARACTER=63 TEXT='Character 137 of Antoine (2002)';
+	TEXT CHARACTER=64 TEXT='Character 139 of Antoine (2002)';
+	TEXT CHARACTER=65 TEXT='Modified from the character 142 of Antoine (2002): state 0 rephrased';
+	TEXT CHARACTER=66 TEXT='Character 143 of Antoine (2002)';
+	TEXT CHARACTER=67 TEXT='Character 144 of Antoine (2002)';
+	TEXT CHARACTER=68 TEXT='Character 145 of Antoine (2002)';
+	TEXT CHARACTER=69 TEXT='Character 146 of Antoine (2002)';
+	TEXT CHARACTER=70 TEXT='Character 147 of Antoine (2002)';
+	TEXT CHARACTER=71 TEXT='Modified from the character 149 of Antoine (2002): state 1 removed';
+	TEXT CHARACTER=72 TEXT='Modified from the character 153 of Antoine (2002, 2003): state 2 removed';
+	TEXT CHARACTER=73 TEXT='Character 154 of Antoine (2002)';
+	TEXT CHARACTER=74 TEXT='Character 155 of Antoine (2002)';
+	TEXT CHARACTER=75 TEXT='Modified from the character 156 of Antoine (2002, 2003): state 2 erased';
+	TEXT CHARACTER=76 TEXT='Character 157 of Antoine (2002)';
+	TEXT CHARACTER=77 TEXT='Character 159 of Antoine (2002)';
+	TEXT CHARACTER=78 TEXT='Character 161 of Antoine (2002)';
+	TEXT CHARACTER=79 TEXT='Character 207 of Antoine (2002)';
+	TEXT CHARACTER=80 TEXT='Character 209 of Antoine (2002)';
+	TEXT CHARACTER=81 TEXT='Character 210 of Antoine (2002)';
+	TEXT CHARACTER=82 TEXT='Character 211 of Antoine (2002)';
+	TEXT CHARACTER=83 TEXT='Character 212 of Antoine (2002)';
+	TEXT CHARACTER=84 TEXT='Character 213 of Antoine (2002)';
+	TEXT CHARACTER=85 TEXT='Character 214 of Antoine (2002)';
+	TEXT CHARACTER=86 TEXT='Character 215 of Antoine (2002)';
+	TEXT CHARACTER=87 TEXT='Character 216 of Antoine (2002)';
+	TEXT CHARACTER=88 TEXT='Character 220 of Antoine (2002)';
+	TEXT CHARACTER=89 TEXT='Character 226 of Antoine (2002)';
+	TEXT CHARACTER=90 TEXT='Modified from the character 228 of Antoine (2002, 2003): state 1 erased';
+	TEXT CHARACTER=91 TEXT='Character 229 of Antoine (2002)';
+	TEXT CHARACTER=92 TEXT='Character 231 of Antoine (2002)';
+	TEXT CHARACTER=93 TEXT='Character 232 of Antoine (2002)';
+	TEXT CHARACTER=94 TEXT='Character 234 of Antoine (2002)';
+	TEXT CHARACTER=95 TEXT='Character 239 of Antoine (2002)';
+	TEXT CHARACTER=96 TEXT='Character 241 of Antoine (2002)';
+	TEXT CHARACTER=97 TEXT='Modified from the character 242 of Antoine (2002): states rephrased';
+	TEXT CHARACTER=98 TEXT='Character 245 of Antoine (2002)';
+	TEXT CHARACTER=99 TEXT='Character 246 of Antoine (2002)';
+	TEXT CHARACTER=100 TEXT='Character 247 of Antoine (2002)';
+	TEXT CHARACTER=101 TEXT='Character 252 of Antoine (2002)';
+	TEXT CHARACTER=102 TEXT='Character 253 of Antoine (2002)';
+	TEXT CHARACTER=103 TEXT='Character 254 of Antoine (2002)';
+	TEXT CHARACTER=104 TEXT='Character 255 of Antoine (2002)';
+	TEXT CHARACTER=105 TEXT='Character 256 of Antoine (2002)';
+	TEXT CHARACTER=106 TEXT='Modified from the character 257 of Antoine (2002, 2003): states rephrased';
+	TEXT CHARACTER=107 TEXT='Character 259 of Antoine (2002)';
+	TEXT CHARACTER=108 TEXT='Character 262 of Antoine (2002)';
+	TEXT CHARACTER=109 TEXT='Character 266 of Antoine (2002)';
+	TEXT CHARACTER=110 TEXT='Character 279 of Antoine (2002)';
+	TEXT CHARACTER=111 TEXT='Character 280 of Antoine (2002)';
+	TEXT CHARACTER=112 TEXT='Character 282 of Antoine (2002)';
+
+	[Character state comments]
+
+	[Attribute comments]
+
+	[Taxon pictures]
+
+	[Character pictures]
+
+	[Character state pictures]
+
+	[Attribute pictures]
+ENDBLOCK;
+

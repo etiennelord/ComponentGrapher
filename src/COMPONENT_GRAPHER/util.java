@@ -635,6 +635,21 @@ public class util {
         return Float.parseFloat(t.format(d));
     }    
 
+      public static Float trois_decimal(Double d) {
+         if (d==null) return null;
+        if (d.isNaN()||d.isInfinite()) return Float.NaN;
+        
+         DecimalFormat t = new DecimalFormat("##.###");
+        return Float.parseFloat(t.format(d));
+    }    
+      public static Float four_decimal(Double d) {
+         if (d==null) return null;
+        if (d.isNaN()||d.isInfinite()) return Float.NaN;
+        
+         DecimalFormat t = new DecimalFormat("##.####");
+        return Float.parseFloat(t.format(d));
+    }    
+      
      public static ArrayList<String> sort(Set<String> st) {
          
          ArrayList<String> a=new ArrayList<String>();

@@ -343,6 +343,9 @@
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JTextField" name="Directory_jTextField">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Directory_jTextFieldActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jButton3">
               <Properties>

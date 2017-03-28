@@ -507,9 +507,9 @@ public class permutation_statistics implements Serializable {
                 case "total_ap_local_type3": values[i]=replicates.get(i).total_ap_local_type3; refvalue=reference.total_ap_local_type3;break;
                 case "total_ap_local_complete": values[i]=replicates.get(i).total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
                 case "triplet_type3": values[i]=replicates.get(i).triplet_type3; refvalue=reference.triplet_type3;break;
-                case "convergence": values[i]=replicates.get(i).convergence; refvalue=reference.convergence;break;
-                case "per_loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;                        
+                //case "convergence": values[i]=replicates.get(i).convergence; refvalue=reference.convergence;break;
+                //case "per_loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                //case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;                        
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
             stats.addValue(values[i]);
@@ -986,7 +986,9 @@ public class permutation_statistics implements Serializable {
 //    
     /**
      * Output a series of CSV file to the ouput directory
-     * @param directory 
+     * We nede to take the stats from the new arrays
+     * Note: the Array of results must have been processed beforehand
+     * @param filename 
      */
      public void output_csv(String filename) {
         
@@ -1083,18 +1085,21 @@ public class permutation_statistics implements Serializable {
       String[] sta={"in_degree2","out_degree2", "closeness_type3","betweenness_type3","percent_triplet_type3"};
       
         util u=new util();
-        //--Summary.txt
+        //--Summary.txt - ok
+         
+         System.out.println(filename);
          u.open(filename+"_summary.txt");
          u.print(reference_data.st_option.toString());        
          u.println("Total permutations (N replicate)     : "+this.replicate);
          u.println("Total time                           : "+util.msToString(endtime-starttime));
          u.println("===============================================================================");
-         u.println(reference_data.st_results.toString());
+         u.println(reference_data.st_results.toString());         
          u.close();
          
         
           u.open(filename+"_summary_statistics.csv");        
-        //--Summary statistic per node        
+       
+          //--Summary statistic per node     -ok    
         for (String s:qualifier) u.print(s+",");
         u.println("");
         //--Data
@@ -1103,121 +1108,150 @@ public class permutation_statistics implements Serializable {
                 u.print(util.encapsulate(""+getRefNodeStatistics(r, c))+",");
             }
             u.println("");
-        }        
+        } 
+        u.println("Note: see the manual for the description of each parameters.");
         u.close();
                 
-        ArrayList<stats> datas=this.calculate_stat();
+        //ArrayList<stats> datas=this.calculate_stat();
         
-        if (datas.size()>0) {
+       // if (datas.size()>0) {
             //--Permutation statistics global network
-            u.open(filename+"_permutation_statistics.csv");        
-            for (String s:qualifier2) u.print(s+",");     
-//             for (int rep=0;rep<data.replicate;rep++) {
-//                       u.print("randomization "+(rep+1)+",");
-//                   }
-            u.println();
-            //--Iterate over the pv2 (network statistic)
-            for (int r=0; r<pv2.length;r++) {
-                 for (int c=0;c<qualifier2.length;c++) {
-                     u.print(getNetworkValue(datas,r, c)+",");
-                 }
-                 
-                 u.println();
-            }    
+            
+            u.open(filename+"_network_statistics.csv");    
+            //--This is what whe need            
+             u.println("Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
+             u.println(this.output_stats_full(this.Network_stats,",",""));
+            u.println("Note: see the manual for the description of each parameters.");
+             u.close();
+            
+            //--Export node statistics
+            
+             u.open(filename+"_nodes_statistics.csv");    
+            //--This is what whe need            
+             u.println("NodeID,Name,Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
+              for (int i=0; i<this.reference_data.nodes.size();i++) {
+                 //System.out.println("===============================================================================");            
+                  String node=i+","+reference_data.nodes.get(i).complete_name+",";
+                  u.println(this.output_stats_full(this.Node_stats.get(i),",",node));
+             }
+             u.println("Note: see the manual for the description of each parameters.");
+             
             u.close();
             
+            
+            
+            ///////////////////////////////////////////////////////////////////
+            /// BELOW OLD CODE
+            
+//            for (String s:qualifier2) u.print(s+",");     
+////             for (int rep=0;rep<data.replicate;rep++) {
+////                       u.print("randomization "+(rep+1)+",");
+////                   }
+//            u.println();
+//            //--Iterate over the pv2 (network statistic)
+//            for (int r=0; r<pv2.length;r++) {
+//                 for (int c=0;c<qualifier2.length;c++) {
+//                     //u.print(getNetworkValue(datas,r, c)+",");
+//                 }
+//                 
+//                 u.println();
+//            }    
+           // u.close();
+            
             //--Permutation statistics per node
-            for (String identifier:sta) {
-                //--identifier is filename for now
-                    u.open(filename+"_"+identifier+".csv");
-                    u.print("NodeID,Name,Reference,p-value,significance level,N,Min,Max,Mean,STD,5%,95%,");
-                    //        st.append("Min     : "+stats.getMin()+"\n");
-//        st.append("Max     : "+stats.getMax()+"\n");
-//        st.append("Mean    : "+stats.getMean()+"\n");
-//        st.append("5%      : "+stats.getPercentile(5)+"\n");
-//        st.append("95%     : "+stats.getPercentile(95)+"\n");
-//        st.append("Ref     : "+refvalue+"\n");
-//        st.append("P-value : "+getPvalue1(values,refvalue)+"\n");
-                    
-                   for (int rep=0;rep<data.replicate;rep++) {
-                       u.print("randomization "+(rep+1)+",");
-                   }
-                   u.println();
-                   //System.out.println("nodes size:"+reference_data.nodes.size());
-                    for (int nodeid=0; nodeid<reference_data.nodes.size();nodeid++) {
-                     node n=reference.data.nodes.get(nodeid);
-                   
-                     u.print(n.id+","+n.complete_name+",");
-                     double ref=0;
-                     if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
-                        ref=this.reference.data.nodes.get(nodeid).stats.getInt(identifier);
-                    } else {             
-                       ref=this.reference.data.nodes.get(nodeid).stats.getFloat(identifier);
-                     }
-                     //--This is the array of values for this node
-                     double[] values=new double[this.replicates.size()];
-                    for (int i=0; i<this.replicates.size();i++) {
-                        node nr=this.replicates.get(i).data.nodes.get(nodeid);
-                        //System.out.println(nr.stats);
-                        values[i]=nr.stats.getFloat(identifier);
-                        if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
-                        values[i]=nr.stats.getInt(identifier);
-                        }         
-                        //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
-                    }            
-                        DescriptiveStatistics node_stat=new DescriptiveStatistics(values);                        
-                    Double[] st;
-                     if (identifier.equals("closeness_type3")) {
-                         st=permutation_statistics.getPvalue_bilateral(values, ref,this.reference.data.nodes.size());
-                     } else {
-                         st=permutation_statistics.getPvalue_unilateral(values, ref,this.reference.data.nodes.size());
-                     }
-                     u.print(ref+","); //--Reference value
-                     double pvalue=0.0;
-                     if (!identifier.equals("closeness_type3")) {
-                        pvalue=st[0];
-                     } else {
-                        pvalue=st[1]; //P-value (P1)                          
-                     }
-                     //--Add information for 
-                    if (ref==0) {
-                       u.print("NA,");
-                       u.print(node_stat.getN()+","); //N
-                       u.print(node_stat.getMin()+","); //Min
-                       u.print(node_stat.getMax()+","); //Max
-                       u.print(node_stat.getMean()+","); //Mean
-                       u.print(node_stat.getStandardDeviation()+","); //STD
-                       u.print(node_stat.getPercentile(5)+","); //5%
-                       u.print(node_stat.getPercentile(95)+","); //95%        
-                    } else {
-                     u.print(pvalue+","); //P-value
-                      u.print(getSignificance(pvalue,ref)+","); //P-value
-                     u.print(node_stat.getN()+","); //N
-                     u.print(node_stat.getMin()+","); //Min
-                     u.print(node_stat.getMax()+","); //Max
-                     u.print(node_stat.getMean()+","); //Mean
-                     u.print(node_stat.getStandardDeviation()+","); //STD
-                     u.print(node_stat.getPercentile(5)+","); //5%
-                     u.print(node_stat.getPercentile(95)+","); //95%           
-                    } 
-                      for (int j=0; j<values.length;j++) u.print(values[j]+",");             
-                     u.println();
-                     
-                    }
-                    u.println("Significance levels: * p<0.05; ** p<0.01; *** p<0.001. Critical p-value levels ("+data.p05+";"+data.p01+";"+data.p001+")");
-                    u.close();
-                } //--End identifier
-        }
+//            for (String identifier:sta) {
+//                //--identifier is filename for now
+//                    u.open(filename+"_"+identifier+".csv");
+//                    u.print("NodeID,Name,Reference,p-value,significance level,N,Min,Max,Mean,STD,5%,95%,");
+//                    
+//                    //        st.append("Min     : "+stats.getMin()+"\n");
+////        st.append("Max     : "+stats.getMax()+"\n");
+////        st.append("Mean    : "+stats.getMean()+"\n");
+////        st.append("5%      : "+stats.getPercentile(5)+"\n");
+////        st.append("95%     : "+stats.getPercentile(95)+"\n");
+////        st.append("Ref     : "+refvalue+"\n");
+////        st.append("P-value : "+getPvalue1(values,refvalue)+"\n");
+//                    
+//                   for (int rep=0;rep<data.replicate;rep++) {
+//                       u.print("randomization "+(rep+1)+",");
+//                   }
+//                   u.println();
+//                   //System.out.println("nodes size:"+reference_data.nodes.size());
+//                    for (int nodeid=0; nodeid<reference_data.nodes.size();nodeid++) {
+//                     node n=reference.data.nodes.get(nodeid);
+//                   
+//                     u.print(n.id+","+n.complete_name+",");
+//                     double ref=0;
+//                     if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+//                        ref=this.reference.data.nodes.get(nodeid).stats.getInt(identifier);
+//                    } else {             
+//                       ref=this.reference.data.nodes.get(nodeid).stats.getFloat(identifier);
+//                     }
+//                     //--This is the array of values for this node
+//                     double[] values=new double[this.replicates.size()];
+//                    for (int i=0; i<this.replicates.size();i++) {
+//                        node nr=this.replicates.get(i).data.nodes.get(nodeid);
+//                        //System.out.println(nr.stats);
+//                        values[i]=nr.stats.getFloat(identifier);
+//                        if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
+//                        values[i]=nr.stats.getInt(identifier);
+//                        }         
+//                        //System.out.println(this.data.replicates.get(i).data.nodes.get(nodeid));
+//                    }            
+//                        DescriptiveStatistics node_stat=new DescriptiveStatistics(values);                        
+//                    Double[] st;
+//                     if (identifier.equals("closeness_type3")) {
+//                         st=permutation_statistics.getPvalue_bilateral(values, ref,this.reference.data.nodes.size());
+//                     } else {
+//                         st=permutation_statistics.getPvalue_unilateral(values, ref,this.reference.data.nodes.size());
+//                     }
+//                     u.print(ref+","); //--Reference value
+//                     double pvalue=0.0;
+//                     if (!identifier.equals("closeness_type3")) {
+//                        pvalue=st[0];
+//                     } else {
+//                        pvalue=st[1]; //P-value (P1)                          
+//                     }
+//                     //--Add information for 
+//                    if (ref==0) {
+//                       u.print("NA,");
+//                       u.print(node_stat.getN()+","); //N
+//                       u.print(node_stat.getMin()+","); //Min
+//                       u.print(node_stat.getMax()+","); //Max
+//                       u.print(node_stat.getMean()+","); //Mean
+//                       u.print(node_stat.getStandardDeviation()+","); //STD
+//                       u.print(node_stat.getPercentile(5)+","); //5%
+//                       u.print(node_stat.getPercentile(95)+","); //95%        
+//                    } else {
+//                     u.print(pvalue+","); //P-value
+//                      u.print(getSignificance(pvalue,ref)+","); //P-value
+//                     u.print(node_stat.getN()+","); //N
+//                     u.print(node_stat.getMin()+","); //Min
+//                     u.print(node_stat.getMax()+","); //Max
+//                     u.print(node_stat.getMean()+","); //Mean
+//                     u.print(node_stat.getStandardDeviation()+","); //STD
+//                     u.print(node_stat.getPercentile(5)+","); //5%
+//                     u.print(node_stat.getPercentile(95)+","); //95%           
+//                    } 
+//                      for (int j=0; j<values.length;j++) u.print(values[j]+",");             
+//                     u.println();
+//                     
+//                    }
+//                    u.println("Significance levels: * p<0.05; ** p<0.01; *** p<0.001. Critical p-value levels ("+data.p05+";"+data.p01+";"+data.p001+")");
+//                    u.close();
+//  //              } //--End identifier
+        //}
       
-    }
+   }
      
      public String getSignificance(double value, double reference) {         
          if (reference==0) return " "; 
          if (value<=0.0) return " ";
-         if (value>0.05) return " ";        
-         if (value<data.p001) return "***";
-         if (value<data.p01) return "**";
-         if (value<data.p05) return "*";
+         if (value>0.05) return " ";    
+         //System.out.println(value+" "+reference+" "+data.p05);
+         if (value<=data.p001) return "***";
+         if (value<=data.p01) return "**";
+         if (value<=data.p05) return "*";
          return " ";
      }
      
@@ -1280,7 +1314,7 @@ public class permutation_statistics implements Serializable {
         datas.add(s);
     
        }
-         System.out.println(datas.size());
+         //System.out.println(datas.size());
        return datas;
    }
     
@@ -1549,13 +1583,7 @@ public class permutation_statistics implements Serializable {
             gson.toJson(this,permutation_statistics.class,js);
             js.flush();
             js.close();
-            //u.close();
-//             String assert1=gson.toJson(this);
-//            FileOutputStream fo = new FileOutputStream(data.serial_file);
-//            ObjectOutputStream oos = new ObjectOutputStream(fo);
-//            oos.writeObject(this);
-//            oos.flush();   
-//            oos.close();
+
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -1580,6 +1608,10 @@ public class permutation_statistics implements Serializable {
         }
     }
     
+    /**
+     * New main procedure
+     * @param directory 
+     */
     public void calculate_from_directory(String directory) {
         System.out.println("Analysing "+directory);
         //--1. list all the files
@@ -1619,6 +1651,7 @@ public class permutation_statistics implements Serializable {
         System.out.println("==============================================================================="); 
         System.out.println("Reanalyze");
         reference.calculate_network_statistics();     
+        
         for (int i=0; i<replicates.size();i++) {
             System.out.println(i);
             summary_statistics su2=replicates.get(i);
@@ -1627,7 +1660,7 @@ public class permutation_statistics implements Serializable {
         }
         
         
-        System.out.println(replicates.size());                
+        //System.out.println(replicates.size());                
         this.replicate=replicates.size();
         if (replicates.size()>0) data.permutation=true;
         //--3. Calculate statistics
@@ -1637,12 +1670,13 @@ public class permutation_statistics implements Serializable {
             this.output_stats(this.calculate_stat());         
              System.out.println("==============================================================================="); 
              System.out.println("Nodes statistics");
+             System.out.println("==============================================================================="); 
              System.out.println(reference_data.nodes);
              for (int i=0; i<this.reference_data.nodes.size();i++) {
-                  System.out.println(i+"\t"+reference_data.nodes.get(i).complete_name+"\t");
+                  System.out.println(i+"\t"+reference_data.nodes.get(i).complete_name+":");                  
                  this.output_stats(this.calculate_stats_for_node(i));
              }
-             
+             System.out.println("Note: see the manual for the description of each parameters.");
         //--4. Enjoy
         
     }
@@ -1687,11 +1721,11 @@ public class permutation_statistics implements Serializable {
     }
      
       /**
-     * Calculate stats without file caching...
+     * Calculate stats without file caching... (NEW)
      * @param directory 
      */
      public void calculate_from_directory_new(String directory) {
-        System.out.println("Analysing "+directory);
+        System.out.println("Analysing :"+directory);
         //--1. list all the files
         ArrayList<String> files=util.listDirWithFullPath(directory);
         //       ArrayList<stats> datas=new ArrayList<stats>();       
@@ -1709,8 +1743,8 @@ public class permutation_statistics implements Serializable {
         
         //--1.1 
         replicates.clear();        
-        replicates=new ArrayList(files.size());
-        System.out.println("Loading analysis.");
+        replicates=new ArrayList(files.size());        
+        System.out.println("===============================================================================");      
         Collections.sort(files);
         //--get reference first
          for (String f:files) {
@@ -1750,49 +1784,104 @@ public class permutation_statistics implements Serializable {
                     this.calculate_stats_for_node_ws_array(su);
                     //--Add to nodes statistisc
                    // replicates.add(su);
-                    System.out.println(f);
+                    System.out.println("Processing: "+f);
                 } else {
                     System.out.println("Unable to load "+f);
                 }
             }
         }
-        //--Recalculate 
-//        System.out.println("==============================================================================="); 
-//        System.out.println("Reanalyze");
-//        reference.calculate_network_statistics();     
-//        for (int i=0; i<replicates.size();i++) {
-//            System.out.println(i);
-//            summary_statistics su2=replicates.get(i);
-//            su2.calculate_some_network_statistics();
-//            replicates.set(i, su2);
-//        }
+
         
         
-        System.out.println("Total randomization:" + replicates.size());                
+        System.out.println("Total randomization processed:" + Network_stats.get(0).values.size());                
         this.replicate=replicates.size();
         if (replicates.size()>0) data.permutation=true;
         //--3. Calculate statistics
-             System.out.println("Network statistics");
-             System.out.println("==============================================================================="); 
-             this.output_stats(this.Network_stats);     
-             System.out.println("==============================================================================="); 
+            System.out.println("===============================================================================================");           
+            System.out.println("Network statistics (See manual for descriptions)");
+             System.out.println("===============================================================================================");           
+             System.out.println("Statistics\tRef\tp-value\tsign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+             System.out.println(output_stats(this.Network_stats));     
+             System.out.println("===============================================================================================");           
              System.out.println("Nodes statistics");
-             //System.out.println(reference_data.nodes);
-             for (int i=0; i<this.reference_data.nodes.size();i++) {
-                  System.out.println(i+"\t"+reference_data.nodes.get(i).complete_name+"\t");
-                 this.output_stats(this.Node_stats.get(i));
-             }
+             System.out.println("===============================================================================================");           
              
+             for (int i=0; i<this.reference_data.nodes.size();i++) {
+                 //System.out.println("===============================================================================");            
+                 System.out.println("-----------------------------------------------------------------------------------------------");           
+                 System.out.println("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name);
+                  //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                  System.out.println("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                 System.out.println("-----------------------------------------------------------------------------------------------");           
+                  System.out.println(this.output_stats(this.Node_stats.get(i)));
+             }
+         //System.out.println("Other statistics found in summary_statistics.csv");     
+        System.out.println("===============================================================================================");           
         //--4. Enjoy
         
     }
     
-    public void output_stats(ArrayList<stats> st) {
+    public String output_stats(ArrayList<stats> st) {
+        String ste="";
         for (stats s:st) {
+            //--Replace some title 
+            if (s.title.equals("betweenness_type3")) s.title="between_type3'";
+            if (s.title.equals("percent_triplet_type3")) s.title="%triplet type3";
+            if (s.title.equals("total_ap_global_complete")) s.title="total_ap_compl.";
+            if (s.title.equals("density_complete")) s.title="den_complete";
+            if (s.title.equals("total_ap_local_complete")) s.title="local_ap_compl.";
+            if (s.title.equals("total_ap_local_type3")) s.title="local_ap_type3";
+            if (s.title.equals("total_ap_global_type3")) s.title="total_ap_type3";
+            if (s.title.equals("total_edges_complete")) s.title="n_edge_compl.";
+            if (s.title.equals("total_edges_type4")) s.title="n_edge_type4";
+            if (s.title.equals("total_edges_type3")) s.title="n_edge_type3";
+            if (s.title.equals("total_edges_type2")) s.title="n_edge_type2";
+            if (s.title.equals("total_edges_type1")) s.title="n_edge_type1";
+            if (s.title.equals("total_CC_type1")) s.title="CC_type1";
+            if (s.title.equals("total_CC_type3")) s.title="CC_type3";
+            if (s.title.equals("total_CC_complete")) s.title="CC_complete";
+            if (s.title.equals("triplet_typeE")) s.title="triangle";
+            if (s.title.equals("time")) s.title="time/net. (ms)";
             DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));
-            System.out.println(s.title+"\t"+s.reference_value+"\t"+s.pvalue[0]+"\t"+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+stat.getN()+"\t"+stat.getMean()+"\t"+stat.getStandardDeviation()+"\t"+stat.getMin()+"\t"+stat.getMax()+"\t"+stat.getPercentile(5)+"\t"+stat.getPercentile(95));
+            ste+=s.title+"\t"+util.four_decimal(s.reference_value)+"\t"+util.trois_decimal(s.pvalue[0])+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+stat.getN()+"\t"+util.trois_decimal(stat.getMean())+"\t"+util.trois_decimal(stat.getStandardDeviation())+"\t"+util.trois_decimal(stat.getMin())+"\t"+util.trois_decimal(stat.getMax())+"\t"+util.trois_decimal(stat.getPercentile(5))+"\t"+util.trois_decimal(stat.getPercentile(95))+"\n";
         }
+        return ste;
     }
+    
+     public String output_stats_full(ArrayList<stats> st, String sep,String prefix) {
+        String ste="";
+        for (stats s:st) {
+            //--Replace some title 
+            if (s.title.equals("betweenness_type3")) s.title="between_type3'";
+            if (s.title.equals("percent_triplet_type3")) s.title="%triplet type3";
+            if (s.title.equals("total_ap_global_complete")) s.title="total_ap_compl.";
+            if (s.title.equals("density_complete")) s.title="den_complete";
+            if (s.title.equals("total_ap_local_complete")) s.title="local_ap_compl.";
+            if (s.title.equals("total_ap_local_type3")) s.title="local_ap_type3";
+            if (s.title.equals("total_ap_global_type3")) s.title="total_ap_type3";
+            if (s.title.equals("total_edges_complete")) s.title="n_edge_compl.";
+            if (s.title.equals("total_edges_type4")) s.title="n_edge_type4";
+            if (s.title.equals("total_edges_type3")) s.title="n_edge_type3";
+            if (s.title.equals("total_edges_type2")) s.title="n_edge_type2";
+            if (s.title.equals("total_edges_type1")) s.title="n_edge_type1";
+            if (s.title.equals("total_CC_type1")) s.title="CC_type1";
+            if (s.title.equals("total_CC_type3")) s.title="CC_type3";
+            if (s.title.equals("total_CC_complete")) s.title="CC_complete";
+            if (s.title.equals("triplet_typeE")) s.title="triangle";
+            if (s.title.equals("time")) s.title="time/net. (ms)";
+            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));
+            if (!prefix.isEmpty()) ste+=prefix;
+            ste+=s.title+sep+s.reference_value+sep+s.pvalue[0]+sep+getSignificance(s.pvalue[0], s.reference_value)+sep+stat.getN()+sep+stat.getMean()+sep+stat.getStandardDeviation()+sep+stat.getMin()+sep+stat.getMax()+sep+stat.getPercentile(5)+sep+stat.getPercentile(95)+"\n";
+        }
+        return ste;
+    }
+    
+     public String output_abbreviation() {
+         String ste="";
+         
+         
+         return (ste);
+     }
      
       /**
      * Test serialization

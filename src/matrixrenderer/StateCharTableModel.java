@@ -75,13 +75,18 @@ String[] qualifier={"Column","Encoded state","Character","State","Total in matri
     public Object getValueAt(int row, int col) {
         //--Get the true row
         //--Case col=0 : charstate
+        //System.out.println(this.symbols.length());
         int index_char=row / this.symbols.length();
         int index_state= row % this.symbols.length();
-                
+        //System.out.println(row + " "+ col + " "+index_char+ " "+ index_state+" "+data.charlabels.get(index_char)+" "+data.statelabels.get(index_state));
+       //System.out.println(index_char+" "+data.charlabels.get(index_char)); 
+        //System.out.println(index_state+" "+data.statelabels.get(index_char));
         HashMap<String,String> st=null;
         try {
             st=data.statelabels.get(index_char);  
         } catch(Exception e) {
+            //e.printStackTrace();
+            //System.out.println("Not found");
             st=new HashMap<String,String>();
             for (char c:this.symbols.toCharArray()) {
                 st.put(""+c,""+c);
@@ -95,6 +100,7 @@ String[] qualifier={"Column","Encoded state","Character","State","Total in matri
         try {
         data.charlabels.get(index_char);
         } catch(Exception e2) {
+           // e2.printStackTrace();
             for (int i=0; i<data.nchar;i++) {
                 data.charlabels.add("Char. "+(i+1));
             }

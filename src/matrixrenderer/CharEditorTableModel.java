@@ -70,7 +70,7 @@ public class CharEditorTableModel extends AbstractTableModel {
            return data.char_matrix[col][row];
         
        } catch(Exception e) {
-           e.printStackTrace();
+           //e.printStackTrace();
            System.out.println(row+ " "+col+ " "+data.ntax+" "+data.nchar);
            System.out.println(data.intmaxrow()+" "+data.intmaxcol());
            return 0;

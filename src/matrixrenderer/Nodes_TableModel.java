@@ -173,7 +173,8 @@ public class Nodes_TableModel extends AbstractTableModel {
            double pvalue=statn.pvalue[0];
            double reference=statn.reference_value;           
            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(statn.values));             
-           //--For the moment, all strings...
+           
+        //--For the moment, all strings...
            switch(col) {
                case 0: return ""+n.id;
                case 1: return ""+n.complete_name;
@@ -191,7 +192,7 @@ public class Nodes_TableModel extends AbstractTableModel {
            }
            
        } catch(Exception e) {
-           //e.printStackTrace();
+           e.printStackTrace();
            //System.out.println(row+ " "+col+ " ");           
            return 0;
        }

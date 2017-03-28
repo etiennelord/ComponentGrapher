@@ -296,6 +296,12 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        Directory_jTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Directory_jTextFieldActionPerformed(evt);
+            }
+        });
+
         jButton3.setText("...");
         jButton3.setToolTipText("Select the output directory for logs and intermediate results.");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -550,10 +556,13 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
 
     private void Run_jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Run_jButtonActionPerformed
           try {
-        data.replicate=Integer.valueOf(this.Bootstrap_jTextField.getText());        
-        data.remove_multiple_column=this.remove_multiple_column_jCheckBox.isSelected();
-        data.remove_undefined_column=this.remove_undefined_column_jCheckBox.isSelected();
-        data.bipartite=this.bipartite_jCheckBox.isSelected();
+          data.replicate=Integer.valueOf(this.Bootstrap_jTextField.getText());        
+          data.remove_multiple_column=this.remove_multiple_column_jCheckBox.isSelected();
+          data.remove_undefined_column=this.remove_undefined_column_jCheckBox.isSelected();
+          data.bipartite=this.bipartite_jCheckBox.isSelected();
+          data.result_directory=  this.Directory_jTextField.getText();
+          String s=(String)this.jComboBox1.getSelectedItem();
+          datasets.maxthreads=Integer.valueOf(s);
           }catch(Exception e){
           e.printStackTrace();
           }
@@ -648,6 +657,11 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
        String s=(String)this.jComboBox1.getSelectedItem();
         datasets.maxthreads=Integer.valueOf(s);
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void Directory_jTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Directory_jTextFieldActionPerformed
+       
+           
+    }//GEN-LAST:event_Directory_jTextFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

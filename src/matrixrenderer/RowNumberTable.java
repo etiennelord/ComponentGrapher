@@ -216,7 +216,8 @@ public class RowNumberTable extends JTable
 				{
 					
                                         setForeground(header.getForeground());
-					setBackground(header.getBackground());
+					//setBackground(header.getBackground());
+                                        setBackground(Color.LIGHT_GRAY);
 					setFont(header.getFont());
                                         // this.setIcon(null);                                         
                                          setText((value == null) ? "" : value.toString());

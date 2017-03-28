@@ -77,7 +77,7 @@ public class datasets extends Observable implements Serializable {
     public double p001=1.0;
     
    public int random=0; 
-   public int replicate=3; //--Bootstrap replicate
+   public int replicate=10; //--Bootstrap replicate
    public boolean permutation=true;
    public boolean bootstrap=false;
    public boolean save_graphml=false;
@@ -1097,7 +1097,7 @@ void print_state_label() {
        str.append("Total number of multistate characters: "+ info_total_multistate+"\n");
        str.append("Total number of possible variations* : "+info_total_variation+"\n");    
        str.append("Total variations tested              : "+ìnfo_total_variation_tested+"\n");
-       str.append("Permuations statistics               : "+this.replicate+"\n");   
+       str.append("Permutations statistics              : "+this.replicate+"\n");   
        str.append("Suggested permutations**             : "+(int)(info_total_possible_nodes/0.05)+"\n");  
        str.append("Remove multiple state columns        : "+this.remove_multiple_column+"\n");
         str.append("Remove undefined columns             : "+this.remove_undefined_column+"\n");        
@@ -1707,7 +1707,7 @@ void print_state_label() {
        try {
            PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));
            pw.println("#NEXUS"+"\n");
-           pw.println("[ File saved by COMPOSITEGRAPHER version "+config.get("version")+","+util.returnCurrentDateAndTime()+"]\n");
+           pw.println("[ File saved by COMPONENT-GRAPHER version "+config.get("version")+","+util.returnCurrentDateAndTime()+"]\n");
            pw.println("BEGIN TAXA;");
            pw.println(" \t"+"DIMENSIONS NTAX="+this.ntax+";");
            pw.println(" \t"+"TAXLABELS");
@@ -1794,7 +1794,7 @@ void print_state_label() {
        try {
            PrintWriter pw=new PrintWriter(new FileWriter(new File(filename)));
            pw.println("#NEXUS"+"\n");
-           pw.println("[ File saved by COMPOSITEGRAPHER version "+config.get("version")+","+util.returnCurrentDateAndTime()+"]\n");           
+           pw.println("[ File saved by COMPONENT-GRAPHER version "+config.get("version")+","+util.returnCurrentDateAndTime()+"]\n");           
            pw.println("BEGIN TAXA;");
            pw.println(" \t"+"DIMENSIONS NTAX="+this.ntax+";");
            pw.println(" \t"+"TAXLABELS");
@@ -2708,58 +2708,13 @@ void print_state_label() {
      */
      public static void main(String[] args) {
            Locale.setDefault(new Locale("en", "US"));
-           //String str="1 PROSTOMIUM / Tentacles Flattened Acron Absent Distinct 'Fused, distinct' 'Fused, limited' 'Fused, frontal..', 2 PERISTOMIUM / Sipunculid Acron Absent Ring Two_rings Elongate Rings_and_collar Lips_only, 3 PROS._ANT. / Absent Present, 4 PROS._ANT_DIST. / Median Lateral Median_and_Lateral, 5 PALPS / 'Absent-Innervation only' Present, 6 PALP_TYPE / Grooved Ventral_Sens., 7 GROOVED_PALPS / Grooved_Prostomial Grooved_Peristomial, 8 Prostomial_G._Palps / G.Pro.Pair G.Pro.Mul. G.Pro.Cro., 9 Peristomial_Palps / G.Peri.Pai Peri.Pap. G.Peri.Mul., 10 V.SENS._PALPS / Pro.Ven. Pro.VenLat., 11 NUCHAL_ORGANS / Absent Pits_or_grooves post._proj. Caruncle, 12 LONG._BANDS / Absent Present, 13 SEGMENTATION / A. P., 14 1st_SEGMENT / Indistinct Similar Surround_head Fused_to_head DL_to_head Elongate Arthropod, 15 1st_APPENDAGES / Same_as_following Absent T._cirri_only Noto. Neuro. Frenulate Arthropod, 16 T.CIRRI / A. P., 17 PARAPODIA / Absent Rami_similar Neuropodia_larger Tori_present Noto._ridges Spiomorph Saccocirrid, 18 D.CIRRI / Absent Cirriform Elytrae Foliacious Limited Narrow_elongate, 19 V.CIRRI / Absent Present, 20 GILLS / Absent Parapodial Dorsal_simple Dorsal_flat 'Dorsal, ant. segments' Interramal Single, 21 LATERAL_O. / A. P., 22 D._CIRRUS_O. / A. P., 23 DORSAL_O. / A. P., 24 EPID._PAP. / A. P., 25 PYG._CIRRI / Absent PresentI PresentII, 26 D.LAT._FOLDS / A. P., 27 STOMODAEUM / Sipunculid Echiurid Arthropod D._muscularised No_organ Ax._Hyper Vent._organ Absent Vent._hyper Axial_Simp. Cossurid Psammodrilid Spintherid, 28 AXIAL_JAWS / Absent Lateral_Pair 'D-V pairs' Cross_or_Cir. Single_Tooth, 29 PROVENT. / A. P., 30 VENT._ORGAN / Eversible 'Non-eversible', 31 V.HYP. / Ridged Jaws, 32 V.HYP._JAWS / Ctenognaths Labidognaths Prionognaths, 33 GULAR_M. / A. P., 34 GUT / Sipunculid Echiurid Straight Lateral_folds Side_Branches Occluded, 35 NEPHRIDIA / Metanephridia Protonephridia, 36 CIL.PHAG. / A. P., 37 META.FUSION / None Mixonephridia Metanephromixia, 38 PROT.FUS. / None Protonephromixia, 39 REPRODUCTIVE_REGION / Not_segmental Along_body Ant.ex.post.gono Restricted Ant_sterile._post.gono Arthropod Clitellate Capitellid Histriobdellid Oweniid Myzostome Questid, 40 SPERM / A. P., 41 CIRCULATION / Absent_Lim. Closed 'Ostiate, Haemocoel', 42 HEART_BODY / A. P., 43 CHAETAE / A. P., 44 CHAETAL_COMP. / A. P., 45 CH._INVER. / A. P., 46 ACICULAE / Absent Present, 47 COMPOUND_Chaetae / Absent SIngle_ligament Double_ligament Fold, 48 COMPOUND_SHAPE / Tapers Falcate Dentate Hooked, 49 CAPILLARY / A. P., 50 SPINES_1_CHAET. / A. P., 51 SPINES / A. P., 52 HOODED_CHAETAE / A. P., 53 HOOKS / Absent Falcate Dentate, 54 UNCINI / A. P., 55 SILKY_CHAETAE / A. P., 56 Coelom / A. P., 57 Circum._Nerve_Ring / A. P., 58 Annelid_Cross / A. P., 59 Molluscan_Cross / A. P., 60 Trochophore / A. P., 61 Prototroch / A. P., 62 Metatroch / A. P., 63 Ciliated_Food_Groove / A. P., 64 Oral_Brush / A. P., 65 Akrotroch / A. P., 66 Meniscotroch / A. P., 67 Telotroch / A. P., 68 Neurotroch / A. P., 69 Protoneph / A. P., 70 Apical_Plate / A. P., 	71 Downstream / A. P.";
-           //process_char_state(str);
+           
          datasets d1=new datasets();
-         //d1.load_morphobank_nexus("sample\\matrice_ebapteste.nex");
-         //d1.load_simple("sample\\sample_5.txt");
-         d1.load_morphobank_nexus("sample\\Rouse_M742.nexus");
-        //d1.load_simple("sample\\sample_4.txt");         
          d1.printCharMatrix();
          d1.compute();
-         //d1.compute_network_solution();
+      
          d1.export_cytoscapejs("data\\test.html", 1);
-//System.out.println(d1.export_charstate("test2.txt"));
-         
-//         datasets d2=new datasets(d1);
-//         d1.compute_nodes();
-//         for (node n:d1.nodes) {
-//             System.out.println(n);
-//         }
-         //d1.load_morphobank_nexus("sample\\Test_matrix-rhinos.nex");
-         
-//         System.out.println(d1.symbols);
-//         System.out.println(d1.getCharMatrixSymbols());
-//         d1.save_NexusMatrix("test.nex");
-//         d1.load_morphobank_nexus("test.nex");
-//         System.out.println(d1.compare(d2));
-//         sout
-//         d1.load_simple("sample\\sample_5.txt");
-//         d1.compute();
-//         datasets d2=new datasets(d1);         
-//         d1.export_edgelist("d1.txt");
-//         d2.export_edgelist("d2.txt");
-//         System.out.println(d1.st_option.toString());
-//         System.out.println(d1.st_results.toString());
-//         summary_statistics s=new summary_statistics(d1);
-//         
-//         s.calculate_network_statistics();
-//         System.out.println(s);
-         
-//         try {
-//            FileOutputStream fo = new FileOutputStream("test.ser");
-//            ObjectOutputStream oos = new ObjectOutputStream(fo);
-//            oos.writeObject(dummy);
-//            oos.flush();   
-//            oos.close();
-//            FileInputStream fi = new FileInputStream("test.ser");
-//            ObjectInputStream ois = new ObjectInputStream(fi);
-//            dummy = (datasets) ois.readObject();
-//             System.out.println(dummy);
-//             System.out.println(dummy.getCurrentCharMatrix());
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
+
     }
 
     

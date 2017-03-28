@@ -68,7 +68,7 @@ public class MatrixOptions extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Matrix options"));
 
         Inverse_jCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        Inverse_jCheckBox.setText("Inverse display of Row x Columns");
+        Inverse_jCheckBox.setText("Inverse display of Rows x Columns");
         Inverse_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Inverse_jCheckBoxActionPerformed(evt);

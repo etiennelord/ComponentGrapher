@@ -1,0 +1,127 @@
+<html>
+<head>
+<style>
+#cy {
+  width: 1200px;
+  height: 1200px;
+  display: block;
+}
+</style>
+<script src='cola.v3.min.js'></script>
+<script src='cytoscape.min.js'></script>
+<script src='cytoscape-cola.js'></script>
+</head>
+<body>
+<div id='cy'></div>
+<script>var cy = cytoscape({
+
+  container: document.getElementById('cy'), // container to render in
+
+  elements: [ // list of graph elements to start with
+
+{data: {id: '1', vname:"PROSTOMIUM|Tentacles" } },
+{data: {id: '2', vname:"PROSTOMIUM|Flattened" } },
+{data: {id: '6', vname:"PROSTOMIUM|Fused, frontal.." } },
+{data: {id: '7', vname:"PERISTOMIUM|Absent" } },
+{data: {id: '9', vname:"PERISTOMIUM|Sipunculid" } },
+{data: {id: '12', vname:"PERISTOMIUM|Rings_and_collar" } },
+{data: {id: '13', vname:"PERISTOMIUM|Elongate" } },
+{data: {id: '26', vname:"Prostomial_G._Palps|G.Pro.Cro." } },
+{data: {id: '27', vname:"Prostomial_G._Palps|G.Pro.Mul." } },
+{data: {id: '35', vname:"NUCHAL_ORGANS|Caruncle" } },
+{data: {id: '39', vname:"SEGMENTATION|A." } },
+{data: {id: '46', vname:"1st_SEGMENT|Elongate" } },
+{data: {id: '52', vname:"1st_APPENDAGES|Frenulate" } },
+{data: {id: '72', vname:"GILLS|Dorsal, ant. segments" } },
+{data: {id: '74', vname:"GILLS|Single" } },
+{data: {id: '91', vname:"STOMODAEUM|Echiurid" } },
+{data: {id: '92', vname:"STOMODAEUM|D._muscularised" } },
+{data: {id: '98', vname:"STOMODAEUM|Cossurid" } },
+{data: {id: '99', vname:"STOMODAEUM|Absent" } },
+{data: {id: '110', vname:"VENT._ORGAN|Non-eversible" } },
+{data: {id: '111', vname:"V.HYP.|Ridged" } },
+{data: {id: '119', vname:"GUT|Sipunculid" } },
+{data: {id: '120', vname:"GUT|Echiurid" } },
+{data: {id: '123', vname:"GUT|Occluded" } },
+{data: {id: '133', vname:"REPRODUCTIVE_REGION|Not_segmental" } },
+{data: {id: '134', vname:"REPRODUCTIVE_REGION|Clitellate" } },
+{data: {id: '153', vname:"CHAETAL_COMP.|P." } },
+{data: {id: '159', vname:"COMPOUND_Chaetae|Fold" } },
+{data: {id: '162', vname:"COMPOUND_SHAPE|Hooked" } },
+{data: {id: '183', vname:"Circum._Nerve_Ring|A." } },
+{data: {id: '208', vname:"Protoneph|A." } },
+{  data: { id: 'e49', source: '1', target: '9',type: '1' },classes: 'type1' },
+{  data: { id: 'e62', source: '1', target: '119',type: '1' },classes: 'type1' },
+{  data: { id: 'e83', source: '1', target: '208',type: '1' },classes: 'type1' },
+{  data: { id: 'e98', source: '2', target: '91',type: '1' },classes: 'type1' },
+{  data: { id: 'e99', source: '2', target: '120',type: '1' },classes: 'type1' },
+{  data: { id: 'e546', source: '6', target: '27',type: '1' },classes: 'type1' },
+{  data: { id: 'e625', source: '7', target: '183',type: '1' },classes: 'type1' },
+{  data: { id: 'e787', source: '9', target: '119',type: '1' },classes: 'type1' },
+{  data: { id: 'e808', source: '9', target: '208',type: '1' },classes: 'type1' },
+{  data: { id: 'e1067', source: '12', target: '26',type: '1' },classes: 'type1' },
+{  data: { id: 'e1133', source: '13', target: '46',type: '1' },classes: 'type1' },
+{  data: { id: 'e1134', source: '13', target: '52',type: '1' },classes: 'type1' },
+{  data: { id: 'e1145', source: '13', target: '99',type: '1' },classes: 'type1' },
+{  data: { id: 'e1147', source: '13', target: '123',type: '1' },classes: 'type1' },
+{  data: { id: 'e3450', source: '35', target: '111',type: '1' },classes: 'type1' },
+{  data: { id: 'e3461', source: '35', target: '153',type: '1' },classes: 'type1' },
+{  data: { id: 'e3838', source: '39', target: '133',type: '1' },classes: 'type1' },
+{  data: { id: 'e4464', source: '46', target: '52',type: '1' },classes: 'type1' },
+{  data: { id: 'e4475', source: '46', target: '99',type: '1' },classes: 'type1' },
+{  data: { id: 'e4477', source: '46', target: '123',type: '1' },classes: 'type1' },
+{  data: { id: 'e4948', source: '52', target: '99',type: '1' },classes: 'type1' },
+{  data: { id: 'e4950', source: '52', target: '123',type: '1' },classes: 'type1' },
+{  data: { id: 'e6560', source: '72', target: '110',type: '1' },classes: 'type1' },
+{  data: { id: 'e6681', source: '74', target: '98',type: '1' },classes: 'type1' },
+{  data: { id: 'e8025', source: '91', target: '120',type: '1' },classes: 'type1' },
+{  data: { id: 'e8062', source: '92', target: '134',type: '1' },classes: 'type1' },
+{  data: { id: 'e8428', source: '99', target: '123',type: '1' },classes: 'type1' },
+{  data: { id: 'e8975', source: '111', target: '153',type: '1' },classes: 'type1' },
+{  data: { id: 'e9421', source: '119', target: '208',type: '1' },classes: 'type1' },
+{  data: { id: 'e11224', source: '159', target: '162',type: '1' },classes: 'type1' },
+ ],
+ style: [ // the stylesheet for the graph
+    {
+      selector: 'node',
+      style: {
+'background-color': '#999',
+        'color': '#000',
+        'label': 'data(vname)',		
+        'text-valign': 'center',
+        'text-outline-width': 0,      }
+    },
+
+    {
+      selector: 'edge',
+      style: {
+        'width': 3,
+        'line-color': '#ccc',
+        'target-arrow-color': '#ccc',
+        'target-arrow-shape': 'triangle'
+      }
+    }
+  ],
+
+  layout: {
+    name: 'grid',
+    rows: 1
+  }
+
+});</script>
+<script> var params = {
+    name: 'cola',
+    nodeSpacing: 5,
+    edgeLengthVal: 5,
+    animate: true,
+    maxSimulationTime: 4000,
+    randomize: true,
+    maxSimulationTime: 1500
+  };
+  var layout = makeLayout();
+  var running = false;
+
+   function makeLayout( opts ){     params.randomize = true;
+    for( var i in opts ){      params[i] = opts[i];    }    return cy.makeLayout( params );  }  layout.run();</script>
+</body>
+</html>

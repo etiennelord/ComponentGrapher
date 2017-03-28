@@ -127,6 +127,8 @@ public class main {
          if (!input_directory.isEmpty()) {
              permutation_statistics stat=new permutation_statistics();
              stat.calculate_from_directory_new(input_directory);
+             
+             stat.output_csv(input_directory+File.separator+util.getFilename(stat.data.filename));
              System.exit(0);
          }
         
@@ -158,7 +160,12 @@ public class main {
              }
          }   
              
-         d.filename=filename;                  
+         d.filename=filename;   
+         d.get_info();
+         //--Set default replicates for 0.05
+         if (perm_n==0) {
+             perm_n=(int)(d.info_total_possible_nodes/0.05);
+         }
          d.nooutput=nooutput;
          d.bipartite=bipartite;
          d.save_graphml=save_graphml;
@@ -176,9 +183,10 @@ public class main {
          d.load_charstate(node_information_filename);
          
         
-         
+         //--We analyse a dataset in the command-line
          if (analyse1) {             
-             System.out.println(d.get_info());
+                          
+             System.out.println(d.get_info());                          
              System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
              System.out.println("===============================================================================");
              permutation_statistics stat=new permutation_statistics(d);             
@@ -186,16 +194,16 @@ public class main {
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
              System.out.println("===============================================================================");              
-             stat.output_stats(stat.calculate_stat());                      
-             System.out.println("==============================================================================="); 
-             System.out.println("Nodes statistics");
-             System.out.println("==============================================================================="); 
-             for (int i=0; i<stat.reference_data.nodes.size();i++) {
-                 System.out.println(i+"\t"+stat.reference_data.nodes.get(i)+"\t");
-                 stat.output_stats(stat.calculate_stats_for_node(i));
-             }
-             
-              System.out.println("===============================================================================");
+             //stat.output_stats(stat.calculate_stat());                      
+//             System.out.println("==============================================================================="); 
+//             System.out.println("Nodes statistics");
+//             System.out.println("==============================================================================="); 
+//             for (int i=0; i<stat.reference_data.nodes.size();i++) {
+//                 System.out.println(i+"\t"+stat.reference_data.nodes.get(i)+"\t");
+//                 stat.output_stats(stat.calculate_stats_for_node(i));
+//             }
+//             
+//              System.out.println("===============================================================================");
              System.out.println("done.");
              System.exit(0);
          }
@@ -257,19 +265,13 @@ public class main {
           System.out.println("matrixfile_4.txt                      : edge list of the type 4 connections.");
           System.out.println("matrixfile_id.txt                     : identification for each node.");
           System.out.println("matrixfile_summary.txt                : statistics and parameters for this run.");
-          System.out.println("matrixfile_summary_statistics.csv     : nodes statistics.");
-          
+          System.out.println("matrixfile_summary_statistics.csv     : nodes informations.");
+          System.out.println("matrixfile_network_statistics.csv     : network statistics and p-value.");
+          System.out.println("matrixfile_nodes_statistics.csv       : nodes statistics and p-value.");
+                   
           System.out.println("log.txt                               : logfile");
           System.out.println("reference.json                        : serialized results for original dataset.");
           System.out.println("randomization_XX.json                 : serialized results for each permuation.");
-          
-          System.out.println("matrixfile_permutation_statistics.csv : network statistics and p-value.");
-          System.out.println("matrixfile_percent_triplet_type3.csv  : type 3 network triplets per nodes.");
-          System.out.println("matrixfile_out_degree2.csv            : outdegree in type 2 network.");
-          System.out.println("matrixfile_in_degree2.csv             : indegree in type 2 network.");
-          System.out.println("matrixfile_closeness_type3.csv        : closeness in type 3 network.");
-          System.out.println("matrixfile_betweenness_type3.csv      : betweenness in type3 network.");
-                    
           System.out.println("\nIf the [-bipartite] option is use, the following files will also be produced:");
           System.out.println("\tmatrixfile.bipartite_complete.txt: bipartite network of the\n\t\t\t\t\t\tcomplete network.");
           System.out.println("\tmatrixfile.bipartite_1.txt       : bipartite network of the type 1.");

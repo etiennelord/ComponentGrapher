@@ -31,7 +31,7 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
    ArrayList<stats> datas=new ArrayList<stats>();
    
    
-   String[] qualifier={"Statistics","Reference","<html><i>p</i>-value</html>","Significance","Mean","STD","Min","Max","5%","95%"};
+   String[] qualifier={"Statistics","Reference","<html><i>p</i>-value</html>","Significance","N","Min","Max","Mean","STD","5%","95%"};
     //pw.println("nodeid\tcontains_taxa\tfound_in_type_1\tfound_in_type_2\tfound_in_type_3\tfound_in_complete\tcolumn\tencoded_state\tchar_states\tCC_type1\tCC_complete\tlocal_ap_type3\tglobal_ap_type3\tlocal_ap_complete\tglobal_ap_complete\tin_degree_type2\tnorm_indegree_type2\tbetweenness_type3\tcloseness_type3\ttriplet_type3\tper_triplet_type3\ttriplet_complete\tper_triplet_complete\tmax_shortest_path_type3\tmax_shortest_path_complete\tconvergence\tprogressive_transition\tprogressive_transition_end_node\tcontains\tpercent_contained\tTaxa");
    
    public void setData(COMPONENT_GRAPHER.permutation_statistics data) {
@@ -56,13 +56,14 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
                case 2: return (s.reference_value==0?"NA":pvalue); //P1
                case 3: return data.getSignificance(pvalue, s.reference_value);
                //case 3: return ; //P2
-               case 4: return stat.getMean();
-               case 5: return stat.getStandardDeviation();
-               case 6: return stat.getMin();
-               case 7: return stat.getMax();
-               case 8: return stat.getPercentile(5);
-               case 9: return stat.getPercentile(95);    
-               default: return stat.getElement(col-10);
+               case 4: return stat.getN();
+               case 5: return stat.getMin();
+               case 6: return stat.getMax();
+               case 7: return stat.getMean();
+               case 8: return stat.getStandardDeviation();             
+               case 9: return stat.getPercentile(5);
+               case 10: return stat.getPercentile(95);    
+               //default: return stat.getElement(col-10);
            }
            
 //return data.char_matrix[col][row];
@@ -70,7 +71,7 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
            e.printStackTrace();
            return 0;
        }         
-    //return 0;
+    return 0;
     }
     
     
