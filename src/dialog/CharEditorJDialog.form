@@ -113,7 +113,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="Import_jButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Import dictionnary"/>
+            <Property name="text" type="java.lang.String" value="Import dictionary"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Import_jButtonActionPerformed"/>
@@ -121,7 +121,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="Export_jButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Export dictionnary"/>
+            <Property name="text" type="java.lang.String" value="Export dictionary"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="Export_jButtonActionPerformed"/>

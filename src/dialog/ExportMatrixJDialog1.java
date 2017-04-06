@@ -130,6 +130,8 @@ public class ExportMatrixJDialog1 extends javax.swing.JDialog {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        Filename_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+
         jButton3.setText("...");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

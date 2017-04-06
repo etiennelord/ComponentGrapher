@@ -91,7 +91,7 @@ public class RenameTaxaJDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Old ");
 
-        setTitle("Rename idenfier");
+        setTitle("Rename");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
@@ -103,7 +103,7 @@ public class RenameTaxaJDialog extends javax.swing.JDialog {
         });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setText("Rename column identifier");
+        jLabel1.setText("Rename taxa");
 
         CanceljButton.setText("Cancel");
         CanceljButton.addActionListener(new java.awt.event.ActionListener() {

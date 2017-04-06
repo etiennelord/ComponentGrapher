@@ -50,6 +50,7 @@ public class PolymorphicChar_EditorJDialog extends javax.swing.JDialog {
         this.frame=parent;
         initComponents();
         PolymorphicChar_TableModel tm = new PolymorphicChar_TableModel();
+        data.create_states();
         if (data.states.get(0).selected!=-1) {
             this.Variation_jTextField.setText(data.current_state_variation);
             this.Variation_jTextField.setForeground(Color.BLACK);

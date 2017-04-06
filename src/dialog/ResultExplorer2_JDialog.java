@@ -26,7 +26,7 @@ public class ResultExplorer2_JDialog extends javax.swing.JDialog {
         initComponents();
         this.data=data;
         
-        this.setTitle("ConpositeGrapher version "+config.get("version"));
+        this.setTitle("ComponentGrapher version "+config.get("version"));
         //this.jTextArea1.setText(PrintMemory());
          //ArrayList<String> stri=util.loadString("data"+File.separator+"about.html");
         this.setIconImage(Config.getImage());

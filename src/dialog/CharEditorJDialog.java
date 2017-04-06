@@ -122,14 +122,14 @@ public class CharEditorJDialog extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(CharState_jTable);
 
-        Import_jButton.setText("Import dictionnary");
+        Import_jButton.setText("Import dictionary");
         Import_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Import_jButtonActionPerformed(evt);
             }
         });
 
-        Export_jButton.setText("Export dictionnary");
+        Export_jButton.setText("Export dictionary");
         Export_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Export_jButtonActionPerformed(evt);

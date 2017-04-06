@@ -34,8 +34,8 @@ public class ExportResultJDialog extends javax.swing.JDialog {
         initComponents();
         this.Name_jTextField.setText(data.reference_data.result_directory);
          this.Directory_jTextField.setText(config.get("resultsDir"));
-          this.setTitle("Export result networks");
-          MessageText("Select the network(s) to export","");
+          this.setTitle("Export result statistics");
+          MessageText("Select the export directory","");
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          this.Export_jButton.setEnabled(data.reference_data.analysed); //-*-Disable export if not analysed
          if (!data.reference_data.analysed) {
@@ -128,6 +128,9 @@ public class ExportResultJDialog extends javax.swing.JDialog {
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        Directory_jTextField.setEditable(false);
+        Directory_jTextField.setBackground(new java.awt.Color(255, 255, 255));
 
         jButton3.setText("...");
         jButton3.setToolTipText("Select graph output directory");

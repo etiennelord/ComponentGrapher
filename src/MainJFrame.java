@@ -139,7 +139,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         jTabbedPane.setEnabledAt(1, false);
         jTabbedPane.setEnabledAt(2, false);
         jTabbedPane.setEnabledAt(3, false);
-        
+        Polymorphic_jButton.setEnabled(true);
         jInfo.setFont(Config.getGlyphicon());
         jInfo.setText("\uf129");
 //        CopyAll2_jButton.setFont(Config.glyphicon);
@@ -368,6 +368,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         jTabbedPane = new javax.swing.JTabbedPane();
         Matrix_jPanel = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -386,16 +387,16 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Matrix_jTable = new javax.swing.JTable();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         Summary_jPanel = new javax.swing.JPanel();
+        nodeinfo_jButton = new javax.swing.JButton();
+        nodeinfo_jlabel = new javax.swing.JLabel();
+        Find_jButton = new javax.swing.JButton();
+        Find_jComboBox = new javax.swing.JComboBox();
         Summary_sum_jPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         CopySummary_jButton = new javax.swing.JButton();
         Filter_ComboBox = new javax.swing.JComboBox();
         Summary_jScrollPane = new javax.swing.JScrollPane();
         Summary_jTable = new javax.swing.JTable();
-        nodeinfo_jButton = new javax.swing.JButton();
-        nodeinfo_jlabel = new javax.swing.JLabel();
-        Find_jComboBox = new javax.swing.JComboBox();
-        Find_jButton = new javax.swing.JButton();
         Statistiques_jPanel = new javax.swing.JPanel();
         Statistics_jPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -444,6 +445,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         setBackground(new java.awt.Color(255, 255, 255));
 
         jTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
+        jTabbedPane.setMaximumSize(new java.awt.Dimension(1083, 549));
 
         Matrix_jPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -522,7 +524,6 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
         Polymorphic_jButton.setText("define states");
         Polymorphic_jButton.setToolTipText("If polymorphic characters are found in the matrix, you will need to define the characters used in the analysis.");
-        Polymorphic_jButton.setEnabled(false);
         Polymorphic_jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Polymorphic_jButtonActionPerformed(evt);
@@ -614,13 +615,35 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                         .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MatrixjScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addComponent(MatrixjScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Data", Matrix_jPanel);
 
+        Summary_jPanel.setBackground(new java.awt.Color(255, 255, 255));
         Summary_jPanel.setEnabled(false);
+
+        nodeinfo_jButton.setText("Node informations");
+        nodeinfo_jButton.setToolTipText("Display information about the selected node");
+        nodeinfo_jButton.setEnabled(false);
+        nodeinfo_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nodeinfo_jButtonActionPerformed(evt);
+            }
+        });
+
+        nodeinfo_jlabel.setText(" ");
+
+        Find_jButton.setText("Find");
+        Find_jButton.setEnabled(false);
+        Find_jButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Find_jButtonActionPerformed(evt);
+            }
+        });
+
+        Find_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Edge", "Triplet", "Triangle" }));
+        Find_jComboBox.setEnabled(false);
 
         Summary_sum_jPanel.setBackground(new java.awt.Color(255, 255, 255));
         Summary_sum_jPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -680,28 +703,6 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Summary_jTable.setDragEnabled(true);
         Summary_jScrollPane.setViewportView(Summary_jTable);
 
-        nodeinfo_jButton.setText("Node informations");
-        nodeinfo_jButton.setToolTipText("Display information about the selected node");
-        nodeinfo_jButton.setEnabled(false);
-        nodeinfo_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nodeinfo_jButtonActionPerformed(evt);
-            }
-        });
-
-        nodeinfo_jlabel.setText(" ");
-
-        Find_jComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Edge", "Triplet", "Triangle" }));
-        Find_jComboBox.setEnabled(false);
-
-        Find_jButton.setText("Find");
-        Find_jButton.setEnabled(false);
-        Find_jButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Find_jButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout Summary_jPanelLayout = new javax.swing.GroupLayout(Summary_jPanel);
         Summary_jPanel.setLayout(Summary_jPanelLayout);
         Summary_jPanelLayout.setHorizontalGroup(
@@ -724,8 +725,8 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
             .addGroup(Summary_jPanelLayout.createSequentialGroup()
                 .addComponent(Summary_sum_jPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Summary_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(103, 103, 103)
+                .addComponent(Summary_jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Summary_jPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nodeinfo_jButton)
                     .addComponent(nodeinfo_jlabel)
@@ -849,7 +850,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Nodes_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
+                .addComponent(Nodes_jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Permutation statistics", Statistiques_jPanel);
@@ -906,7 +907,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
             .addGroup(ConnectedComponent_jPanelLayout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Complexes", ConnectedComponent_jPanel);
@@ -961,7 +962,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(progress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(5, 5, 5))
         );
 
         jMenu1.setText("File");
@@ -1083,7 +1084,11 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
         Define_state_jMenuItem.setText("Define character states");
         Define_state_jMenuItem.setToolTipText("");
-        Define_state_jMenuItem.setEnabled(false);
+        Define_state_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Define_state_jMenuItemActionPerformed(evt);
+            }
+        });
         PolymorphicChar_jMenu.add(Define_state_jMenuItem);
 
         jMenuItem3.setText("Create new matrix");
@@ -1115,14 +1120,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jTabbedPane)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1398,6 +1403,10 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
        
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void Define_state_jMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Define_state_jMenuItemActionPerformed
+        PolymorphicChar_EditorJDialog poly=new PolymorphicChar_EditorJDialog(this,data);
+    }//GEN-LAST:event_Define_state_jMenuItemActionPerformed
+
     
     
     /**
@@ -1503,11 +1512,11 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     void updateMatrixTableInfo() {
         
         //--Interface        
-        if (data.states.size()>0) {
-              Polymorphic_jButton.setEnabled(true);
-          } else {
-              Polymorphic_jButton.setEnabled(false);
-          }
+//        if (data.states.size()>0) {
+//              Polymorphic_jButton.setEnabled(true);
+//          } else {
+//              Polymorphic_jButton.setEnabled(false);
+//          }
           rowtable.repaint();        
           
           MatrixJButton.setText("<html>Matrix<br>"+data.intmaxrow()+ "x" +data.intmaxcol()+"</html>");
@@ -1872,6 +1881,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
     private javax.swing.JTable Summary_jTable;
     private javax.swing.JPanel Summary_sum_jPanel;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jIcon;

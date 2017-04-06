@@ -58,7 +58,7 @@ public class NodeView_JDialog extends javax.swing.JDialog {
         this.frame=parent;
         initComponents();
         //this.RenamejButton.setText(RenameButtonText);
-        //this.setTitle(RenameButtonText);
+        
         NodeView_TableModel nvt=new NodeView_TableModel();
         nvt.setData(data, nodeid);
         nvt.fireTableDataChanged();
@@ -69,6 +69,7 @@ public class NodeView_JDialog extends javax.swing.JDialog {
         CopyAll_jButton.setText("\uf0c5");
         //this.new_jTextField.setText(oldColName);
         Message("Noteid:"+nodeid+" "+nvt.current_node.complete_name,"");
+        this.setTitle("Node information for "+nodeid+" "+nvt.current_node.complete_name);
         // Set position
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension d = getSize();

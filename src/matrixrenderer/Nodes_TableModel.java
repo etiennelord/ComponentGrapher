@@ -192,7 +192,7 @@ public class Nodes_TableModel extends AbstractTableModel {
            }
            
        } catch(Exception e) {
-           e.printStackTrace();
+           //e.printStackTrace();
            //System.out.println(row+ " "+col+ " ");           
            return 0;
        }

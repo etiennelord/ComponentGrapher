@@ -2147,6 +2147,7 @@ void print_state_label() {
       * This prepate the multiples-states matrix
       */
      public void create_states() {
+         this.states.clear();
          ArrayList<String> st=new ArrayList<String>();        
          this.current_state_matrix=new String[this.ntax][this.nchar];        
          for (int i=0; i<this.ntax;i++) {

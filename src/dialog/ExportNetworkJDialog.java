@@ -170,6 +170,9 @@ public class ExportNetworkJDialog extends javax.swing.JDialog {
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
+        Directory_jTextField.setEditable(false);
+        Directory_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+
         jButton3.setText("...");
         jButton3.setToolTipText("Select graph output directory");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
