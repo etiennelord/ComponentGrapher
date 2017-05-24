@@ -241,14 +241,26 @@ public class permutation_statistics implements Serializable {
            logfile.open(log_filename);
            this.replicate=reference_data.replicate;
        // System.out.println(reference_data.result_directory);
-       reference_data.compute();
+    
+           reference_data.compute();
        data.MessageOption(data.get_info());
        //data.MessageOption("Saving to "+reference_data.result_directory);
        //data.MessageOption("* This is set in the Run analysis menu.");
        logfile.println(data.get_info());
        starttime=System.currentTimeMillis();
+       /////////////////////////////////////////////////////////////////////////
+       //--New mode, if we have missing data       
+       if (reference_data.info_total_undefined_column>0) {
+          
+           
+       
+
+       } else {
+       /////////////////////////////////////////////////////////////////////////    
+       //--No missing data (default)
+           
        reference=new summary_statistics(reference_data);
-        data.MessageResult("Calculating reference");
+       data.MessageResult("Calculating reference");
         data.MessageResult("Analyzing :"+reference.data.filename);        
         //System.out.println("Calculating reference\n");
         logfile.println("Analyzing :"+reference.data.filename);
@@ -298,7 +310,9 @@ public class permutation_statistics implements Serializable {
 
                    datasets t=new datasets(data);
                    if (data.permutation) {
-                       t.generate_permutation();
+                       t.generate_permutation(); //--Default
+                       //--Add case for the unknown caracter
+                       
                    } else if (data.bootstrap) {
                         t.generate_bootstrap();
                    }
@@ -337,6 +351,7 @@ public class permutation_statistics implements Serializable {
          logfile.println("Total time: "+util.msToString(endtime-starttime));
         //--done in the mainframe now...data=reference_data;
        logfile.close();
+       } //--End else without missing data
        } catch(Exception pp) {
            
        }

@@ -48,6 +48,7 @@ import java.util.Set;
  * The edge are now 2 array of integer : src_edge, dst_edge
  * @author Etienne Lord, Jananan Pathmanathan
  * @since October/November 2015, 2016
+ * Added the new permutation for unknown character
  */
 public class datasets extends Observable implements Serializable {
     
@@ -77,7 +78,7 @@ public class datasets extends Observable implements Serializable {
     public double p001=1.0;
     
    public int random=0; 
-   public int replicate=10; //--Bootstrap replicate
+   public int replicate=10; //--Bootstrap replicate   
    public boolean permutation=true;
    public boolean bootstrap=false;
    public boolean save_graphml=false;
@@ -131,6 +132,9 @@ public class datasets extends Observable implements Serializable {
    public int max_char_state=1; //--Maximum char state found for a taxon e.g. {1,2,3} =3
    public String char_matrix[][]; //--This is the original data matrixd minus the {}
    public int mode=0;
+   
+   public int unknown_data_treatment=1; // 1- Majority rule, 2- Highest majority, 3- use the miinimum of
+   
     /////////////////////////////////////////////////////////////////////////////
    /// VARIABLES - Datasets
    //--This is for rapid access to node type
@@ -138,6 +142,7 @@ public class datasets extends Observable implements Serializable {
    
    public ArrayList<Integer> undefined_column=new ArrayList<Integer>();
    public ArrayList<Integer> multiple_column=new ArrayList<Integer>();
+   public ArrayList<String> character_colum=new ArrayList<String>(); //--Valid character at each column
    
    //public int char_state[]; //--char state for this partition
    /////////////////////////////////////////////////////////////////////////////
@@ -153,9 +158,9 @@ public class datasets extends Observable implements Serializable {
    public String current_state_variation;
     /////////////////////////////////////////////////////////////////////////////
     /// INFO FROM get_Info()
-       public int info_total_undefined=0; // ? or -
+       public int info_total_undefined=0; // ? or - (now just ? - May 2017)
        public int info_total_multiple=0; // {1,2}
-       public int info_total_undefined_column=0;
+       public int info_total_undefined_column=0; 
        public int info_total_multiple_column=0; // {1,2}
        public int info_total_multistate=this.states.size();
        public int info_total_variation=(int)this.total_states;      
@@ -1152,7 +1157,7 @@ void print_state_label() {
             System.out.println("no data loaded from "+this.filename+"?");
             return false;
         }
-      compute_nodes();
+      compute_nodes(); 
       allocate_edges_memory();
       MessageOption(get_info());
       //System.out.println(this.st_option);
@@ -1227,7 +1232,6 @@ void print_state_label() {
       //}
           
   }
-  
   
   /**
    * Create the name for the node.
@@ -2148,11 +2152,13 @@ void print_state_label() {
       */
      public void create_states() {
          this.states.clear();
+         character_colum.clear();
          ArrayList<String> st=new ArrayList<String>();        
          this.current_state_matrix=new String[this.ntax][this.nchar];        
          for (int i=0; i<this.ntax;i++) {
-             for (int j=0; j<this.nchar;j++) {
+             for (int j=0; j<this.nchar;j++) {                 
                  this.current_state_matrix[i][j]=char_matrix[i][j];
+                 //--Extract each unique symbol
                  if (char_matrix[i][j].length()>1) {
                      state s=new state();
                      s.pos_i=i;
@@ -2164,7 +2170,18 @@ void print_state_label() {
                      st.add(s.state);
                  }
              }
-         }         
+         }
+         //--Extract valid char by column
+         for (int j=0; j<this.nchar;j++) {
+            String tmp="";
+             for (int i=0; i<this.ntax;i++) {
+                String t=char_matrix[i][j];
+                for (char c:t.toCharArray()) {
+                    if (c!='?'&&c!='*'&&c!='-'&&!tmp.contains(""+c)) tmp+=c;
+                }
+             }
+             character_colum.add(tmp);
+         }
      }
      
      /**
@@ -2227,6 +2244,65 @@ void print_state_label() {
          return current_state_variation;
      }
      
+      /**
+      * This initialize the current state matrix 
+      * @param state_id
+      * @param rand
+      * @return 
+      */
+     public String prepare_current_state_matrix_with_missing(int state_id, boolean rand) {
+          current_state_variation=""; 
+          if (random>0&&random>total_states) {
+              random=0;              
+          } 
+         
+         boolean ok=false;      
+         
+        if (!user_state_string.isEmpty()&&user_state_string.length()>=states.size()) {
+                 current_state_variation=user_state_string;                       
+             try {
+              for(int i=0; i<states.size();i++) {
+                  state s=states.get(i);
+                  if (!s.state.contains(""+current_state_variation.charAt(i))) {
+                      System.out.println("Illegal user supplied variation string : "+current_state_variation); 
+                      System.out.println("Available states are:");
+                      this.print_state_label();
+                  } else {
+                    this.current_state_matrix[s.pos_i][s.pos_j]=""+current_state_variation.charAt(i);
+                  }
+              }
+             } catch (Exception e) {
+                 System.out.println("Illegal user supplied variation string : "+current_state_variation); 
+                 this.print_state_label();
+                 System.out.println("Available states are:");                   
+             }           
+        } else {
+           //--random
+            while (!ok) {
+                current_state_variation="";         
+                for (int i=0; i<states.size();i++) {
+                      state s=states.get(i);
+                      //--Randomly pick a state
+                      LFSR258  r=new  LFSR258();                      
+                      int pos=r.nextInt(0,s.state.length()-1);
+                      current_state_variation+=s.state.charAt(pos);
+                      this.current_state_matrix[s.pos_i][s.pos_j]=""+s.state.charAt(pos);
+                      s.selected=pos;
+                      HashMap<String,String> st=statelabels.get(s.pos_j);                      
+                      String k=""+s.state.charAt(pos);
+                      if (!rand) s.selected=-1;
+                      s.state_label=k+"|"+st.get(k);
+                      states.set(i, s);
+                      
+                      
+                  }
+                if (!state_strings.contains(current_state_variation)) {                   
+                    ok=true;
+                }
+            } 
+         }       
+         return current_state_variation;
+     }
     
      /**
       * Test if all the caracters are defined (no polymorphic)

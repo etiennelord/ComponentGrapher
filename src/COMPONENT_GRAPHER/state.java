@@ -36,6 +36,7 @@ public class state implements Serializable {
     public ArrayList<String> states=new ArrayList<String>(); //--State as en ArrayList
     public  String state=""; //--State at this position (e.g. ABC) 
     public int selected=-1;
+    public boolean undefined=false; //--State is undefined
     public String state_label="";
     
     public state() {}

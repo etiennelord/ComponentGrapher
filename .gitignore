@@ -12,3 +12,4 @@ internal/*
 rhino
 rhino/*
 *.log
+/dist/
