@@ -142,7 +142,7 @@ public class datasets extends Observable implements Serializable {
    
    public ArrayList<Integer> undefined_column=new ArrayList<Integer>();
    public ArrayList<Integer> multiple_column=new ArrayList<Integer>();
-   public ArrayList<String> character_colum=new ArrayList<String>(); //--Valid character at each column
+   public ArrayList<String> character_column=new ArrayList<String>(); //--Valid character at each column
    
    //public int char_state[]; //--char state for this partition
    /////////////////////////////////////////////////////////////////////////////
@@ -2152,9 +2152,20 @@ void print_state_label() {
       */
      public void create_states() {
          this.states.clear();
-         character_colum.clear();
+         character_column.clear();
          ArrayList<String> st=new ArrayList<String>();        
          this.current_state_matrix=new String[this.ntax][this.nchar];        
+         //--Extract valid char by column
+         for (int j=0; j<this.nchar;j++) {
+            String tmp="";
+             for (int i=0; i<this.ntax;i++) {
+                String t=char_matrix[i][j];
+                for (char c:t.toCharArray()) {
+                    if (c!='?'&&c!='*'&&c!='-'&&!tmp.contains(""+c)) tmp+=c;
+                }
+             }
+             character_column.add(tmp);
+         }
          for (int i=0; i<this.ntax;i++) {
              for (int j=0; j<this.nchar;j++) {                 
                  this.current_state_matrix[i][j]=char_matrix[i][j];
@@ -2168,20 +2179,20 @@ void print_state_label() {
                      this.total_states*=s.state.length();
                      states.add(s);                    
                      st.add(s.state);
+                 } else if (char_matrix[i][j].equals("?")||char_matrix[i][j].equals("*")){
+                     //Handle ? and * character
+                     state s=new state();
+                     s.pos_i=i;
+                     s.pos_j=j;
+                     s.undefined=true;
+                     s.state_id=this.total_state_id++;
+                     s.state=character_column.get(j);
+                     this.total_states*=s.state.length();
+                     states.add(s);                    
+                     st.add(s.state);
                  }
              }
-         }
-         //--Extract valid char by column
-         for (int j=0; j<this.nchar;j++) {
-            String tmp="";
-             for (int i=0; i<this.ntax;i++) {
-                String t=char_matrix[i][j];
-                for (char c:t.toCharArray()) {
-                    if (c!='?'&&c!='*'&&c!='-'&&!tmp.contains(""+c)) tmp+=c;
-                }
-             }
-             character_colum.add(tmp);
-         }
+         }         
      }
      
      /**
@@ -2191,7 +2202,8 @@ void print_state_label() {
       * @return 
       */
      public String prepare_current_state_matrix(int state_id, boolean rand) {
-          current_state_variation=""; 
+          LFSR258  r=new  LFSR258();                       
+         current_state_variation=""; 
           if (random>0&&random>total_states) {
               random=0;              
           } 
@@ -2223,7 +2235,8 @@ void print_state_label() {
                 for (int i=0; i<states.size();i++) {
                       state s=states.get(i);
                       //--Randomly pick a state
-                      LFSR258  r=new  LFSR258();                      
+                      //--Note: this is not random since the random seed is fixed
+                      //--Note: this can handle random character                     
                       int pos=r.nextInt(0,s.state.length()-1);
                       current_state_variation+=s.state.charAt(pos);
                       this.current_state_matrix[s.pos_i][s.pos_j]=""+s.state.charAt(pos);
@@ -2232,9 +2245,7 @@ void print_state_label() {
                       String k=""+s.state.charAt(pos);
                       if (!rand) s.selected=-1;
                       s.state_label=k+"|"+st.get(k);
-                      states.set(i, s);
-                      
-                      
+                      states.set(i, s);                                            
                   }
                 if (!state_strings.contains(current_state_variation)) {                   
                     ok=true;

@@ -22,6 +22,7 @@ import static COMPONENT_GRAPHER.main.authors;
 import static COMPONENT_GRAPHER.main.help;
 import static COMPONENT_GRAPHER.main.version;
 import COMPONENT_GRAPHER.permutation_statistics;
+import COMPONENT_GRAPHER.permutation_statistics_undefined;
 import COMPONENT_GRAPHER.util;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -50,6 +51,7 @@ public class main {
          ///////////////////////////////////////////////////////////////////////
             /// FLAGS
             boolean analyse1=true;        //--Permutation statistic
+            boolean analyse2=false;       //--Permutation statistic
             boolean save_graphml=false;   //--Save output as graphML
             boolean save_bipartite=false; //--Compute and save bipartite networks
             boolean save_triplets=false; //--Compute and save triplets information
@@ -80,7 +82,11 @@ public class main {
         
         // Read command line option
         for (String st:args) {
-            String s=st.toLowerCase();            
+            String s=st.toLowerCase();    
+            if (s.indexOf("-und")>-1) {
+                analyse1=false;
+                analyse2=true;
+            }
             if (s.indexOf("-minrand=")>-1) minrand=Double.valueOf(st.substring(9));
             if (s.indexOf("-maxiter=")>-1) maxiter=Integer.valueOf(st.substring(9));
             if (s.indexOf("-mintaxa=")>-1) {
@@ -207,12 +213,23 @@ public class main {
              System.out.println("done.");
              System.exit(0);
          }
-         //--Actual computing
-         //d.compute();
-        
+         if (analyse2) {             
+             System.out.println(d.get_info());                          
+             System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
+             System.out.println("===============================================================================");
+             permutation_statistics_undefined stat=new permutation_statistics_undefined(d);             
+             stat.generate_statistics();                                   
+             stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
+             if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
+             System.out.println("===============================================================================");              
+             
+             System.out.println("done.");
+             System.exit(0);
+         }
       System.out.println("normal exit.");
+      
       } else {
-          //--Gui version
+          //--Gui version - No Argv -
           EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
