@@ -261,10 +261,14 @@ public class main {
           //System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
           System.out.println("\t-perm=100    : Specify the number permutation to performed.");          
           System.out.println("\t-maxpool=10  : Specify the number of concurrent threads.");          
+          System.out.println("\t-und         : Perform randomization on undefined states (?,*).");          
+          System.out.println("\t-undmode=0,1 : Select the undefined mode  0: Absolute Majority");          
+          System.out.println("\t             : for the edge selection     1: Majority Rule");          
+          
           //System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");          
           //System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");
           //System.out.println("\t-random=9    : Force a number of random variations.");
-          System.out.println("\t-undefined   : Remove column containing undefined states (e.g. ?,-)");
+          System.out.println("\t-undefined   : Remove column containing undefined states (e.g. ?,-,*)");
           System.out.println("\t-multiple    : Remove column containing multiple states (e.g. {1,2,3}).");          
           System.out.println("\t-bipartite   : Output bipartite files.");
           System.out.println("\t-graphml     : Output graphml files (Gephi,Cytoscape compatibles).");
