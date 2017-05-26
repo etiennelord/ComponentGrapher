@@ -33,7 +33,7 @@ public class main {
 
         ///////////////////////////////////////////////////////////////////////
         /// VERSION
-        public static String version="1.0.5";
+        public static String version="1.0.6";
         public static String authors="Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov,\nFrançois-Joseph Lapointe, Éric Bapteste";
         
     /**

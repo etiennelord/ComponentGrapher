@@ -1325,7 +1325,7 @@ void print_state_label() {
       }
       this.current_total_iter=this.maxiter;
       if (this.total_states==1) this.current_total_iter=1;
-      if (this.total_states<1000&&this.maxiter>this.total_states) this.current_total_iter=(int)this.total_states;
+      if (this.total_states<100000&&this.maxiter>this.total_states) this.current_total_iter=(int)this.total_states;
       this.total_edges=(((nodes.size()*(nodes.size()-1))/2)*this.current_total_iter);
       //--Set the statistic values
       this.p05=0.05/(float)nodes.size(); //--critical values
@@ -1333,7 +1333,7 @@ void print_state_label() {
       this.p001=0.001/(float)nodes.size();          
   }
   
-  private void allocate_edges_memory() {
+  public void allocate_edges_memory() {
         //--debug System.out.println("allocate_edges_memory.");    
         //System.out.println("Trying to allocate memory for "+total_edges+" possible edges.");
        MessageResult("Trying to allocate memory for "+total_edges+" possible edges.\n");

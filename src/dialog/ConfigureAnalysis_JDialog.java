@@ -76,6 +76,13 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
       this.Char_jTextField.setText(""+data.info_Nchar);
       this.Nodes_jTextField.setText(""+data.info_total_possible_nodes);
       this.Polymorphic_jTextField.setText(""+data.info_total_multistate);
+      this.undefined_jTextField.setText(""+data.info_total_undefined);
+      if (data.info_total_undefined>0) {
+       this.undefined_jTextField.setEnabled(true);       
+      } else {
+        this.undefined_jTextField.setEnabled(false);
+      }
+      this.edge_strategy_jComboBox.setSelectedIndex(data.unknown_data_treatment);
       //this.InfojLabel.setText("<html>Total nodes: <b>"+data.info_total_possible_nodes+" </b>Taxa (rows): <b>"+data.info_Ntaxa+"</b> Characters (columns): <b>"+data.info_Nchar+"</b> Treated columns: <b>"+data.info_total_valid_column+ "</b> Multistate characters: "+data.info_total_multiple+"</html>");
        
 //          if (data.state_strings.size()!=0&&data.info_total_multiple>0) {
@@ -146,11 +153,16 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         Bootstrap_jTextField = new javax.swing.JTextField();
         Bootstrap_jCheckBox = new javax.swing.JCheckBox();
         Recommended_jLabel = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        edge_strategy_jComboBox = new javax.swing.JComboBox<>();
+        Minimum_percentjTextField = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
         Run_jButton = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -180,6 +192,8 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         Nodes_jTextField = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         Polymorphic_jTextField = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        undefined_jTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -216,17 +230,40 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         Recommended_jLabel.setText("recommended");
         Recommended_jLabel.setToolTipText("This is calculated as the total possible network nodes divided by 0.05");
 
+        jLabel11.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel11.setText("Edges selection strategy");
+
+        edge_strategy_jComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Absolute majority (>50% edge type found)", "Majority Rule (most abundant edge type)", "Minimum (%) appearance to accept and edge type" }));
+
+        Minimum_percentjTextField.setText("50");
+        Minimum_percentjTextField.setToolTipText(" Minimum percent to accept an edge");
+        Minimum_percentjTextField.setEnabled(false);
+
+        jLabel13.setText("%");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Bootstrap_jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Bootstrap_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Recommended_jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(Bootstrap_jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Bootstrap_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Recommended_jLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(edge_strategy_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Minimum_percentjTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,6 +273,12 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                     .addComponent(Bootstrap_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Bootstrap_jCheckBox)
                     .addComponent(Recommended_jLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(edge_strategy_jComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Minimum_percentjTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -266,7 +309,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         });
 
         remove_undefined_column_jCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        remove_undefined_column_jCheckBox.setText("Remove from analysis the column(s) containing undefined states (e.g. ?,-)");
+        remove_undefined_column_jCheckBox.setText("Remove from analysis the column(s) containing undefined states (e.g. ?,*)");
         remove_undefined_column_jCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 remove_undefined_column_jCheckBoxActionPerformed(evt);
@@ -443,6 +486,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         Char_jTextField.setBorder(null);
 
         Nodes_jTextField.setEditable(false);
+        Nodes_jTextField.setBackground(new java.awt.Color(255, 255, 255));
         Nodes_jTextField.setText("jTextField3");
         Nodes_jTextField.setBorder(null);
 
@@ -450,8 +494,17 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
         jLabel10.setText("Polymorphic characters");
 
         Polymorphic_jTextField.setEditable(false);
+        Polymorphic_jTextField.setBackground(new java.awt.Color(255, 255, 255));
         Polymorphic_jTextField.setText("jTextField1");
         Polymorphic_jTextField.setBorder(null);
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel12.setText("Undefined characters (e.g. ?,*)");
+
+        undefined_jTextField.setEditable(false);
+        undefined_jTextField.setBackground(new java.awt.Color(255, 255, 255));
+        undefined_jTextField.setText("jTextField1");
+        undefined_jTextField.setBorder(null);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -485,14 +538,20 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                             .addComponent(jLabel7))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(Taxa_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(Nodes_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Polymorphic_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(Polymorphic_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(Taxa_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel9)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(Nodes_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel12)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(undefined_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -514,7 +573,9 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Char_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12)
+                    .addComponent(undefined_jTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
@@ -524,14 +585,14 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(Run_jButton)
@@ -561,6 +622,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
           data.remove_undefined_column=this.remove_undefined_column_jCheckBox.isSelected();
           data.bipartite=this.bipartite_jCheckBox.isSelected();
           data.result_directory=  this.Directory_jTextField.getText();
+          data.unknown_data_treatment=this.edge_strategy_jComboBox.getSelectedIndex();
           String s=(String)this.jComboBox1.getSelectedItem();
           datasets.maxthreads=Integer.valueOf(s);
           }catch(Exception e){
@@ -669,6 +731,7 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
     private javax.swing.JTextField Bootstrap_jTextField;
     private javax.swing.JTextField Char_jTextField;
     private javax.swing.JTextField Directory_jTextField;
+    private javax.swing.JTextField Minimum_percentjTextField;
     private javax.swing.JTextField Name_jTextField;
     private javax.swing.JCheckBox NoLog_jCheckBox;
     private javax.swing.JTextField Nodes_jTextField;
@@ -677,12 +740,17 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
     private javax.swing.JButton Run_jButton;
     private javax.swing.JTextField Taxa_jTextField;
     private javax.swing.JCheckBox bipartite_jCheckBox;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> edge_strategy_jComboBox;
     private javax.swing.JCheckBox graphml_jCheckBox;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -699,5 +767,6 @@ public class ConfigureAnalysis_JDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jStatusMessage;
     private javax.swing.JCheckBox remove_multiple_column_jCheckBox;
     private javax.swing.JCheckBox remove_undefined_column_jCheckBox;
+    private javax.swing.JTextField undefined_jTextField;
     // End of variables declaration//GEN-END:variables
 }
