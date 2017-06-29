@@ -61,6 +61,7 @@ public class permutation_statistics implements Serializable {
     public int replicate=100;
     public int current_replicate=1;
     LFSR258  rand=new LFSR258();            
+    
     transient Callable callback=null;
     transient Config config=new Config();
     
@@ -165,6 +166,7 @@ public class permutation_statistics implements Serializable {
     
    //--Helper class 
    public class stats implements Serializable {
+      
        public String title="";
        public String node_field="";
        public Double reference_value=0.0;       

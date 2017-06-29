@@ -41,6 +41,15 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Set;
+import org.forester.evoinference.matrix.distance.BasicSymmetricalDistanceMatrix;
+import org.forester.evoinference.matrix.distance.DistanceMatrix;
+import static org.forester.io.parsers.util.ParserUtils.readPhylogenies;
+import org.forester.phylogeny.Phylogeny;
+import org.forester.phylogeny.PhylogenyMethods;
+import static org.forester.phylogeny.PhylogenyMethods.midpointRoot;
+import org.forester.phylogeny.PhylogenyNode;
+import org.forester.phylogeny.data.PhylogenyData;
+import org.forester.phylogeny.data.PhylogenyDataUtil;
 
 /**
  * This is a new version 
@@ -53,6 +62,8 @@ import java.util.Set;
 public class datasets extends Observable implements Serializable {
     
     transient public static Config config=new Config();
+    
+    static int I1=1234, I2=5678;
     
     transient static LFSR258  rand=new LFSR258();  
     
@@ -98,7 +109,7 @@ public class datasets extends Observable implements Serializable {
    public boolean node_computed=false; //--Set to false to recompute
    public boolean inverse_matrix_table=true; //--Tag to change the table interface
    public boolean display_char_numbering=false; //--Tag to display the char numbering
-   
+   public Phylogeny tree=null;   
    
    public String commandline="";
    public int maxiter=1;
@@ -134,6 +145,7 @@ public class datasets extends Observable implements Serializable {
    public int mode=0;
    
    public int unknown_data_treatment=1; // 1- Majority rule, 2- Highest majority, 3- use the miinimum of
+   public int unknown_state_treatment=0; //0, equi, 1: prob, 2: phylogenetic
    
     /////////////////////////////////////////////////////////////////////////////
    /// VARIABLES - Datasets
@@ -386,11 +398,20 @@ public class datasets extends Observable implements Serializable {
            this.taxa_edge[i]=d.taxa_edge[i];
            this.count_edge[i]=d.count_edge[i];
         }
-        
-        
-        
     }
-   
+
+    
+    /** 
+ * From R base sunif.c
+ * A version of Marsaglia-MultiCarry
+ * @return 
+ */
+double unif_rand()
+{
+    I1= 36969*(I1 & 0177777) + (I1>>16);
+    I2= 18000*(I2 & 0177777) + (I2>>16);
+    return ((I1 << 16)^(I2 & 0177777)) * 2.328306437080797e-10; /* in [0,1) */
+}
     /***
      * Randomly permute the value in i and j
      * @param col i.e. character p.e. pied 
@@ -2170,6 +2191,9 @@ void print_state_label() {
              for (int j=0; j<this.nchar;j++) {                 
                  this.current_state_matrix[i][j]=char_matrix[i][j];
                  //--Extract each unique symbol
+                 //--Get all possibles states for this column
+                 String stchar=get_states_column_all_chars(j);
+                 System.out.println(stchar);
                  if (char_matrix[i][j].length()>1) {
                      state s=new state();
                      s.pos_i=i;
@@ -2186,7 +2210,11 @@ void print_state_label() {
                      s.pos_j=j;
                      s.undefined=true;
                      s.state_id=this.total_state_id++;
-                     s.state=character_column.get(j);
+                     switch(this.unknown_state_treatment) {
+                         case 0:s.state=character_column.get(j); break;
+                         case 1:s.state=stchar;break;
+                         case 2: //TO DO
+                     }                     
                      this.total_states*=s.state.length();
                      states.add(s);                    
                      st.add(s.state);
@@ -2342,6 +2370,24 @@ void print_state_label() {
      
      /**
       * This return the possible state found in a column
+      * @since Juin 2017
+      * @param j
+      * @return 
+      */
+     public String get_states_column_all_chars(int j) {
+         String temp="";
+         for (int i=0; i<this.ntax;i++) {
+             String d=this.char_matrix[i][j];
+             for (int k=0; k<d.length();k++) {
+                 char e=d.charAt(k);
+                 if (e!='?'&&e!='*'&&e!='-') temp+=e;
+             }
+         }
+         return temp;
+     }
+     
+      /**
+      * This return the possible state found in a column
       * @param j
       * @return 
       */
@@ -2351,6 +2397,7 @@ void print_state_label() {
              String d=this.char_matrix[i][j];
              for (int k=0; k<d.length();k++) {
                  char e=d.charAt(k);
+                 //System.out.println(e);                 
                  if (!temp.contains(""+e)) temp.add(""+e);
              }
          }
@@ -2468,8 +2515,7 @@ void print_state_label() {
                            type4_total_edge++;
                            total_type4++;
                        }     
-                    }
-                        
+                    }                        
     }   
      
     
@@ -2795,18 +2841,241 @@ void print_state_label() {
      * @param args 
      */
      public static void main(String[] args) {
-           Locale.setDefault(new Locale("en", "US"));
+         Locale.setDefault(new Locale("en", "US"));
            
          datasets d1=new datasets();
-         d1.printCharMatrix();
-         d1.compute();
-      
-         d1.export_cytoscapejs("data\\test.html", 1);
+         try {
+            
+         Phylogeny[] p=readPhylogenies("sample/tree_test_26juin2017.txt");
+            //forester.tree.Tree tr=new forester.tree.Tree(""); 
+            d1.tree=p[0];
+             
+             //if (!d1.tree.isRooted()) midpointRoot(d1.tree);
+             
+                     
+             //Compute distance matrix
+             ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) d1.tree.getExternalNodes();
+             // 
+             int nl=d1.tree.getNumberOfExternalNodes();
+             for (int i=0; i<nl;i++) {
+                 d1.tree.getNode(i).setDistanceToParent(1.0);
+             }
+             BasicSymmetricalDistanceMatrix d=new BasicSymmetricalDistanceMatrix(nodes.size());
+             for (int i=0; i<nodes.size();i++) {
+                 
+                 d.setIdentifier(i, nodes.get(i).getName());
+                 for (int j=0; j<nodes.size();j++) {
+                     System.out.println(nodes);
+                         d.setValue(i, j, PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j)));                     
+                 }
+             }
+             
+             
+             
+             
+         System.out.println(d);    
+         
+         //Test remove col
+         for (int i=d.getSize(); i>=0;i--) {
+             d=removeRowCol(d,i);
+             System.out.println(d);   
+         }
+         } catch(Exception e){e.printStackTrace();}
+         
+         //d1.load_simple("sample/matrice_test_26juin2017.txt");
+         //d1.printCharMatrix();
+         //d1.compute();
+         
+         
+         //d1.export_cytoscapejs("data\\test.html", 1);
 
     }
 
     
-
+   double getMax(BasicSymmetricalDistanceMatrix matrix) {
+        double max=-1;
+        for (int i=0;i<matrix.getSize();i++) {
+            for (int j=0;j<matrix.getSize();j++) {
+                if (matrix.getValue(i, j)>max) max=matrix.getValue(i, j);
+            }
+        }        
+        return max;
+    }
+    
+   double[] getRowsums(BasicSymmetricalDistanceMatrix matrix) {
+        double[] sum=new double[matrix.getSize()];
+        
+        for (int row=0;row<matrix.getSize();row++) {
+            sum[row]=0;
+            for (int col=0;col<matrix.getSize();col++) {
+                sum[row]+=matrix.getValue(col, row);
+            }
+        }        
+        return sum;
+    }
    
+   double[] getCummulsums(BasicSymmetricalDistanceMatrix matrix, int row) {
+        double[] sum=new double[matrix.getSize()];
+        double prev=0;
+        for (int col=0;col<matrix.getSize();col++) {
+                sum[col]=prev+matrix.getValue(col, row);
+                prev=sum[col];
+        }        
+        return sum;
+    }
+  
+   //TO DO
+   int getRowPos(double prob, double[] p  ) {
+       return 0;
+   }
+   
+      BasicSymmetricalDistanceMatrix phyloProb(Phylogeny p, double k) {
+       int nl=p.getNumberOfExternalNodes();
+             for (int i=0; i<nl;i++) {
+                 p.getNode(i).setDistanceToParent(1.0);
+             }
+             ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) p.getExternalNodes();
+             BasicSymmetricalDistanceMatrix d=new BasicSymmetricalDistanceMatrix(nodes.size());
+             BasicSymmetricalDistanceMatrix scaled_d=new BasicSymmetricalDistanceMatrix(nodes.size());
+             for (int i=0; i<nodes.size();i++) {                 
+                 d.setIdentifier(i, nodes.get(i).getName());
+                 for (int j=0; j<nodes.size();j++) {
+                     
+                         d.setValue(i, j, PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j)));                     
+                 }
+             }
+             double maxd=getMax(d);
+             //Scale the matrix
+             
+             for (int i=0; i<nodes.size();i++) {                 
+                 d.setIdentifier(i, nodes.get(i).getName());
+                 for (int j=0; j<nodes.size();j++) {                     
+                         scaled_d.setValue(i, j, k-(d.getValue(i, j)/maxd));                     
+                 }
+             }
+             //Normalize d_scaled by rowSums
+             double[] rowsum=getRowsums(scaled_d);
+             for (int row=0; row<rowsum.length;row++) {
+                 for (int col=0; col<rowsum.length;col++) {
+                     scaled_d.setValue(col, row, scaled_d.getValue(col, row)/rowsum[row]);                     
+                 }
+             }           
+             return scaled_d;
+        }
+      
+      
+
+            /* generate sample */
+      
+      /* A version of Marsaglia-MultiCarry */
+
+
+//void set_seed(unsigned int i1, unsigned int i2)
+//{
+//    I1 = i1; I2 = i2;
+//}
+//
+//void get_seed(unsigned int *i1, unsigned int *i2)
+//{
+//    *i1 = I1; *i2 = I2;
+//}
+
+      static BasicSymmetricalDistanceMatrix removeRowCol(BasicSymmetricalDistanceMatrix p,int x) {
+          if (p.getSize()==1) return p;
+          if (x>=p.getSize()) return p;
+          BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
+          
+          int pp_i=0;
+          int pp_j=0;
+          for (int i=0; i<p.getSize();i++) {
+            if (i!=x) {  
+            for (int j=0; j<p.getSize();j++) {
+                  if (j!=x) {
+                      pp.setValue(pp_i, pp_j, p.getValue(i,j));
+                      pp_j++;
+                  }
+               }     
+               pp_j=0;
+               pp.setIdentifier(pp_i, p.getIdentifier(i));
+               pp_i++;
+            }
+             
+          }        
+                  
+          return pp;
+      }
+
+      
+       void phyloPermute(Phylogeny pp,double k) {
+         BasicSymmetricalDistanceMatrix p=phyloProb(pp,k);
+             //--Sample colonne
+//                          for (int i = 0; i < nans; i++) {
+//                double rU = unif_rand() * n;
+//                k = (int) rU;
+//                ans[i] = (rU < q[k]) ? k+1 : a[k]+1;
+//            }
+//            
+        
+  
+        }
+         
+         
+//  p<-phyloProb(tree, k)
+//  tt<-rownames(p)
+//  nsp<-length(tt)
+//  order<-sample(1:nsp, replace=F)
+//  ttnew<-character(nsp)
+//  cpm<-p
+//  for(j in order[-nsp]) {
+//    cpm<-cpm/rowSums(cpm)
+//    rr<-which(rownames(cpm)==tt[j])
+//    pp<-cpm[rr,]
+//    s2<-sample(names(pp), size=1, replace=T, prob=pp)
+//    slot<-which(tt==s2)
+//    rc<-which(colnames(cpm)==s2)
+//    ttnew[slot]<-tt[j]
+//    cpm<-cpm[-rr,-rc]
+//  }
+//  ttnew[which(ttnew=="")]<-tt[order[nsp]]
+       
+  
     
 } //End dataset
+
+
+//phyloProb<-function(tree, k) {
+//  phylo_dist <- cophenetic.phylo(tree)
+//  scaled_phylo_dist <- phylo_dist/max(phylo_dist)
+//  s <- k-scaled_phylo_dist
+//  s/rowSums(s)
+//}
+
+//# Permutes species according to phylogentic tree; returns tip names in permuted order
+//phyloPermute<-function(tree, k) {
+//  p<-phyloProb(tree, k)
+//  tt<-rownames(p)
+//  nsp<-length(tt)
+//  order<-sample(1:nsp, replace=F)
+//  ttnew<-character(nsp)
+//  cpm<-p
+//  for(j in order[-nsp]) {
+//    cpm<-cpm/rowSums(cpm)
+//    rr<-which(rownames(cpm)==tt[j])
+//    pp<-cpm[rr,]
+//    s2<-sample(names(pp), size=1, replace=T, prob=pp)
+//    slot<-which(tt==s2)
+//    rc<-which(colnames(cpm)==s2)
+//    ttnew[slot]<-tt[j]
+//    cpm<-cpm[-rr,-rc]
+//  }
+//  ttnew[which(ttnew=="")]<-tt[order[nsp]]
+//  
+//  ttnew
+//}	
+//
+//permPhylo <- function(tree, matrix.1, k) 
+//{ 
+//  s <- phyloPermute(tree, k = k) 
+//  trans <- match(s, rownames(matrix.1))
+//  matrix.1[trans,trans] 
+//}
