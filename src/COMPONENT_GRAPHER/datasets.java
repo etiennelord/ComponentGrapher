@@ -406,7 +406,7 @@ public class datasets extends Observable implements Serializable {
  * A version of Marsaglia-MultiCarry
  * @return 
  */
-double unif_rand()
+static double unif_rand()
 {
     I1= 36969*(I1 & 0177777) + (I1>>16);
     I2= 18000*(I2 & 0177777) + (I2>>16);
@@ -2865,21 +2865,37 @@ void print_state_label() {
                  
                  d.setIdentifier(i, nodes.get(i).getName());
                  for (int j=0; j<nodes.size();j++) {
-                     System.out.println(nodes);
+                     //System.out.println(nodes);
                          d.setValue(i, j, PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j)));                     
                  }
              }
              
              
+             double[][] prob=d1.phyloProb(p[0], 2.0);
              
+         //System.out.println(d);    
              
-         System.out.println(d);    
          
+        
+//             for (int j=0;j<d.getSize();j++) {
+//                for (int i=0;i<d.getSize();i++) {
+//                 double[] probl=d1.getCummulsums(prob,j);
+//                 System.out.print(probl[i]+" ");
+//                 }   
+//                 System.out.println("");
+//             }
+             
+             for (int i=0; i<20;i++) {
+                ArrayList<String> dat2=phyloPermute(p[0],2.0);
+                 System.out.println(dat2);
+                
+             }
+         //for (int i=0; i<200;i++) System.out.println(Math.abs(d1.unif_rand()));
          //Test remove col
-         for (int i=d.getSize(); i>=0;i--) {
-             d=removeRowCol(d,i);
-             System.out.println(d);   
-         }
+//         for (int i=d.getSize(); i>=0;i--) {
+//             d=removeRowCol(d,i);
+//             System.out.println(d);   
+//         }
          } catch(Exception e){e.printStackTrace();}
          
          //d1.load_simple("sample/matrice_test_26juin2017.txt");
@@ -2901,7 +2917,17 @@ void print_state_label() {
         }        
         return max;
     }
-    
+   
+   static double getMax(double[][] matrix) {
+        double max=-1;
+        for (int i=0;i<matrix.length;i++) {
+            for (int j=0;j<matrix.length;j++) {
+                if (matrix[i][j]>max) max=matrix[i][j];
+            }
+        }        
+        return max;
+    }
+   
    double[] getRowsums(BasicSymmetricalDistanceMatrix matrix) {
         double[] sum=new double[matrix.getSize()];
         
@@ -2909,6 +2935,18 @@ void print_state_label() {
             sum[row]=0;
             for (int col=0;col<matrix.getSize();col++) {
                 sum[row]+=matrix.getValue(col, row);
+            }
+        }        
+        return sum;
+    }
+   
+   static double[] getRowsums(double[][] matrix) {
+        double[] sum=new double[matrix.length];
+        
+        for (int row=0;row<matrix.length;row++) {
+            sum[row]=0;
+            for (int col=0;col<matrix.length;col++) {
+                sum[row]+=matrix[col][row];
             }
         }        
         return sum;
@@ -2923,46 +2961,58 @@ void print_state_label() {
         }        
         return sum;
     }
-  
-   //TO DO
-   int getRowPos(double prob, double[] p  ) {
-       return 0;
-   }
    
-      BasicSymmetricalDistanceMatrix phyloProb(Phylogeny p, double k) {
-       int nl=p.getNumberOfExternalNodes();
-             for (int i=0; i<nl;i++) {
+   static double[] getCummulsums(double[][] matrix, int row) {
+        double[] sum=new double[matrix.length];
+        double prev=0;
+        for (int col=0;col<matrix.length;col++) {
+                sum[col]=prev+matrix[col][row];
+                prev=sum[col];
+        }        
+        return sum;
+    }
+  
+  
+      static double[][] phyloProb(Phylogeny p, double k) {
+            int nl=p.getNumberOfExternalNodes();
+            //if distance to parent is not set 
+            for (int i=0; i<nl;i++) {
                  p.getNode(i).setDistanceToParent(1.0);
-             }
+             }            
              ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) p.getExternalNodes();
-             BasicSymmetricalDistanceMatrix d=new BasicSymmetricalDistanceMatrix(nodes.size());
-             BasicSymmetricalDistanceMatrix scaled_d=new BasicSymmetricalDistanceMatrix(nodes.size());
+             double d[][]=new double[nl][nl];
+            
              for (int i=0; i<nodes.size();i++) {                 
-                 d.setIdentifier(i, nodes.get(i).getName());
+                 //d.setIdentifier(i, nodes.get(i).getName());
                  for (int j=0; j<nodes.size();j++) {
-                     
-                         d.setValue(i, j, PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j)));                     
+                        d[i][j]=PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j));
                  }
-             }
+             }             
+             return phyloProb(d, k);
+        }
+      
+      static double[][] phyloProb(double[][] d, double k) {
+            int nl=d.length;
+             double scaled_d[][]=new double[nl][nl];
+             
              double maxd=getMax(d);
              //Scale the matrix
              
-             for (int i=0; i<nodes.size();i++) {                 
-                 d.setIdentifier(i, nodes.get(i).getName());
-                 for (int j=0; j<nodes.size();j++) {                     
-                         scaled_d.setValue(i, j, k-(d.getValue(i, j)/maxd));                     
+             for (int i=0; i<nl;i++) {                 
+                 //d.setIdentifier(i, nodes.get(i).getName());
+                 for (int j=0; j<nl;j++) {                     
+                         scaled_d[i][j]=k-(d[i][j]/maxd);                     
                  }
              }
              //Normalize d_scaled by rowSums
              double[] rowsum=getRowsums(scaled_d);
              for (int row=0; row<rowsum.length;row++) {
                  for (int col=0; col<rowsum.length;col++) {
-                     scaled_d.setValue(col, row, scaled_d.getValue(col, row)/rowsum[row]);                     
+                     scaled_d[col][row]=scaled_d[col][row]/rowsum[row];                     
                  }
              }           
              return scaled_d;
         }
-      
       
 
             /* generate sample */
@@ -3005,21 +3055,128 @@ void print_state_label() {
           return pp;
       }
 
+      static BasicSymmetricalDistanceMatrix removeRowCol(BasicSymmetricalDistanceMatrix p,int row, int col) {
+          if (p.getSize()==1) return p;
+          if (row>=p.getSize()) return p;
+          if (col>=p.getSize()) return p;
+          BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
+          
+          int pp_i=0;
+          int pp_j=0;
+          for (int i=0; i<p.getSize();i++) {
+            if (i!=row) {  
+            for (int j=0; j<p.getSize();j++) {
+                  if (j!=col) {
+                      pp.setValue(pp_i, pp_j, p.getValue(i,j));
+                      pp_j++;
+                  }
+               }     
+               pp_j=0;
+               pp.setIdentifier(pp_i, p.getIdentifier(i));
+               pp_i++;
+            }             
+          }        
+                  
+          return pp;
+      }
       
-       void phyloPermute(Phylogeny pp,double k) {
-         BasicSymmetricalDistanceMatrix p=phyloProb(pp,k);
-             //--Sample colonne
-//                          for (int i = 0; i < nans; i++) {
-//                double rU = unif_rand() * n;
-//                k = (int) rU;
-//                ans[i] = (rU < q[k]) ? k+1 : a[k]+1;
-//            }
-//            
-        
+      static double[][] removeRowCol(double[][] p,int row, int col) {
+          int n=p.length;
+          if (n==1) return p;
+          if (row>=n) return p;
+          if (col>=n) return p;
+          double[][] pp=new double[n-1][n-1];
+          //BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
+          
+          int pp_i=0;
+          int pp_j=0;
+          for (int i=0; i<n;i++) {
+            if (i!=row) {  
+            for (int j=0; j<n;j++) {
+                  if (j!=col) {
+                      pp[pp_j][pp_i]=p[j][i];
+                      pp_j++;
+                  }
+               }     
+               pp_j=0;              
+               pp_i++;
+            }             
+          }                          
+          return pp;
+      }
+      
   
+       //TO DO
+      static int getRowPos(double[][] p, int row) {
+         double[] prob=getCummulsums(p,row);
+         double rand=unif_rand();
+         for (int i=0; i<prob.length;i++) {
+             if (rand<=prob[i]) return i;
+         }
+          return prob.length-1; //last index
+      }
+   
+      
+      
+      static ArrayList<String> permute(ArrayList<String> data,String name1, String name2) {          
+          int pos1=data.indexOf(name1);
+          int pos2=data.indexOf(name2);
+          ArrayList<String> tmp=new ArrayList<String>();
+          tmp.addAll(data);
+          tmp.set(pos1, name2);
+          tmp.set(pos2, name1);          
+          return tmp;
+      }
+      //
+      /**
+       * This return a permutation order of the label based on the phylogeny 
+       * @param pp phyloTree
+       * @param k 
+       */
+       static ArrayList<String> phyloPermute(Phylogeny pp,double k) {
+         //BasicSymmetricalDistanceMatrix p=phyloProb(pp,k);
+          LFSR258  r=new  LFSR258();   
+         ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) pp.getExternalNodes(); 
+         ArrayList<String> names=new ArrayList<String>();                 
+         ArrayList<String> output=new ArrayList<String>();
+         int n=nodes.size();
+         
+         boolean[] done=new boolean[n];
+         String[] st=new String[n]; 
+         
+         for (int i=0; i<n;i++) {
+             done[i]=false;
+             st[i]="";
+             names.add(nodes.get(i).getName());             
+         } 
+         output.addAll(names);
+        // Setp 0;
+         double[][] prob=phyloProb(pp, k);
+         //printm(prob);
+        // Step 1.
+         
+          while (prob.length>1) {              
+              int first=r.nextInt(0, prob.length-1);              
+              int second=getRowPos(prob, first);
+              //System.out.println(first+" - "+second+" "+names.get(first)+" "+names.get(second));
+              output=permute(output, names.get(first),names.get(second));
+              //st[second]=names.get(first);             
+              names.remove(first);
+              prob=removeRowCol(prob, first, second);
+              //printm(prob);                            
+          }
+          
+          return output;
         }
          
-         
+         static void printm(double[][] p) {
+             for (int i=0; i<p.length;i++) {
+                 for (int j=0; j<p[i].length;j++) {
+                     System.out.print(p[i][j]+" ");
+                 }
+                 System.out.println("");
+             }
+         }
 //  p<-phyloProb(tree, k)
 //  tt<-rownames(p)
 //  nsp<-length(tt)
