@@ -571,8 +571,8 @@ public class graph {
            }    
        }     
        u.close();
-       System.out.println("Total triplets\tType A\tType B\tType C\tType D\tType E");
-       System.out.println("\t\t"+total[0]+"\t"+total[1]+"\t"+total[2]+"\t"+total[3]+"\t"+total[4]);
+       System.out.println("Type A\tType B\tType C\tType D\tType E");
+       System.out.println(total[0]+"\t"+total[1]+"\t"+total[2]+"\t"+total[3]+"\t"+total[4]);
        //--ouput 
        return true;
    } 
@@ -808,7 +808,7 @@ public class graph {
 //      return tmp;
 //  } 
    
-   public int[] DFS(int s,int ignore) {
+   public int[] DFS(int s,int ignore) {       
        int[] tmp=new int[total_nodes+1];
        boolean[] visited=new boolean[total_nodes];
        int total_to_visit=total_nodes;
@@ -818,9 +818,8 @@ public class graph {
            tmp[i]=0;
        }
        int index=0;//-Start at 1?
-       Stack<Integer> stack=new Stack<Integer>();
-      
-       stack.push(s);
+       Stack<Integer> stack=new Stack<Integer>();      
+       if (s!=-1) stack.push(s);
        while(total_to_visit>0) {
         // Find next vertice
         if (stack.isEmpty()) {
@@ -828,14 +827,22 @@ public class graph {
                 if (!visited[i]&&i!=ignore) { stack.push(i);break;} 
             }
         }   
-        while(!stack.isEmpty()) {
+        while(stack.size()>0) {
             int v=stack.pop();
+            try {
+                //v>-1&&
             if (!visited[v]) {
                 visited[v]=true;
                 total_to_visit--;
                 tmp[v]=index;
                 for (int i:get_adj(v).keySet()) 
                     if (!visited[i]&&i!=ignore) stack.push(i);
+            }
+            } catch(Exception e) {
+                e.printStackTrace();
+                System.out.println(v);
+                System.out.println(stack);
+                System.out.println(visited);
             }
         }
         index++;

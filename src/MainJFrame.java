@@ -421,6 +421,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         Stop_jButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         ImportMatrix_jMenuItem = new javax.swing.JMenuItem();
         ExportMatrix_jMenuItem = new javax.swing.JMenuItem();
         ImportState_jMenuItem = new javax.swing.JMenuItem();
@@ -436,7 +437,6 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         EditCharacter_jMenuItem = new javax.swing.JMenuItem();
         EditTaxa_jMenuItem = new javax.swing.JMenuItem();
         Define_state_jMenuItem = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
 
@@ -967,6 +967,14 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
 
         jMenu1.setText("File");
 
+        jMenuItem3.setText("Create new matrix");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
         ImportMatrix_jMenuItem.setText("Load matrix");
         ImportMatrix_jMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1091,14 +1099,6 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         });
         PolymorphicChar_jMenu.add(Define_state_jMenuItem);
 
-        jMenuItem3.setText("Create new matrix");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        PolymorphicChar_jMenu.add(jMenuItem3);
-
         jMenuBar1.add(PolymorphicChar_jMenu);
 
         jMenu3.setText("About");
@@ -1125,7 +1125,7 @@ public class MainJFrame extends javax.swing.JFrame implements Observer{
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );

@@ -314,8 +314,26 @@ public class permutation_statistics_undefined implements Serializable {
                    logfile.println(this_replicate+" / "+replicate +" [started]");
 
                    datasets t=new datasets(data);                   
-                   //Create the new matrix
-                   t.prepare_current_state_matrix(this_replicate, true);
+                   //Create the new matrix, we have a suffisant number of state found...?                   
+                   if (t.states.size()>1&&(t.perm_mode==4||t.perm_mode==5)) {                       
+                       t.prepare_current_state_matrix(this_replicate, true);
+                   } else {
+                       permute p=new permute(t);
+                        if (t.perm_mode==2) {                               
+                           if (t.tree!=null) {
+                               p.generate_phylopermutation();
+                           } else {
+                               p.generate_permutation(); 
+                           }
+                       } else {
+                          switch (t.perm_mode) {
+                              case 0:p.generate_permutation(); break; 
+                              case 1:p.generate_probpermutation(); break;
+                              case 3:p.generate_bootstrap(); break;                              
+                          }                  
+                       }      
+                   }
+                   
 //                   maxiter=1;             
 //             d.random=0;
 //             d.user_state_string=user_state_string;
@@ -351,7 +369,7 @@ public class permutation_statistics_undefined implements Serializable {
             //--Done
              System.out.println(rfile.size());
              // This is new - May 2017
-             this.calculate_from_directory_new(directory);
+             this.calculate_from_directory_new_ref(directory);
             
          } catch(Exception e){
              e.printStackTrace();
@@ -360,7 +378,7 @@ public class permutation_statistics_undefined implements Serializable {
          }
          endtime=System.currentTimeMillis();
          System.out.println("Total time: "+util.msToString(endtime-starttime));
-         System.out.println("===============================================================================");
+         System.out.println("===============================================================================================");
          logfile.println("Total time: "+util.msToString(endtime-starttime));
         //--done in the mainframe now...data=reference_data;
        logfile.close();
@@ -1191,7 +1209,7 @@ public class permutation_statistics_undefined implements Serializable {
                 case "time":    values[i]=replicates.get(i).total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
-            s.values.add(values[i]);
+            if (values[i]!=Double.NaN) s.values.add(values[i]);
         }            
          //s.stat.addValue(refvalue);  //--Add reference to get the real Min and max      
         s.reference_value=refvalue;
@@ -1248,7 +1266,7 @@ public class permutation_statistics_undefined implements Serializable {
                 case "time":    values=su.total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
-            s.values.add(values);
+           if (values!=Double.NaN) s.values.add(values);
             s.reference_value=refvalue;
             //--Recalculate the stats
             s.pvalue=getPvalue1(util.getDoubles(s.values), refvalue);
@@ -1413,7 +1431,7 @@ public class permutation_statistics_undefined implements Serializable {
     
      public boolean loadAnalysis(String datafile) {
          if (util.DirExists(datafile)) {
-             this.calculate_from_directory_new(datafile);
+             this.calculate_from_directory_new_ref(datafile);
          } else {
              
              try {
@@ -1652,10 +1670,10 @@ public class permutation_statistics_undefined implements Serializable {
     }
      
       /**
-     * Calculate stats without file caching... (NEW)
+     * Calculate stats without file caching... (NEW JuNE-JULY 2017)
      * @param directory 
      */
-     public void calculate_from_directory_new(String directory) {
+     public void calculate_from_directory_new_ref(String directory) {
         System.out.println("Analysing :"+directory);
         //--1. list all the files
         ArrayList<String> files=util.listDirWithFullPath(directory);
@@ -1752,9 +1770,13 @@ public class permutation_statistics_undefined implements Serializable {
                     //For now, majority rule
                     
                     int type=0;
-                    switch(reference_data.unknown_data_treatment) {
-                        case 0:type=get_abs_majority(a, b, c, d);break;
-                        case 1:type=get_majority(a, b, c, d);break;                        
+                    switch(reference_data.edges_selection_mode) {                        
+                        case 0:// impossible for undefined type
+                               //Keep the edge only in the reference data
+                               break;
+                        case 1:type=get_abs_majority(a, b, c, d);break;
+                        case 2:type=get_majority(a, b, c, d);break;   
+                        default: type=get_minimum_edge(a, b, c, d, reference_data.edges_selection_mode);
                     }
                     
                     if (type>0&&type<4) {
@@ -1847,7 +1869,8 @@ public class permutation_statistics_undefined implements Serializable {
             System.out.println("Network statistics (See manual for descriptions)");
              System.out.println("===============================================================================================");           
              System.out.println("Statistics\tRef\tp-value\tsign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
-             System.out.println(output_stats(this.Network_stats));     
+             System.out.println(output_stats(this.Network_stats));  
+             System.out.println("* Some statistic are not available for each permutations, resulting in smaller sample size (N). ");
              System.out.println("===============================================================================================");           
              System.out.println("Nodes statistics");
              System.out.println("===============================================================================================");           

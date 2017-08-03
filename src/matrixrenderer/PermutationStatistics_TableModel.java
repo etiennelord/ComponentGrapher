@@ -49,7 +49,7 @@ public class PermutationStatistics_TableModel extends AbstractTableModel {
            stats s=datas.get(row);
            double pvalue=s.pvalue[0];
            //--Bad but needed for serialization
-           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));  
+           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.getValues()));  
            switch (col) {
                case 0: return s.title;
                case 1: return s.reference_value;

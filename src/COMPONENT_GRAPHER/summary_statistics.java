@@ -1004,7 +1004,7 @@ public class summary_statistics implements Serializable {
          } catch(Exception e) {
              //e.printStackTrace();
           try {
-              System.out.println("seriallize error for "+filename);
+              //System.out.println("seriallize error for "+filename);
               GsonBuilder gsonBuilder = new GsonBuilder();
           
              gsonBuilder.serializeSpecialFloatingPointValues();  
@@ -1014,11 +1014,12 @@ public class summary_statistics implements Serializable {
             js.flush();
             js.close();
           } catch(Exception e2) {
-              System.out.println("seriallize");
+              System.out.println("seriallize error for "+filename);
+              Config.log("Error in serialize "+filename+":" + e.getMessage());  
+              return false;
           }
              //--This might failed for NaN
-             Config.log("Error in serialize "+filename+":" + e.getMessage());
-             return false;
+             return true;
          }
         return true;
     } 

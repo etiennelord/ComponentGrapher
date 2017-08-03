@@ -63,14 +63,15 @@ public class datasets extends Observable implements Serializable {
     
     transient public static Config config=new Config();
     
-    static int I1=1234, I2=5678;
+ 
     
-    transient static LFSR258  rand=new LFSR258();  
+    transient static LFSR258  rand=null;//
+
     
    /////////////////////////////////////////////////////////////////////////////
    /// Colors of links (edges)
     
-    // Type1 17,255,17GREEN
+    // Type1 17,255,17 GREEN
     // Type2 0,98,203 BLUE
     // Type3 255,42,80 RED
     
@@ -109,7 +110,10 @@ public class datasets extends Observable implements Serializable {
    public boolean node_computed=false; //--Set to false to recompute
    public boolean inverse_matrix_table=true; //--Tag to change the table interface
    public boolean display_char_numbering=false; //--Tag to display the char numbering
-   public Phylogeny tree=null;   
+   transient public Phylogeny tree=null;   
+   public String tree_newick="";
+   public double tree_k=2.0; 
+   public String tree_filename="";
    
    public String commandline="";
    public int maxiter=1;
@@ -130,22 +134,29 @@ public class datasets extends Observable implements Serializable {
    public ArrayList<String> label=new ArrayList<String>(); //--Taxa name
    public ArrayList<String> state=new ArrayList<String>(); //--line of char. for the taxa 
    public static Pattern isNumbers=Pattern.compile("^\\s{0,}([0-9]{1,})\\s{1,}([0-9]{1,})$");   
-   
-   
+      
    public String title="";
    public String filename="";       //--Original matrix file 
    public String serial_file="";    //--file use for the serialization of dataset
    public String result_directory="";
    public String symbols="";       //SYMBOLS="012345";   
+   public long seed=1001; //--Current seed is current timecode
    public int ntax=0;
    public int nchar=0;	
    public int total_valid_column=0; //--Valid columns (characters) 
    public int max_char_state=1; //--Maximum char state found for a taxon e.g. {1,2,3} =3
    public String char_matrix[][]; //--This is the original data matrixd minus the {}
    public int mode=0;
+   public int perm_mode=0;     
+      
+            //0: Equiprobable permutation (default)
+           // 1: Probabilistic permutation
+           // 2: Phylogeny (default if -tree option is used)"
+           // 3: Bootstrap
+           // 4: Only permute undefined states
    
-   public int unknown_data_treatment=1; // 1- Majority rule, 2- Highest majority, 3- use the miinimum of
-   public int unknown_state_treatment=0; //0, equi, 1: prob, 2: phylogenetic
+   public int edges_selection_mode=0; // 0=Classic, 1- Majority rule, 2- Highest majority, >10 use a minimum of %
+   //public int unknown_state_treatment=0; //0, equi, 1: prob, 2: phylogenetic
    
     /////////////////////////////////////////////////////////////////////////////
    /// VARIABLES - Datasets
@@ -224,7 +235,25 @@ public class datasets extends Observable implements Serializable {
    /// FUNCTIONS    
 
    
-   public datasets() {}
+   public datasets() {
+     if (rand==null) {
+
+        rand=new LFSR258();
+//         rand.setSeed(l);
+     }
+   }
+   
+   public void setSeed(long seed) {
+       try {  
+       if (seed<1) seed=1;
+         long[] l={seed+1, seed+511,seed+4096,seed+131071, seed+8388607};
+         rand.setSeed(l);
+       } catch(Exception e) {
+           e.printStackTrace();
+           System.out.println("Error. Unable to set seed: "+seed);
+       }
+         
+   }
    
     /**
      * Copy constructor
@@ -251,6 +280,12 @@ public class datasets extends Observable implements Serializable {
         this.min_taxa=d.min_taxa;
         this.random=d.random;        
         this.replicate=d.replicate;
+        this.tree_k=d.tree_k;
+        this.tree_filename=d.tree_filename;
+        this.tree_newick=d.tree_newick;
+       this.tree=d.tree;
+       this.edges_selection_mode=d.edges_selection_mode;
+       this.perm_mode=d.perm_mode;
         
         this.title=d.title;
        this.filename=d.filename;      
@@ -286,8 +321,8 @@ public class datasets extends Observable implements Serializable {
        this.total_state_id=d.total_state_id;
        this.total_states=d.total_states;
        this.save_inter_result=d.save_inter_result;
-       this.analysed=d.analysed;
-  
+       this.analysed=d.analysed;       
+       
     /////////////////////////////////////////////////////////////////////////////
     /// INFO FROM get_Info()
        this.info_total_undefined=d.info_total_undefined; // ? or -
@@ -401,54 +436,44 @@ public class datasets extends Observable implements Serializable {
     }
 
     
-    /** 
- * From R base sunif.c
- * A version of Marsaglia-MultiCarry
- * @return 
- */
-static double unif_rand()
-{
-    I1= 36969*(I1 & 0177777) + (I1>>16);
-    I2= 18000*(I2 & 0177777) + (I2>>16);
-    return ((I1 << 16)^(I2 & 0177777)) * 2.328306437080797e-10; /* in [0,1) */
-}
-    /***
-     * Randomly permute the value in i and j
-     * @param col i.e. character p.e. pied 
-     */
-    private void permute(int col) {
-        int index_i=rand.nextInt(0,ntax-1);        
-        int index_j=rand.nextInt(0,ntax-1);
-        while (index_j==index_i) {
-            index_j=rand.nextInt(0,ntax-1);
-        }
-       
-        String o=current_state_matrix[index_i][col];
-        current_state_matrix[index_i][col]=current_state_matrix[index_j][col];
-        current_state_matrix[index_j][col]=o;        
-    } 
+ 
+//    /***
+//     * Randomly permute the value in i and j
+//     * @param col i.e. character p.e. pied 
+//     */
+//    private void permute(int col) {
+//        int index_i=rand.nextInt(0,ntax-1);        
+//        int index_j=rand.nextInt(0,ntax-1);
+//        while (index_j==index_i) {
+//            index_j=rand.nextInt(0,ntax-1);
+//        }
+//       
+//        String o=current_state_matrix[index_i][col];
+//        current_state_matrix[index_i][col]=current_state_matrix[index_j][col];
+//        current_state_matrix[index_j][col]=o;        
+//    } 
     
-    /**
-     * We copy a random state from this column to a new position
-     * @param col
-     * @param index_i 
-     */
-    private void bootstrap(int col, int index_i) {        
-        int index_j=rand.nextInt(0,ntax-1);
-        current_state_matrix[index_i][col]=current_state_matrix[index_j][col];        
-    } 
-    
-    /**
-     * From the original data, do one matrix permutation
-     */
-    public void generate_permutation() {
-    
-       //Do the random permuation
-        for (int j=0; j<nchar;j++) {
-            for (int i=0; i<ntax-1;i++) permute(j);
-         }        
-    }
-    
+//    /**
+//     * We copy a random state from this column to a new position
+//     * @param col
+//     * @param index_i 
+//     */
+//    private void bootstrap(int col, int index_i) {        
+//        int index_j=rand.nextInt(0,ntax-1);
+//        current_state_matrix[index_i][col]=current_state_matrix[index_j][col];        
+//    } 
+//    
+//    /**
+//     * From the original data, do one matrix permutation
+//     */
+//    public void generate_permutation() {
+//    
+//       //Do the random permuation
+//        for (int j=0; j<nchar;j++) {
+//            for (int i=0; i<ntax-1;i++) permute(j);
+//         }        
+//    }
+//    
     
     public int getTotalCharState(int character, String state) {
         int total=0;
@@ -459,21 +484,62 @@ static double unif_rand()
         return total;
     }
     
-     /**
-     * From the original data, do one matrix permutation
-     */
-    public void generate_bootstrap() {
-    
-       //Do the random permuation
-        for (int j=0; j<nchar;j++) {
-            for (int i=0; i<ntax;i++) bootstrap(j, i);
-         }        
-    }
-   
+//     /**
+//     * From the original data, do one matrix permutation
+//     */
+//    public void generate_bootstrap() {
+//    
+//       //Do the random permuation
+//        for (int j=0; j<nchar;j++) {
+//            for (int i=0; i<ntax;i++) bootstrap(j, i);
+//         }        
+//    }
+//   
 /////////////////////////////////////////////////////////////////////////////
    /// FUNCTIONS    
    
-   
+   public boolean load_phylogeny() {
+       //System.out.println("Loading phylogeny "+this.tree_filename);       
+       if (tree_filename.isEmpty()) return false;       
+       Phylogeny[] p=null;
+       try {
+         p=readPhylogenies(tree_filename);
+         if (p==null) return false;
+          if (p.length<1) return false;            
+          this.tree=p[0];
+          this.tree_newick=this.tree.toNewHampshire();
+          
+       } catch(Exception e) {
+           System.out.println("Unable to load "+tree_filename);
+           return false;
+       }
+       //--Validate species in the matrix
+       // this.tree.deleteSubtree(pn, nexus); -- TO DO, delete species if not found in tree
+       ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) this.tree.getExternalNodes();
+       int total_to_found=this.ntax;
+       
+       for (PhylogenyNode n:nodes) {
+          String nname=n.getName().trim();
+          if (label.indexOf(nname)<0) {
+              System.out.println("Error, tree species "+nname+ " is not found in the matrix.");
+              return false;
+          }
+       }
+       
+       
+       
+             return true;
+            
+             
+                     
+//             //Compute distance matrix
+//             ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) d1.tree.getExternalNodes();
+//             // 
+//             int nl=d1.tree.getNumberOfExternalNodes();
+//             for (int i=0; i<nl;i++) {
+//                 d1.tree.getNode(i).setDistanceToParent(1.0);
+//             }
+   }
 
    public void setCallback(Callable callback_) {
        this.callback=callback_;
@@ -500,6 +566,7 @@ static double unif_rand()
 			if (line.charAt(i)!='\'') nlabel+=line.charAt(i);
 		}
 	}	
+        nlabel=nlabel.replaceAll(">", "_").replaceAll("<", "_").replaceAll("[\\/]", "_").trim();
 	return (nlabel);
     }
 
@@ -676,7 +743,9 @@ public String[][] charmatrix() {
         while (index<tmp.size()) {
             String id=tmp.get(index++);
             String labels=tmp.get(index);
+            labels=labels.replaceAll(">", "_").replaceAll("<", "_").replaceAll("[\\/]", "_");
             index+=2;
+            //System.out.println(labels);
             this.charlabels.add(labels);
             //--find the state
             int pos=index;
@@ -684,6 +753,8 @@ public String[][] charmatrix() {
             ArrayList<String>states=new ArrayList<String>();
             while (pos<tmp.size()&&!new_state) {
                 String stri=tmp.get(pos);
+                //--Filter the stri
+                stri=stri.replaceAll(">", "_").replaceAll("<", "_").replaceAll("[\\/]", "_").trim();
                 states.add(stri);
                 pos++;
                 if (stri.equals("/")) {
@@ -699,10 +770,11 @@ public String[][] charmatrix() {
             //--Debug System.out.println(labels);
             for (int i=0; i<states.size();i++) {
                int idx=tmps.size();
-               String cs=""+symbols.charAt(idx);                                            
+               String cs=""+symbols.charAt(idx);           
+               cs=cs.replaceAll(">", "_").replaceAll("<", "_").replaceAll("[\\/]", "_").trim();
                 tmps.put(cs, states.get(i));
             }
-            //--Debug System.out.println(states);
+            //--Debug  System.out.println(states);
             this.statelabels.add(tmps);
             tmps=new HashMap<String,String>();
         }      
@@ -715,7 +787,7 @@ public String[][] charmatrix() {
    * @return 
    */
   public boolean load_morphobank_nexus(String filename) {
-         //--Note, we need to reset the variables here
+         //--Note, we need to reset the variables here         
          states.clear();
          charlabels.clear();
          label.clear();
@@ -806,7 +878,7 @@ public String[][] charmatrix() {
                                 }
                          } else 
 			 if (flag_in_CHARSTATELABELS) {
-                           tmp_char_state+=line;
+                           tmp_char_state+=line;                           
                            if (line.endsWith(";")) {
                                flag_in_CHARSTATELABELS=false;
                                process_char_state(tmp_char_state);
@@ -824,15 +896,16 @@ public String[][] charmatrix() {
                             
                               line=line.trim();        
                               line.replaceAll("'", "");
+                              line=line.replaceAll(">", "_").replaceAll("<", "_").replaceAll("[\\/]", "_");
                                 if (line.charAt(0)==','||line.charAt(0)==';'||line.endsWith(",")) {                                    
-				   line=line.substring(0, line.length()-1);
+				   line=line.substring(0, line.length()-1).trim();                                   
                                    next_state=true;
                                    if (tmp_state.size()>0) {                                       
                                        if (line.length()>1) {
                                            int index=tmp_state.size();
-                                            String c=""+symbols.charAt(index);
+                                            String c=""+symbols.charAt(index);                                            
                                             tmp_state.put(c, line);
-                                       }				 	
+                                       }                                       
                                        statelabels.add(tmp_state);
 				 	//new state
 				 	tmp_state=new HashMap<String,String>();
@@ -861,10 +934,12 @@ public String[][] charmatrix() {
             System.err.println("Warning, more than one matrix (with tag MATRIX) found in file: "+filename);
             return false;
         }
+        
      this.char_matrix=charmatrix();
      this.build_charstate_label(); //--Ensure annotation
     //--debug for Nexus
-     //--print_state_label();
+   //  print_state_label();  
+     //System.exit(0);
     //--Create the different states
   try {
     if (this.nchar!=0) {
@@ -890,11 +965,12 @@ public String[][] charmatrix() {
       for (int i=0; i<this.ntax;i++) {
           for (int j=0;j<this.nchar;j++) {
               String st=this.char_matrix[i][j];
-              for (char c:st.toCharArray()) {
-                  if (c!=' '&&c!='?'&&c!='*'&&c!='-') {
-                      if (!map.contains(""+c)) map.add(""+c);
+              if (!st.trim().isEmpty())
+                  for (char c:st.toCharArray()) {
+                      if (c!=' '&&c!='?'&&c!='*'&&c!='-') {
+                          if (!map.contains(""+c)) map.add(""+c);
+                      }
                   }
-              }
           }
       }
       Collections.sort(map);
@@ -1116,6 +1192,9 @@ void print_state_label() {
        str.append("=============================== PARAMETERS ====================================\n");       
        str.append("Command line options                 : "+this.commandline+"\n");            
        str.append("Input                                : "+this.filename+"\n");   
+       if (!tree_filename.isEmpty()) {
+         str.append("Input tree                           : "+this.tree_filename+"\n");            
+       }
        str.append("Output directory                     : "+this.result_directory+"\n");   
        str.append("N taxa                               : "+info_Ntaxa+" (rows)\n");
        str.append("N characters                         : "+info_Nchar+" (columns)\n");
@@ -1123,16 +1202,16 @@ void print_state_label() {
        str.append("Total number of multistate characters: "+ info_total_multistate+"\n");
        str.append("Total number of possible variations* : "+info_total_variation+"\n");    
        str.append("Total variations tested              : "+ìnfo_total_variation_tested+"\n");
-       str.append("Permutations statistics              : "+this.replicate+"\n");   
+       str.append("Permutations statistics              : "+this.replicate+"\n");         
        str.append("Suggested permutations**             : "+(int)(info_total_possible_nodes/0.05)+"\n");  
        str.append("Remove multiple state columns        : "+this.remove_multiple_column+"\n");
         str.append("Remove undefined columns             : "+this.remove_undefined_column+"\n");        
 
-       if (this.random>0||(((float)this.maxiter)<this.total_states&&this.maxiter>1)) {
-           str.append("Iteration mode                       : random"+"\n");       
-       } else {
-            str.append("Iteration mode                       : ordered"+"\n");   
-       }
+//       if (this.random>0||(((float)this.maxiter)<this.total_states&&this.maxiter>1)) {
+//           str.append("Iteration mode                       : random"+"\n");       
+//       } else {
+//            str.append("Iteration mode                       : ordered"+"\n");   
+//       }
        str.append("Total column                         : "+info_Nchar+"\n");
        str.append("Total undefined column(s)            : "+info_total_undefined_column+"\n");
        str.append("Total multiple column(s)             : "+info_total_multiple_column+"\n");
@@ -1140,11 +1219,28 @@ void print_state_label() {
        str.append("Total undefined char                 : "+info_total_undefined+"\n");
        str.append("Total multiple char                  : "+info_total_multiple+"\n");              
        str.append("Total possible nodes                 : "+info_total_possible_nodes+"\n");   
-       
-       str.append("Number of thread (maxpool)           : "+this.maxthreads+"\n");  
+       str.append("Edges selection mode                 : ");
+       switch(this.edges_selection_mode) {
+           case 0: str.append("treat all edges (default)\n");break;
+           case 1: str.append("absolute majority\n");break;
+           case 2: str.append("majority rule\n");break;           
+           default: str.append("minimum "+this.edges_selection_mode+"% for an edge\n"); 
+       }
+        str.append("Permutations mode                    : ");   
+       switch(this.perm_mode) {
+           case 0: str.append("equiprobable (default)\n");break;
+           case 1: str.append("probabilistic\n");break;
+           case 2: str.append("phylogeny\n");break;     
+           case 3: str.append("bootstrap\n");break;     
+           case 4: str.append("equiprobable- only undefined states\n");break;     
+           case 5: str.append("probabilistic- only undefined states\n");break;         
+       }
+       str.append("Seed                                 : "+this.seed+"\n");   
+       str.append("PhyloPermute k                       : "+this.tree_k+"\n");   
+       str.append("Number of threads                    : "+this.maxthreads+"\n");  
        str.append("===============================================================================\n");       
        str.append("*  Indicate the number of state variation for polymorphic characters.\n");       
-       str.append("** Indicate the minimum number of permuations for significant p-values.\n");       
+       str.append("** Indicate the minimum number of permutations for significant p-values.\n");       
         if (this.min_taxa<1) {
           //System.out.print("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
           str.append("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
@@ -1282,6 +1378,7 @@ void print_state_label() {
       if (!(remove_multiple_column&&multiple_column.contains(i))&&!(remove_undefined_column&&undefined_column.contains(i))) {
          total_valid_column++;
           ArrayList<String>d=get_states_column(i);
+          Collections.sort(d); //--To always have the same node ordering 
           //--debug System.out.println(d);
           HashMap<String,String> st=null;
           try {
@@ -2193,7 +2290,7 @@ void print_state_label() {
                  //--Extract each unique symbol
                  //--Get all possibles states for this column
                  String stchar=get_states_column_all_chars(j);
-                 System.out.println(stchar);
+                 //--Debug System.out.println(stchar);
                  if (char_matrix[i][j].length()>1) {
                      state s=new state();
                      s.pos_i=i;
@@ -2210,10 +2307,10 @@ void print_state_label() {
                      s.pos_j=j;
                      s.undefined=true;
                      s.state_id=this.total_state_id++;
-                     switch(this.unknown_state_treatment) {
-                         case 0:s.state=character_column.get(j); break;
-                         case 1:s.state=stchar;break;
-                         case 2: //TO DO
+                     //s.state=character_column.get(j);
+                     switch(this.perm_mode) {                         
+                         case 5:s.state=stchar;break; //--Probabilistics                         
+                         default:s.state=character_column.get(j); break; //--Equiprobable
                      }                     
                      this.total_states*=s.state.length();
                      states.add(s);                    
@@ -2226,11 +2323,11 @@ void print_state_label() {
      /**
       * This initialize the current state matrix 
       * @param state_id
-      * @param rand
+      * @param brand
       * @return 
       */
-     public String prepare_current_state_matrix(int state_id, boolean rand) {
-          LFSR258  r=new  LFSR258();                       
+     public String prepare_current_state_matrix(int state_id, boolean brand) {
+          //LFSR258  r=new  LFSR258();                       
          current_state_variation=""; 
           if (random>0&&random>total_states) {
               random=0;              
@@ -2262,16 +2359,15 @@ void print_state_label() {
                 current_state_variation="";         
                 for (int i=0; i<states.size();i++) {
                       state s=states.get(i);
-                      //--Randomly pick a state
-                      //--Note: this is not random since the random seed is fixed
-                      //--Note: this can handle random character                     
-                      int pos=r.nextInt(0,s.state.length()-1);
+                      //--Randomly pick a state -- see the  states creation
+                      //--For the default methods
+                      int pos=rand.nextInt(0,s.state.length()-1);
                       current_state_variation+=s.state.charAt(pos);
                       this.current_state_matrix[s.pos_i][s.pos_j]=""+s.state.charAt(pos);
                       s.selected=pos;
                       HashMap<String,String> st=statelabels.get(s.pos_j);                      
                       String k=""+s.state.charAt(pos);
-                      if (!rand) s.selected=-1;
+                      if (!brand) s.selected=-1;
                       s.state_label=k+"|"+st.get(k);
                       states.set(i, s);                                            
                   }
@@ -2286,10 +2382,10 @@ void print_state_label() {
       /**
       * This initialize the current state matrix 
       * @param state_id
-      * @param rand
+      * brand rand
       * @return 
       */
-     public String prepare_current_state_matrix_with_missing(int state_id, boolean rand) {
+     public String prepare_current_state_matrix_with_missing(int state_id, boolean brand) {
           current_state_variation=""; 
           if (random>0&&random>total_states) {
               random=0;              
@@ -2322,14 +2418,14 @@ void print_state_label() {
                 for (int i=0; i<states.size();i++) {
                       state s=states.get(i);
                       //--Randomly pick a state
-                      LFSR258  r=new  LFSR258();                      
-                      int pos=r.nextInt(0,s.state.length()-1);
+                     
+                      int pos=rand.nextInt(0,s.state.length()-1);
                       current_state_variation+=s.state.charAt(pos);
                       this.current_state_matrix[s.pos_i][s.pos_j]=""+s.state.charAt(pos);
                       s.selected=pos;
                       HashMap<String,String> st=statelabels.get(s.pos_j);                      
                       String k=""+s.state.charAt(pos);
-                      if (!rand) s.selected=-1;
+                      if (!brand) s.selected=-1;
                       s.state_label=k+"|"+st.get(k);
                       states.set(i, s);
                       
@@ -2783,7 +2879,7 @@ void print_state_label() {
                 }
                 if (index_char>=statelabels.size()) {
                     for (int j=statelabels.size();j<=index_char;j++) this.statelabels.add(new HashMap<String,String>());
-                }                         
+                }                              
                 this.statelabels.set(index_char, stmp);
             }               
             String ch="";
@@ -2837,21 +2933,19 @@ void print_state_label() {
     
     
     /**
-     * Test serialization
+     * Test serialization and others
      * @param args 
      */
      public static void main(String[] args) {
          Locale.setDefault(new Locale("en", "US"));
            
          datasets d1=new datasets();
+         
          try {
             
          Phylogeny[] p=readPhylogenies("sample/tree_test_26juin2017.txt");
-            //forester.tree.Tree tr=new forester.tree.Tree(""); 
+            //forester.tree.Tree tr=new forester.tree.Tree("(A,(B,(C,D)));"); 
             d1.tree=p[0];
-             
-             //if (!d1.tree.isRooted()) midpointRoot(d1.tree);
-             
                      
              //Compute distance matrix
              ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) d1.tree.getExternalNodes();
@@ -2865,374 +2959,26 @@ void print_state_label() {
                  
                  d.setIdentifier(i, nodes.get(i).getName());
                  for (int j=0; j<nodes.size();j++) {
-                     //System.out.println(nodes);
                          d.setValue(i, j, PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j)));                     
                  }
              }
              
-             
-             double[][] prob=d1.phyloProb(p[0], 2.0);
-             
-         //System.out.println(d);    
-             
-         
-        
-//             for (int j=0;j<d.getSize();j++) {
-//                for (int i=0;i<d.getSize();i++) {
-//                 double[] probl=d1.getCummulsums(prob,j);
-//                 System.out.print(probl[i]+" ");
-//                 }   
-//                 System.out.println("");
-//             }
+         permute pe=new permute();
+
              
              for (int i=0; i<20;i++) {
-                ArrayList<String> dat2=phyloPermute(p[0],2.0);
+                ArrayList<String> dat2=pe.phyloPermute(p[0],2.0);
                  System.out.println(dat2);
                 
              }
-         //for (int i=0; i<200;i++) System.out.println(Math.abs(d1.unif_rand()));
-         //Test remove col
-//         for (int i=d.getSize(); i>=0;i--) {
-//             d=removeRowCol(d,i);
-//             System.out.println(d);   
-//         }
+
          } catch(Exception e){e.printStackTrace();}
          
-         //d1.load_simple("sample/matrice_test_26juin2017.txt");
-         //d1.printCharMatrix();
-         //d1.compute();
-         
-         
-         //d1.export_cytoscapejs("data\\test.html", 1);
 
     }
 
-    
-   double getMax(BasicSymmetricalDistanceMatrix matrix) {
-        double max=-1;
-        for (int i=0;i<matrix.getSize();i++) {
-            for (int j=0;j<matrix.getSize();j++) {
-                if (matrix.getValue(i, j)>max) max=matrix.getValue(i, j);
-            }
-        }        
-        return max;
-    }
    
-   static double getMax(double[][] matrix) {
-        double max=-1;
-        for (int i=0;i<matrix.length;i++) {
-            for (int j=0;j<matrix.length;j++) {
-                if (matrix[i][j]>max) max=matrix[i][j];
-            }
-        }        
-        return max;
-    }
-   
-   double[] getRowsums(BasicSymmetricalDistanceMatrix matrix) {
-        double[] sum=new double[matrix.getSize()];
-        
-        for (int row=0;row<matrix.getSize();row++) {
-            sum[row]=0;
-            for (int col=0;col<matrix.getSize();col++) {
-                sum[row]+=matrix.getValue(col, row);
-            }
-        }        
-        return sum;
-    }
-   
-   static double[] getRowsums(double[][] matrix) {
-        double[] sum=new double[matrix.length];
-        
-        for (int row=0;row<matrix.length;row++) {
-            sum[row]=0;
-            for (int col=0;col<matrix.length;col++) {
-                sum[row]+=matrix[col][row];
-            }
-        }        
-        return sum;
-    }
-   
-   double[] getCummulsums(BasicSymmetricalDistanceMatrix matrix, int row) {
-        double[] sum=new double[matrix.getSize()];
-        double prev=0;
-        for (int col=0;col<matrix.getSize();col++) {
-                sum[col]=prev+matrix.getValue(col, row);
-                prev=sum[col];
-        }        
-        return sum;
-    }
-   
-   static double[] getCummulsums(double[][] matrix, int row) {
-        double[] sum=new double[matrix.length];
-        double prev=0;
-        for (int col=0;col<matrix.length;col++) {
-                sum[col]=prev+matrix[col][row];
-                prev=sum[col];
-        }        
-        return sum;
-    }
-  
-  
-      static double[][] phyloProb(Phylogeny p, double k) {
-            int nl=p.getNumberOfExternalNodes();
-            //if distance to parent is not set 
-            for (int i=0; i<nl;i++) {
-                 p.getNode(i).setDistanceToParent(1.0);
-             }            
-             ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) p.getExternalNodes();
-             double d[][]=new double[nl][nl];
-            
-             for (int i=0; i<nodes.size();i++) {                 
-                 //d.setIdentifier(i, nodes.get(i).getName());
-                 for (int j=0; j<nodes.size();j++) {
-                        d[i][j]=PhylogenyMethods.calculateDistance(nodes.get(i),nodes.get(j));
-                 }
-             }             
-             return phyloProb(d, k);
-        }
-      
-      static double[][] phyloProb(double[][] d, double k) {
-            int nl=d.length;
-             double scaled_d[][]=new double[nl][nl];
-             
-             double maxd=getMax(d);
-             //Scale the matrix
-             
-             for (int i=0; i<nl;i++) {                 
-                 //d.setIdentifier(i, nodes.get(i).getName());
-                 for (int j=0; j<nl;j++) {                     
-                         scaled_d[i][j]=k-(d[i][j]/maxd);                     
-                 }
-             }
-             //Normalize d_scaled by rowSums
-             double[] rowsum=getRowsums(scaled_d);
-             for (int row=0; row<rowsum.length;row++) {
-                 for (int col=0; col<rowsum.length;col++) {
-                     scaled_d[col][row]=scaled_d[col][row]/rowsum[row];                     
-                 }
-             }           
-             return scaled_d;
-        }
-      
-
-            /* generate sample */
-      
-      /* A version of Marsaglia-MultiCarry */
-
-
-//void set_seed(unsigned int i1, unsigned int i2)
-//{
-//    I1 = i1; I2 = i2;
-//}
-//
-//void get_seed(unsigned int *i1, unsigned int *i2)
-//{
-//    *i1 = I1; *i2 = I2;
-//}
-
-      static BasicSymmetricalDistanceMatrix removeRowCol(BasicSymmetricalDistanceMatrix p,int x) {
-          if (p.getSize()==1) return p;
-          if (x>=p.getSize()) return p;
-          BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
-          
-          int pp_i=0;
-          int pp_j=0;
-          for (int i=0; i<p.getSize();i++) {
-            if (i!=x) {  
-            for (int j=0; j<p.getSize();j++) {
-                  if (j!=x) {
-                      pp.setValue(pp_i, pp_j, p.getValue(i,j));
-                      pp_j++;
-                  }
-               }     
-               pp_j=0;
-               pp.setIdentifier(pp_i, p.getIdentifier(i));
-               pp_i++;
-            }
-             
-          }        
-                  
-          return pp;
-      }
-
-      static BasicSymmetricalDistanceMatrix removeRowCol(BasicSymmetricalDistanceMatrix p,int row, int col) {
-          if (p.getSize()==1) return p;
-          if (row>=p.getSize()) return p;
-          if (col>=p.getSize()) return p;
-          BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
-          
-          int pp_i=0;
-          int pp_j=0;
-          for (int i=0; i<p.getSize();i++) {
-            if (i!=row) {  
-            for (int j=0; j<p.getSize();j++) {
-                  if (j!=col) {
-                      pp.setValue(pp_i, pp_j, p.getValue(i,j));
-                      pp_j++;
-                  }
-               }     
-               pp_j=0;
-               pp.setIdentifier(pp_i, p.getIdentifier(i));
-               pp_i++;
-            }             
-          }        
-                  
-          return pp;
-      }
-      
-      static double[][] removeRowCol(double[][] p,int row, int col) {
-          int n=p.length;
-          if (n==1) return p;
-          if (row>=n) return p;
-          if (col>=n) return p;
-          double[][] pp=new double[n-1][n-1];
-          //BasicSymmetricalDistanceMatrix pp=new BasicSymmetricalDistanceMatrix(p.getSize()-1);
-          
-          int pp_i=0;
-          int pp_j=0;
-          for (int i=0; i<n;i++) {
-            if (i!=row) {  
-            for (int j=0; j<n;j++) {
-                  if (j!=col) {
-                      pp[pp_j][pp_i]=p[j][i];
-                      pp_j++;
-                  }
-               }     
-               pp_j=0;              
-               pp_i++;
-            }             
-          }                          
-          return pp;
-      }
-      
-  
-       //TO DO
-      static int getRowPos(double[][] p, int row) {
-         double[] prob=getCummulsums(p,row);
-         double rand=unif_rand();
-         for (int i=0; i<prob.length;i++) {
-             if (rand<=prob[i]) return i;
-         }
-          return prob.length-1; //last index
-      }
-   
-      
-      
-      static ArrayList<String> permute(ArrayList<String> data,String name1, String name2) {          
-          int pos1=data.indexOf(name1);
-          int pos2=data.indexOf(name2);
-          ArrayList<String> tmp=new ArrayList<String>();
-          tmp.addAll(data);
-          tmp.set(pos1, name2);
-          tmp.set(pos2, name1);          
-          return tmp;
-      }
-      //
-      /**
-       * This return a permutation order of the label based on the phylogeny 
-       * @param pp phyloTree
-       * @param k 
-       */
-       static ArrayList<String> phyloPermute(Phylogeny pp,double k) {
-         //BasicSymmetricalDistanceMatrix p=phyloProb(pp,k);
-          LFSR258  r=new  LFSR258();   
-         ArrayList<PhylogenyNode> nodes=(ArrayList<PhylogenyNode>) pp.getExternalNodes(); 
-         ArrayList<String> names=new ArrayList<String>();                 
-         ArrayList<String> output=new ArrayList<String>();
-         int n=nodes.size();
-         
-         boolean[] done=new boolean[n];
-         String[] st=new String[n]; 
-         
-         for (int i=0; i<n;i++) {
-             done[i]=false;
-             st[i]="";
-             names.add(nodes.get(i).getName());             
-         } 
-         output.addAll(names);
-        // Setp 0;
-         double[][] prob=phyloProb(pp, k);
-         //printm(prob);
-        // Step 1.
-         
-          while (prob.length>1) {              
-              int first=r.nextInt(0, prob.length-1);              
-              int second=getRowPos(prob, first);
-              //System.out.println(first+" - "+second+" "+names.get(first)+" "+names.get(second));
-              output=permute(output, names.get(first),names.get(second));
-              //st[second]=names.get(first);             
-              names.remove(first);
-              prob=removeRowCol(prob, first, second);
-              //printm(prob);                            
-          }
-          
-          return output;
-        }
-         
-         static void printm(double[][] p) {
-             for (int i=0; i<p.length;i++) {
-                 for (int j=0; j<p[i].length;j++) {
-                     System.out.print(p[i][j]+" ");
-                 }
-                 System.out.println("");
-             }
-         }
-//  p<-phyloProb(tree, k)
-//  tt<-rownames(p)
-//  nsp<-length(tt)
-//  order<-sample(1:nsp, replace=F)
-//  ttnew<-character(nsp)
-//  cpm<-p
-//  for(j in order[-nsp]) {
-//    cpm<-cpm/rowSums(cpm)
-//    rr<-which(rownames(cpm)==tt[j])
-//    pp<-cpm[rr,]
-//    s2<-sample(names(pp), size=1, replace=T, prob=pp)
-//    slot<-which(tt==s2)
-//    rc<-which(colnames(cpm)==s2)
-//    ttnew[slot]<-tt[j]
-//    cpm<-cpm[-rr,-rc]
-//  }
-//  ttnew[which(ttnew=="")]<-tt[order[nsp]]
        
   
     
 } //End dataset
-
-
-//phyloProb<-function(tree, k) {
-//  phylo_dist <- cophenetic.phylo(tree)
-//  scaled_phylo_dist <- phylo_dist/max(phylo_dist)
-//  s <- k-scaled_phylo_dist
-//  s/rowSums(s)
-//}
-
-//# Permutes species according to phylogentic tree; returns tip names in permuted order
-//phyloPermute<-function(tree, k) {
-//  p<-phyloProb(tree, k)
-//  tt<-rownames(p)
-//  nsp<-length(tt)
-//  order<-sample(1:nsp, replace=F)
-//  ttnew<-character(nsp)
-//  cpm<-p
-//  for(j in order[-nsp]) {
-//    cpm<-cpm/rowSums(cpm)
-//    rr<-which(rownames(cpm)==tt[j])
-//    pp<-cpm[rr,]
-//    s2<-sample(names(pp), size=1, replace=T, prob=pp)
-//    slot<-which(tt==s2)
-//    rc<-which(colnames(cpm)==s2)
-//    ttnew[slot]<-tt[j]
-//    cpm<-cpm[-rr,-rc]
-//  }
-//  ttnew[which(ttnew=="")]<-tt[order[nsp]]
-//  
-//  ttnew
-//}	
-//
-//permPhylo <- function(tree, matrix.1, k) 
-//{ 
-//  s <- phyloPermute(tree, k = k) 
-//  trans <- match(s, rownames(matrix.1))
-//  matrix.1[trans,trans] 
-//}

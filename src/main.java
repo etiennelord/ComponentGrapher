@@ -1,5 +1,5 @@
 /*
- *  COMPOSITE-GRAPHER v1.0
+ *  COMPOSITE-GRAPHER v1.0.7
  *  
  *  Copyright (C) 2016-2017  Etienne Lord
  *
@@ -67,6 +67,8 @@ public class main {
             int maxiter=1;          //--default, one iteration, get the first state
             int random_n=0;          //--Specify that we want random partition
             int perm_n=0;            //--Number of permutation for the p-value   
+            int edges_selection_mode=0;
+            int perm_mode=0;         //--Permutation mode
             String user_state_string="";//--passed user state string
             String node_information_filename="";
             String output_directory="";
@@ -86,6 +88,40 @@ public class main {
             if (s.indexOf("-und")>-1) {
                 analyse1=false;
                 analyse2=true;
+                perm_mode=4;
+            }
+            if (s.indexOf("-edges=")>-1) {
+                edges_selection_mode=Integer.valueOf(st.substring(7));
+                if (edges_selection_mode!=0) {
+                    analyse1=false;
+                    analyse2=true;
+                }                 
+            }
+             if (s.indexOf("-permmode=")>-1) {
+                perm_mode=Integer.valueOf(st.substring(10));
+                if (perm_mode==4) {
+                    analyse1=false;
+                    analyse2=true;
+                }                 
+            }
+            
+              if (s.indexOf("-perm=")>-1) perm_n=Integer.valueOf(st.substring(6));
+            
+            if (s.indexOf("-tree=")>-1) {                
+                d.tree_filename=st.substring(6);
+            }
+            if (s.indexOf("-k=")>-1) {              
+                d.tree_k=Double.valueOf(st.substring(3));
+            }
+            if (s.indexOf("-seed=")>-1) {
+                try {
+                    d.seed=Long.valueOf(st.substring(6));                   
+                    d.setSeed(d.seed);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Unable to read seed: "+st);
+                    d.seed=1000;
+                }
             }
             if (s.indexOf("-minrand=")>-1) minrand=Double.valueOf(st.substring(9));
             if (s.indexOf("-maxiter=")>-1) maxiter=Integer.valueOf(st.substring(9));
@@ -99,6 +135,7 @@ public class main {
                 }
             }
             if (s.indexOf("-maxpool=")>-1) datasets.maxthreads=Integer.valueOf(st.substring(9));
+            if (s.indexOf("-threads=")>-1) datasets.maxthreads=Integer.valueOf(st.substring(9));
             if (s.indexOf("-perm=")>-1) { 
                 perm_n=Integer.valueOf(st.substring(6));
             } 
@@ -138,6 +175,10 @@ public class main {
              System.exit(0);
          }
         
+         if (perm_mode==3) {
+             System.out.println("Permutation mode 3 is not yet available.");
+             System.exit(-1);
+         }
           boolean r=d.load_morphobank_nexus(args[0]);               
         
           if (!r||d.nchar==0||d.ntax==0) r=d.load_simple(filename);
@@ -145,8 +186,19 @@ public class main {
              System.out.println("Unable to load : "+filename+". No file found?");
              System.exit(-1);
          }
-        
-        
+           //--Load phylogeny
+         if (perm_mode==2&&d.tree_filename.isEmpty()) {
+             System.out.println("Error. No phylogenetic tree pass to the -tree= option with phylogenetic permutations.");
+             System.exit(-1);
+         }
+         if (!d.tree_filename.isEmpty()) {             
+             if (!d.load_phylogeny()) {
+                  System.exit(-1);
+             }
+             perm_mode=2; //phylogeny
+         }
+         
+         
 //        if (random_n>0&&maxiter==1) {             
 //             maxiter=random_n;
 //         }
@@ -172,7 +224,9 @@ public class main {
          if (perm_n==0) {
              perm_n=(int)(d.info_total_possible_nodes/0.05);
          }
+         d.perm_mode=perm_mode;
          d.nooutput=nooutput;
+         d.edges_selection_mode=edges_selection_mode;
          d.bipartite=bipartite;
          d.save_graphml=save_graphml;
          d.min_rand_index=minrand;         
@@ -182,6 +236,11 @@ public class main {
          d.maxiter=maxiter;
          d.min_taxa=mintaxa;
          d.save_summary=save_summary;                
+//         if ((d.perm_mode==4||d.perm_mode==5)&&d.edges_selection_mode==0) {
+//             System.out.println("Warning. Permitted edges selection mode (-edges) for undefined permutation is :1,2 or 3.");
+//             d.edges_selection_mode=1;
+//         }
+         
          
          if (show_matrix) d.printCharMatrix();
          
@@ -199,7 +258,7 @@ public class main {
              stat.generate_statistics_new();                                   
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
-             System.out.println("===============================================================================");              
+             System.out.println("===============================================================================================");              
              //stat.output_stats(stat.calculate_stat());                      
 //             System.out.println("==============================================================================="); 
 //             System.out.println("Nodes statistics");
@@ -219,9 +278,10 @@ public class main {
              System.out.println("===============================================================================");
              permutation_statistics_undefined stat=new permutation_statistics_undefined(d);             
              stat.generate_statistics();                                   
+             
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
-             System.out.println("===============================================================================");              
+             System.out.println("===============================================================================================");              
              
              System.out.println("done.");
              System.exit(0);
@@ -230,6 +290,7 @@ public class main {
       
       } else {
           //--Gui version - No Argv -
+          try {
           EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -243,6 +304,9 @@ public class main {
                     frame.setVisible(true);
                 }
              });
+          } catch(Exception e) {
+              help();
+          }
       }
     }
     //http://docs.oracle.com/javafx/2/charts/bar-chart.htm
@@ -259,16 +323,26 @@ public class main {
           
           System.out.println("Options :");
           //System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
-          System.out.println("\t-perm=100    : Specify the number permutation to performed.");          
-          System.out.println("\t-maxpool=10  : Specify the number of concurrent threads.");          
-          System.out.println("\t-und         : Perform randomization on undefined states (?,*).");          
-          System.out.println("\t-undmode=0,1 : Select the undefined mode  0: Absolute Majority");          
-          System.out.println("\t             : for the edge selection     1: Majority Rule");          
-          
+          System.out.println("\t-perm=100    : Specify the number permutation to performed.");  
+          System.out.println("\t-permmode=0  : Specify the permutation mode");
+           System.out.println("\t           0: Equiprobable permutation (default)");
+           System.out.println("\t           1: Probabilistic permutation");
+           System.out.println("\t           2: Phylogeny (default if -tree option is used)");
+           //System.out.println("\t           3: Bootstrap");                 
+           System.out.println("\t           4: Equiprobable- only permute undefined states"); 
+           System.out.println("\t           5: Probabilistic- only permute undefined states"); 
+           
+          System.out.println("\t-threads=10  : Specify the number of concurrent threads.");          
+          //System.out.println("\t-und         : Perform randomization on undefined states (?,*).");          
+          System.out.println("\t-edges=0     : Specify edge's inference mode ");
+          System.out.println("\t            0: Treat all edges (default)");
+          System.out.println("\t            1: Absolute Majority");                 
+          System.out.println("\t            2: Majority Rule");          
+          System.out.println("\t          >10 : Minimum percent to have edge");                    
           //System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");          
           //System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");
           //System.out.println("\t-random=9    : Force a number of random variations.");
-          System.out.println("\t-undefined   : Remove column containing undefined states (e.g. ?,-,*)");
+          System.out.println("\t-undefined   : Remove column containing undefined states (e.g. ?,*)");
           System.out.println("\t-multiple    : Remove column containing multiple states (e.g. {1,2,3}).");          
           System.out.println("\t-bipartite   : Output bipartite files.");
           System.out.println("\t-graphml     : Output graphml files (Gephi,Cytoscape compatibles).");

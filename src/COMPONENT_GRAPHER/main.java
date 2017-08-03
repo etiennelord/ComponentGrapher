@@ -1,4 +1,7 @@
 package COMPONENT_GRAPHER;
+
+import java.util.Locale;
+
 /*
  *  COMPONENT-GRAPHER v1.0
  *  
@@ -33,7 +36,7 @@ public class main {
 
         ///////////////////////////////////////////////////////////////////////
         /// VERSION
-        public static String version="1.0.6";
+        public static String version="1.0.8";
         public static String authors="Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov,\nFrançois-Joseph Lapointe, Éric Bapteste";
         
     /**
@@ -42,7 +45,7 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+         Locale.setDefault(new Locale("en", "US"));
         ///////////////////////////////////////////////////////////////////////
         /// FLAGS
         boolean analyse1=false;
@@ -59,7 +62,7 @@ public class main {
         float mintaxa=1;         //-- the minimum number of taxa to consider
         int maxiter=1;          //--default, one iteration, get the first state
         int random_n=0;          //--Specify that we want random partition
-        int perm_n=100;            //--Number of permutation for the p-value   
+        int perm_n=100;            //--Number of permutation for the p-value           
         String user_state_string="";//--passed user state string
         String node_information_filename="";
       
@@ -76,6 +79,7 @@ public class main {
         // Read command line option
         for (String st:args) {
             String s=st.toLowerCase();
+            System.out.println(s);
             if (s.indexOf("-output=")>-1) filename=st.substring(8);         
             if (s.indexOf("-minrand=")>-1) minrand=Double.valueOf(st.substring(9));
             if (s.indexOf("-maxiter=")>-1) maxiter=Integer.valueOf(st.substring(9));
@@ -88,7 +92,7 @@ public class main {
                     mintaxa=Float.valueOf(st.substring(9));
                 }
             }
-            if (s.indexOf("-perm=")>-1) perm_n=Integer.valueOf(st.substring(6));
+          
             if (s.indexOf("-random=")>-1) random_n=Integer.valueOf(st.substring(8));
             if (s.indexOf("-variation=")>-1) user_state_string=st.substring(11);
             if (s.indexOf("-undefined")>-1) undefined=true;
@@ -122,7 +126,8 @@ public class main {
              System.out.println("Unable to load : "+filename+". No file found?");
              System.exit(-1);
          }
-        
+      
+         
         
         if (random_n>0&&maxiter==1) {             
              maxiter=random_n;
@@ -150,6 +155,7 @@ public class main {
          d.load_charstate(node_information_filename);
           
          
+         
              permutation_statistics stat=new permutation_statistics(d);
              stat.generate_statistics_new();
          
@@ -171,6 +177,7 @@ public class main {
           System.out.println("\tmatrixfile : a nexus or phylip matrix to analyse.");      
           
           System.out.println("Options :");
+          System.out.println("\t-tree=file   : Specify phylogenetic tree in newick format.");
           System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
           System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");
           System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");

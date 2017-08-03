@@ -172,7 +172,7 @@ public class Nodes_TableModel extends AbstractTableModel {
            
            double pvalue=statn.pvalue[0];
            double reference=statn.reference_value;           
-           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(statn.values));             
+           DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(statn.getValues()));             
            
         //--For the moment, all strings...
            switch(col) {

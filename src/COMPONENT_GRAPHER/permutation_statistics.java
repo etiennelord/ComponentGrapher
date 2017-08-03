@@ -172,7 +172,15 @@ public class permutation_statistics implements Serializable {
        public Double reference_value=0.0;       
        //public DescriptiveStatistics stat=new DescriptiveStatistics();    
        public Double[] pvalue;  
-       public ArrayList<Double> values=new ArrayList<Double>();
+       private ArrayList<Double> values=new ArrayList<Double>();
+       
+       public ArrayList<Double> getValues() {
+           ArrayList<Double> v=new ArrayList<Double>();
+           for (Double w:values) {
+               if (Double.isFinite(w)) v.add(w);
+           }
+           return v;
+       }
        
        public stats() {}       
    }
@@ -411,7 +419,7 @@ public class permutation_statistics implements Serializable {
                         e.printStackTrace();
                    }
         //--Test if we are doing replicate here
-                
+      reference_data.save_CurrentPhylipMatrix(directory+File.separator+"reference_matrix.txt", true);          
         long estimate=System.currentTimeMillis()-starttime;
         System.out.println("Total time for reference :"+util.msToString(estimate));
         logfile.println("Total time for reference :"+util.msToString(estimate));
@@ -421,11 +429,7 @@ public class permutation_statistics implements Serializable {
             logfile.close();
             return;
         }
-        //System.out.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));      
-        //logfile.println("Estimatied time for all replicates ("+replicate+"):"+util.msToString((replicate*estimate/4)));
-         //long timerunning=System.currentTimeMillis();  //--We will estimate 1%
-         //int one_percent=(int)Math.ceil(replicate/100)+1; //Not used
-         
+             
          ExecutorService pool=Executors.newFixedThreadPool(datasets.maxthreads);
          
         if (data.replicate<=1) return;
@@ -437,19 +441,39 @@ public class permutation_statistics implements Serializable {
         for (int i=0; i<replicate;i++) {
              partitions.add(new Callable<String>(){
              public String call() {
-                  final int this_replicate= current_replicate++;
+
+                 final int this_replicate= current_replicate++;
                   final long this_start_time=System.currentTimeMillis();
                    System.out.println(this_replicate+" / "+replicate +" [started]");
                    data.MessageResult(this_replicate+" / "+replicate +" [started]\n");
                    logfile.println(this_replicate+" / "+replicate +" [started]");
 
-                   datasets t=new datasets(data);
-                   if (data.permutation) {
-                       t.generate_permutation();
-                   } else if (data.bootstrap) {
-                        t.generate_bootstrap();
-                   }
-                   t.compute();
+                   datasets t=new datasets(data); //--Duplicate the dataset
+                 try {                     
+                      permute p=new permute(t);
+                       if (t.perm_mode==2) {                               
+                           if (t.tree!=null) {
+                               p.generate_phylopermutation();
+                           } else {
+                               p.generate_permutation();
+                           }
+                       } else {
+                          switch (t.perm_mode) {
+                              case 0:p.generate_permutation(); break;
+                              case 1:p.generate_probpermutation(); break;
+                              case 3:p.generate_bootstrap(); break;                              
+                          }                  
+                       }                  
+                  
+                 } catch(Exception e) {
+                     e.printStackTrace();
+                 }
+                 //--Save permutated matrix here
+                 
+                 t.save_CurrentPhylipMatrix(directory+File.separator+"replicate_matrix_"+this_replicate+".txt", true);
+                 
+                 
+                  t.compute();
                    summary_statistics s=new summary_statistics(t);            
                     s.calculate_network_statistics();           
                     String fileresult=saveReplicateStatistics(this_replicate, s);
@@ -477,23 +501,18 @@ public class permutation_statistics implements Serializable {
             }
             pool.shutdown();
             //--Done
-             System.out.println(rfile.size());
+             System.out.println("Total results to process: "+rfile.size());
             this.calculate_from_directory_new(directory);
-            //--Here, we load and call the new statistic function
-//            for (final Future<String> file:results_partition) {
-//                replicates.add(r.get());
-//            }
-            //--Load the results 
-           
+
             
          } catch(Exception e){
-             //e.printStackTrace();
+             e.printStackTrace();
              logfile.println("Job was stopped. "+e.getMessage());
             // e.printStackTrace();
          }
          endtime=System.currentTimeMillis();
          System.out.println("Total time: "+util.msToString(endtime-starttime));
-         System.out.println("===============================================================================");
+         System.out.println("===============================================================================================");
          logfile.println("Total time: "+util.msToString(endtime-starttime));
         //--done in the mainframe now...data=reference_data;
        logfile.close();
@@ -554,6 +573,7 @@ public class permutation_statistics implements Serializable {
     
     public String hist( double[] values, int num_bins) {
         String hh="";
+        String sep="\t";
         double[] histogram = new double[num_bins];
         double[] histogram_min = new double[num_bins];
         double[] histogram_max = new double[num_bins];
@@ -579,11 +599,11 @@ public class permutation_statistics implements Serializable {
         
         hh+="     [";
         for (int i=0;i<num_bins;i++) {
-            hh+=histogram[i]+",";        
+            hh+=histogram[i]+sep;        
         }
         hh+="]\n[";
          for (int i=0;i<num_bins;i++) {
-            hh+=util.deux_decimal(histogram_min[i])+"-"+util.deux_decimal(histogram_max[i])+",";        
+            hh+=util.deux_decimal(histogram_min[i])+"-"+util.deux_decimal(histogram_max[i])+sep;        
         }
          hh+="]\n";
         return hh;
@@ -1008,7 +1028,7 @@ public class permutation_statistics implements Serializable {
      * @param filename 
      */
      public void output_csv(String filename) {
-        
+         String sep="\t";
          String[] qualifier={
   "Nodeid",
   "Name",
@@ -1117,12 +1137,12 @@ public class permutation_statistics implements Serializable {
           u.open(filename+"_summary_statistics.csv");        
        
           //--Summary statistic per node     -ok    
-        for (String s:qualifier) u.print(s+",");
+        for (String s:qualifier) u.print(s+sep);
         u.println("");
         //--Data
         for (int r=0; r<reference.data.nodes.size();r++) {            
             for (int c=0; c<qualifier.length;c++) {
-                u.print(util.encapsulate(""+getRefNodeStatistics(r, c))+",");
+                u.print(util.encapsulate(""+getRefNodeStatistics(r, c))+sep);
             }
             u.println("");
         } 
@@ -1136,8 +1156,8 @@ public class permutation_statistics implements Serializable {
             
             u.open(filename+"_network_statistics.csv");    
             //--This is what whe need            
-             u.println("Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
-             u.println(this.output_stats_full(this.Network_stats,",",""));
+             u.println("Statistics"+sep+"Reference_value"+sep+"p-value"+sep+"sign."+sep+"N"+sep+"Mean"+sep+"STD"+sep+"Min"+sep+"Max"+sep+"5%"+sep+"95%");
+             u.println(this.output_stats_full(this.Network_stats,sep,""));
             u.println("Note: see the manual for the description of each parameters.");
              u.close();
             
@@ -1145,11 +1165,11 @@ public class permutation_statistics implements Serializable {
             
              u.open(filename+"_nodes_statistics.csv");    
             //--This is what whe need            
-             u.println("NodeID,Name,Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
+             u.println("NodeID"+sep+"Name"+sep+"Statistics"+sep+"Reference_value"+sep+"p-value"+sep+"sign."+sep+"N"+sep+"Mean"+sep+"STD"+sep+"Min"+sep+"Max"+sep+"5%"+sep+"95%");
               for (int i=0; i<this.reference_data.nodes.size();i++) {
                  //System.out.println("===============================================================================");            
-                  String node=i+","+reference_data.nodes.get(i).complete_name+",";
-                  u.println(this.output_stats_full(this.Node_stats.get(i),",",node));
+                  String node=i+sep+reference_data.nodes.get(i).complete_name+sep;                  
+                  u.println(this.output_stats_full(this.Node_stats.get(i),sep,node));
              }
              u.println("Note: see the manual for the description of each parameters.");
              
@@ -1160,15 +1180,15 @@ public class permutation_statistics implements Serializable {
             ///////////////////////////////////////////////////////////////////
             /// BELOW OLD CODE
             
-//            for (String s:qualifier2) u.print(s+",");     
+//            for (String s:qualifier2) u.print(s+sep);     
 ////             for (int rep=0;rep<data.replicate;rep++) {
-////                       u.print("randomization "+(rep+1)+",");
+////                       u.print("randomization "+(rep+1)+sep);
 ////                   }
 //            u.println();
 //            //--Iterate over the pv2 (network statistic)
 //            for (int r=0; r<pv2.length;r++) {
 //                 for (int c=0;c<qualifier2.length;c++) {
-//                     //u.print(getNetworkValue(datas,r, c)+",");
+//                     //u.print(getNetworkValue(datas,r, c)+sep);
 //                 }
 //                 
 //                 u.println();
@@ -1190,14 +1210,14 @@ public class permutation_statistics implements Serializable {
 ////        st.append("P-value : "+getPvalue1(values,refvalue)+"\n");
 //                    
 //                   for (int rep=0;rep<data.replicate;rep++) {
-//                       u.print("randomization "+(rep+1)+",");
+//                       u.print("randomization "+(rep+1)+sep);
 //                   }
 //                   u.println();
 //                   //System.out.println("nodes size:"+reference_data.nodes.size());
 //                    for (int nodeid=0; nodeid<reference_data.nodes.size();nodeid++) {
 //                     node n=reference.data.nodes.get(nodeid);
 //                   
-//                     u.print(n.id+","+n.complete_name+",");
+//                     u.print(n.id+sep+n.complete_name+sep);
 //                     double ref=0;
 //                     if (identifier.equals("in_degree2")||identifier.equals("out_degree2")) {
 //                        ref=this.reference.data.nodes.get(nodeid).stats.getInt(identifier);
@@ -1222,7 +1242,7 @@ public class permutation_statistics implements Serializable {
 //                     } else {
 //                         st=permutation_statistics.getPvalue_unilateral(values, ref,this.reference.data.nodes.size());
 //                     }
-//                     u.print(ref+","); //--Reference value
+//                     u.print(ref+sep); //--Reference value
 //                     double pvalue=0.0;
 //                     if (!identifier.equals("closeness_type3")) {
 //                        pvalue=st[0];
@@ -1232,25 +1252,25 @@ public class permutation_statistics implements Serializable {
 //                     //--Add information for 
 //                    if (ref==0) {
 //                       u.print("NA,");
-//                       u.print(node_stat.getN()+","); //N
-//                       u.print(node_stat.getMin()+","); //Min
-//                       u.print(node_stat.getMax()+","); //Max
-//                       u.print(node_stat.getMean()+","); //Mean
-//                       u.print(node_stat.getStandardDeviation()+","); //STD
-//                       u.print(node_stat.getPercentile(5)+","); //5%
-//                       u.print(node_stat.getPercentile(95)+","); //95%        
+//                       u.print(node_stat.getN()+sep); //N
+//                       u.print(node_stat.getMin()+sep); //Min
+//                       u.print(node_stat.getMax()+sep); //Max
+//                       u.print(node_stat.getMean()+sep); //Mean
+//                       u.print(node_stat.getStandardDeviation()+sep); //STD
+//                       u.print(node_stat.getPercentile(5)+sep); //5%
+//                       u.print(node_stat.getPercentile(95)+sep); //95%        
 //                    } else {
-//                     u.print(pvalue+","); //P-value
-//                      u.print(getSignificance(pvalue,ref)+","); //P-value
-//                     u.print(node_stat.getN()+","); //N
-//                     u.print(node_stat.getMin()+","); //Min
-//                     u.print(node_stat.getMax()+","); //Max
-//                     u.print(node_stat.getMean()+","); //Mean
-//                     u.print(node_stat.getStandardDeviation()+","); //STD
-//                     u.print(node_stat.getPercentile(5)+","); //5%
-//                     u.print(node_stat.getPercentile(95)+","); //95%           
+//                     u.print(pvalue+sep); //P-value
+//                      u.print(getSignificance(pvalue,ref)+sep); //P-value
+//                     u.print(node_stat.getN()+sep); //N
+//                     u.print(node_stat.getMin()+sep); //Min
+//                     u.print(node_stat.getMax()+sep); //Max
+//                     u.print(node_stat.getMean()+sep); //Mean
+//                     u.print(node_stat.getStandardDeviation()+sep); //STD
+//                     u.print(node_stat.getPercentile(5)+sep); //5%
+//                     u.print(node_stat.getPercentile(95)+sep); //95%           
 //                    } 
-//                      for (int j=0; j<values.length;j++) u.print(values[j]+",");             
+//                      for (int j=0; j<values.length;j++) u.print(values[j]+sep);             
 //                     u.println();
 //                     
 //                    }
@@ -1323,7 +1343,7 @@ public class permutation_statistics implements Serializable {
                 case "time":    values[i]=replicates.get(i).total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
-            s.values.add(values[i]);
+            if (Double.isFinite(values[i])) s.values.add(values[i]);
         }            
          //s.stat.addValue(refvalue);  //--Add reference to get the real Min and max      
         s.reference_value=refvalue;
@@ -1380,7 +1400,7 @@ public class permutation_statistics implements Serializable {
                 case "time":    values=su.total_time; refvalue=reference.total_time;break;  
             }            
            //System.out.println(node_field+" "+i+" :"+values[i]);
-            s.values.add(values);
+            if (Double.isFinite(values)) s.values.add(values);
             s.reference_value=refvalue;
             //--Recalculate the stats
             s.pvalue=getPvalue1(util.getDoubles(s.values), refvalue);
@@ -1819,6 +1839,7 @@ public class permutation_statistics implements Serializable {
              System.out.println("===============================================================================================");           
              System.out.println("Statistics\tRef\tp-value\tsign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
              System.out.println(output_stats(this.Network_stats));     
+             System.out.println("* Some statistic are not available for each permutations, resulting in smaller sample size (N). ");
              System.out.println("===============================================================================================");           
              System.out.println("Nodes statistics");
              System.out.println("===============================================================================================");           
@@ -1859,7 +1880,7 @@ public class permutation_statistics implements Serializable {
             if (s.title.equals("total_CC_complete")) s.title="CC_complete";
             if (s.title.equals("triplet_typeE")) s.title="triangle";
             if (s.title.equals("time")) s.title="time/net. (ms)";
-            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));
+            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.getValues()));
             ste+=s.title+"\t"+util.four_decimal(s.reference_value)+"\t"+util.trois_decimal(s.pvalue[0])+"\t"+getSignificance(s.pvalue[0], s.reference_value)+"\t"+stat.getN()+"\t"+util.trois_decimal(stat.getMean())+"\t"+util.trois_decimal(stat.getStandardDeviation())+"\t"+util.trois_decimal(stat.getMin())+"\t"+util.trois_decimal(stat.getMax())+"\t"+util.trois_decimal(stat.getPercentile(5))+"\t"+util.trois_decimal(stat.getPercentile(95))+"\n";
         }
         return ste;
@@ -1886,7 +1907,7 @@ public class permutation_statistics implements Serializable {
             if (s.title.equals("total_CC_complete")) s.title="CC_complete";
             if (s.title.equals("triplet_typeE")) s.title="triangle";
             if (s.title.equals("time")) s.title="time/net. (ms)";
-            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.values));
+            DescriptiveStatistics stat=new DescriptiveStatistics(util.getDoubles(s.getValues()));
             if (!prefix.isEmpty()) ste+=prefix;
             ste+=s.title+sep+s.reference_value+sep+s.pvalue[0]+sep+getSignificance(s.pvalue[0], s.reference_value)+sep+stat.getN()+sep+stat.getMean()+sep+stat.getStandardDeviation()+sep+stat.getMin()+sep+stat.getMax()+sep+stat.getPercentile(5)+sep+stat.getPercentile(95)+"\n";
         }
