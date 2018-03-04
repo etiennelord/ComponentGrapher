@@ -1127,6 +1127,7 @@ public class permutation_statistics implements Serializable {
          System.out.println(filename);
          u.open(filename+"_summary.txt");
          u.print(reference_data.st_option.toString());        
+         u.println("===============================================================================");
          u.println("Total permutations (N replicate)     : "+this.replicate);
          u.println("Total time                           : "+util.msToString(endtime-starttime));
          u.println("===============================================================================");
@@ -1843,16 +1844,36 @@ public class permutation_statistics implements Serializable {
              System.out.println("===============================================================================================");           
              System.out.println("Nodes statistics");
              System.out.println("===============================================================================================");           
-             
+             this.reference_data.st_results.append("===============================================================================================\n");
+             this.reference_data.st_results.append("Network statistics (See manual for descriptions)\n");
+             this.reference_data.st_results.append("===============================================================================================\n");
+             this.reference_data.st_results.append(util.replaceTab("Statistics\tRef\tp-value\tsign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%\n"));
+             this.reference_data.st_results.append(util.replaceTab(output_stats(this.Network_stats)));
+             this.reference_data.st_results.append("* Some statistic are not available for each permutations, resulting in smaller sample size (N).\n ");
+             this.reference_data.st_results.append("===============================================================================================\n");           
+             this.reference_data.st_results.append("Nodes statistics\n");
+             this.reference_data.st_results.append("===============================================================================================\n");           
              for (int i=0; i<this.reference_data.nodes.size();i++) {
                  //System.out.println("===============================================================================");            
                  System.out.println("-----------------------------------------------------------------------------------------------");           
                  System.out.println("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name);
-                  //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                 
+                 //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
                   System.out.println("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
                  System.out.println("-----------------------------------------------------------------------------------------------");           
                   System.out.println(this.output_stats(this.Node_stats.get(i)));
+                  
+                  this.reference_data.st_results.append("-----------------------------------------------------------------------------------------------\n");           
+                 this.reference_data.st_results.append(util.replaceTab("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name+"\n"));
+                 
+                 //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                   this.reference_data.st_results.append(util.replaceTab("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%\n"));
+                  this.reference_data.st_results.append("-----------------------------------------------------------------------------------------------\n");           
+                  this.reference_data.st_results.append(util.replaceTab((this.output_stats(this.Node_stats.get(i)))));
+                  
+                  
              }
+             this.reference_data.st_results.append("===============================================================================================\n");
          //System.out.println("Other statistics found in summary_statistics.csv");     
         System.out.println("===============================================================================================");           
         //--4. Enjoy

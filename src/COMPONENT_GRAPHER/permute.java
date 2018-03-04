@@ -127,10 +127,13 @@ static double unif_rand()
      */
     public void generate_phylopermutation() {
        if (dat.tree==null) {
-           System.out.println("Error. No phylogeny found! Performint normal permutation.");
+           System.out.println("Error. No phylogeny found! Perform normal permutation.");
+           System.exit(-1);
            generate_permutation();
            return;
        }
+      //--Test if we have all the species
+      
        //Do the random permuation
         for (int j=0; j<dat.nchar;j++) {
             //--1. Create the HashMap for this coloumn nata iwht the key (taxa) and value (char)
@@ -140,8 +143,13 @@ static double unif_rand()
             }
             //--2. Generate a permutation for this column 
             ArrayList<String> tax_place=phyloPermute(dat.tree,dat.tree_k);
+             if (dat.ntax!=tax_place.size()) {
+                 System.out.println("Error. Wrong number of species in the phylogenetic tree. Please verify the tree.");
+                  System.exit(-1);
+                  return;
+             }
             for (int i=0; i<dat.ntax;i++) {
-                dat.current_state_matrix[i][j]=tax_char.get(tax_place.get(i)); //--GEt the rigth char
+                dat.current_state_matrix[i][j]=tax_char.get(tax_place.get(i)); //--Get the right char
             }
          }        
     }
@@ -384,7 +392,7 @@ static double unif_rand()
       /**
        * This return a permutation order of the label based on the phylogeny 
        * @param pp phyloTree
-       * @param k 
+       * @param k number of 
        */
        ArrayList<String> phyloPermute(Phylogeny pp,double k) {
          //BasicSymmetricalDistanceMatrix p=phyloProb(pp,k);

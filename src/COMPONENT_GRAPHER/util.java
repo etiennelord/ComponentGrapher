@@ -667,5 +667,33 @@ public class util {
         return dateformatFile.format(today.getTime());
 
     }
-     
+    
+//    public static String replaceTab(String s) {
+//            return s.replaceAll("\t", "   ");
+//        }
+    
+   public static String replaceTab(String s) {
+  String tmp=""; 
+  int pos=0;
+  for (int i=0; i<s.length();i++) {
+      if (s.charAt(i)=='\t') {
+       //int k=(tmp.length())%8;
+       int k=(((pos + 8) / 8)*8);
+      // tmp+="    ";
+        for (int j=pos; j<k;j++) {
+            pos++;
+            tmp+=" ";
+        }
+      } else if (s.charAt(i)=='\n') {
+        pos=0;
+        tmp+=""+s.charAt(i); 
+      } else {
+       tmp+=""+s.charAt(i); 
+       pos++;
+      }
+   }
+  return tmp;
+  
+}
+    
 }

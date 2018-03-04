@@ -18,9 +18,6 @@
  */
 
 import COMPONENT_GRAPHER.datasets;
-import static COMPONENT_GRAPHER.main.authors;
-import static COMPONENT_GRAPHER.main.help;
-import static COMPONENT_GRAPHER.main.version;
 import COMPONENT_GRAPHER.permutation_statistics;
 import COMPONENT_GRAPHER.permutation_statistics_undefined;
 import COMPONENT_GRAPHER.util;
@@ -36,6 +33,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class main {
 
+     public static String version="1.0.9";
+     public static String authors="Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov,\nFrançois-Joseph Lapointe, Éric Bapteste";
     /**
      * @param args the command line arguments
      */
@@ -99,6 +98,14 @@ public class main {
             }
              if (s.indexOf("-permmode=")>-1) {
                 perm_mode=Integer.valueOf(st.substring(10));
+                
+                //--Quick fix for one option since bootstrap is not functionnal for now
+                if (perm_mode==3) {
+                    perm_mode=4;
+                } else if (perm_mode==4) {
+                    perm_mode=5;
+                }
+                
                 if (perm_mode==4) {
                     analyse1=false;
                     analyse2=true;
@@ -289,6 +296,9 @@ public class main {
       System.out.println("normal exit.");
       
       } else {
+          help();
+          // No GUI version for now
+          
           //--Gui version - No Argv -
           try {
           EventQueue.invokeLater(new Runnable() {
@@ -323,22 +333,23 @@ public class main {
           
           System.out.println("Options :");
           //System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
+          System.out.println("\t-tree=file   : Specify phylogenetic tree in newick format.");
           System.out.println("\t-perm=100    : Specify the number permutation to performed.");  
           System.out.println("\t-permmode=0  : Specify the permutation mode");
-           System.out.println("\t           0: Equiprobable permutation (default)");
-           System.out.println("\t           1: Probabilistic permutation");
-           System.out.println("\t           2: Phylogeny (default if -tree option is used)");
-           //System.out.println("\t           3: Bootstrap");                 
-           System.out.println("\t           4: Equiprobable- only permute undefined states"); 
-           System.out.println("\t           5: Probabilistic- only permute undefined states"); 
+           System.out.println("\t          0  : Equiprobable permutation (default)");
+           System.out.println("\t          1  : Probabilistic permutation");
+           System.out.println("\t          2  : Phylogeny (default if -tree option is used)");
+           //System.out.println("\t          3: Bootstrap");                 
+           System.out.println("\t          3  : Equiprobable- only permute undefined states"); 
+           System.out.println("\t          4  : Probabilistic- only permute undefined states"); 
            
           System.out.println("\t-threads=10  : Specify the number of concurrent threads.");          
           //System.out.println("\t-und         : Perform randomization on undefined states (?,*).");          
           System.out.println("\t-edges=0     : Specify edge's inference mode ");
-          System.out.println("\t            0: Treat all edges (default)");
-          System.out.println("\t            1: Absolute Majority");                 
-          System.out.println("\t            2: Majority Rule");          
-          System.out.println("\t          >10 : Minimum percent to have edge");                    
+          System.out.println("\t          0  : Treat all edges (default)");
+          System.out.println("\t          1  : Absolute Majority");                 
+          System.out.println("\t          2  : Majority Rule");          
+          System.out.println("\t        >10  : Minimum percent to have edge");                    
           //System.out.println("\t-mintaxa=9[%]: The minimum number of taxa (or percent) to include one edge.");          
           //System.out.println("\t-maxiter=9   : Maximum number of variations to search in case of \n\t\t\tundefined states in the input matrix (e.g. {1,2,3})\n\t\t\t*Note: the first 1000 iterations are ordered and not \n\t\t\trandom. (default=1). ");
           //System.out.println("\t-random=9    : Force a number of random variations.");
@@ -368,11 +379,11 @@ public class main {
           System.out.println("reference.json                        : serialized results for original dataset.");
           System.out.println("randomization_XX.json                 : serialized results for each permuation.");
           System.out.println("\nIf the [-bipartite] option is use, the following files will also be produced:");
-          System.out.println("\tmatrixfile.bipartite_complete.txt: bipartite network of the\n\t\t\t\t\t\tcomplete network.");
-          System.out.println("\tmatrixfile.bipartite_1.txt       : bipartite network of the type 1.");
-          System.out.println("\tmatrixfile.bipartite_2.txt       : bipartite network of the type 2.");
-          System.out.println("\tmatrixfile.bipartite_3.txt       : bipartite network of the type 3.");          
-          System.out.println("\tmatrixfile.bipartite_id.txt      : identification for each node");
+          System.out.println("\tmatrixfile.bipartite_complete.txt: bipartite network of the\n\t\t\t\t\tcomplete network.");
+          System.out.println("\tmatrixfile.bipartite_1.txt    : bipartite network of the type 1.");
+          System.out.println("\tmatrixfile.bipartite_2.txt    : bipartite network of the type 2.");
+          System.out.println("\tmatrixfile.bipartite_3.txt    : bipartite network of the type 3.");          
+          System.out.println("\tmatrixfile.bipartite_id.txt   : identification for each node");
           System.out.println("\nIf the [-graphml] option is used, the following files will also be produced:");
           System.out.println("\tmatrixfile_complete.graphml");
           System.out.println("\tmatrixfile_1.graphml");
