@@ -23,21 +23,34 @@ java -Xms=2g -Xmx=4g -jar COMPONENT-GRAPHER.jar
 B) To perform several permuation (higher than 1000) for the estimation of the _p_-value, it is recommended to run the analysis from the command-line. 
 
 For example for the matrix panarthropod_wo_absent_trait.nex located in the _datasets_ directory  
-With the **2000** permutations (-perm=2000)  and **100** concurrent threads (-maxpool=100)
+With the **2000** permutations (-perm=2000)  and **100** concurrent threads (-threads=100)
 ```
-java -Xms=2g -Xmx=6g -jar COMPONENT-GRAPHER.jar datasets/panarthropod_wo_absent_trait.nex -perm=2000 -maxpool=100
+java -Xms=2g -Xmx=6g -jar COMPONENT-GRAPHER.jar datasets/panarthropod_wo_absent_trait.nex -perm=2000 -threads=100
 ```
-
-
+For the second example, we can specify a phylogenetic tree for the permutation.  
+```
+java -Xms=2g -Xmx=6g -jar COMPONENT-GRAPHER.jar datasets/rhinocerotid_original.nex -tree=datasets/rhinocerotid_tree.newick -threads=20
+```
 
 Full command-line options are*:   
 * Please refers to the manual for more informations
 
 | Options          | Usages                                                                 |
 | ---------------- | ---------------------------------------------------------------------- |
-|	-tree=file      | Specify the number permutation to performed.                           |
+|	-tree=file     | Specify the phylogenetic tree if the permutation mode is phylogenetic. |
 |	-perm=100      | Specify the number permutation to performed.                           |
-|	-maxpool=10    | Specify the number of concurrent threads.                              |
+|       -permmode=0    | Specify the permutation mode.                                          |                  
+|                 0    | Equiprobable permutation (default)                                     |
+|	          1    | Probabilistic permutation                                              |
+|	          2    | Phylogeny (default if -tree option is used)                            |
+|	          3    | Equiprobable- only permute undefined states                            |
+|	          4    | Probabilistic- only permute undefined states                           |
+|       -edges=0       | Specify edge's inference mode                                          |
+|	          0    | Treat all edges (default)                                              |
+|	          1    | Absolute Majority                                                      |
+|	          2    | Majority Rule                                                          |
+|	        >10    | Minimum percent to have edge                                           |
+|	-threads=10    | Specify the number of concurrent threads.                              |
 |	-output=dir    | Specify output directory.                                              |
 |	-undefined     | Remove column containing undefined states (e.g. ?,-,\*)                |
 |	-multiple      | Remove column containing polymorphic states (e.g. {1,2,3}).            |
@@ -47,7 +60,7 @@ Full command-line options are*:
 |	-variation=X   | Specify the variation string to use if polymorphic states are presents.|
 |	-triplets      | Output triplets file (triplets.txt)                                    |
 
-Generated results files are:   
+Generated results files in the ouput directory are:   
 
 | Files                                   | Informations                                           |
 | --------------------------------------- | ------------------------------------------------------ |
