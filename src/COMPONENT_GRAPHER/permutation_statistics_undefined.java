@@ -1708,14 +1708,18 @@ public class permutation_statistics_undefined implements Serializable {
                         //reference_data=new datasets(su.data); //be sure to copy nodes data
                         reference_data.nodes.clear();
                         for (node n:su.data.nodes) {
-                            reference_data.nodes.add(new node(n));
+                            reference_data.nodes.add(new node(n));                            
+                            reference_data.identification.put(n.name,n.id);
+                            reference_data.inv_identification.put(n.id, n.name);
                         }
+                        //-- Also need the nodeid 
+                        
                         //--Copy state
                         reference_data.total_states=su.data.total_states;
                         reference_data.total_edges=su.data.total_edges;
                     
                         reference_data.allocate_edges_memory();
-                       //instantiate the edges
+                       //instantiate the all edges 
                        int tn=su.data.nodes.size();
                        edges=new int[tn][tn][5];
                        for (int i=0; i<tn;i++)
@@ -1748,7 +1752,7 @@ public class permutation_statistics_undefined implements Serializable {
                 }
             }
         } //--End files
-         // Process the network
+         // Process the networks
          reference_data.total_edges=0;
          reference_data.current_total_edge=0;
          reference_data.type4_total_edge=0;
@@ -1760,7 +1764,6 @@ public class permutation_statistics_undefined implements Serializable {
                 reference_data.node_id_type.add(new HashMap<Integer,Integer>());
             }
            
-      
         // We will need to check each possible node couple
         for (int i=0;i<tn;i++) {
             for (int j=0; j<tn;j++) {
@@ -1812,7 +1815,21 @@ public class permutation_statistics_undefined implements Serializable {
                 } 
             }
         }
-         //compute the new statistics for this network 
+        //--Special export here 
+
+        //--Force the export of a new graph here
+        
+        if (reference_data.save_graphml) {            
+               reference_data.export_edgelist(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"_");   
+                if (reference_data.save_graphml) {           
+                     reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__complete",0);
+                     reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__1",1);
+                     reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__2",2);
+                     reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__3",3);
+                     reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__4",4);
+                }
+        }         
+                //compute the new statistics for this network 
          //System.out.println(reference_data);
          reference=new summary_statistics(reference_data);
         reference.calculate_network_statistics();
