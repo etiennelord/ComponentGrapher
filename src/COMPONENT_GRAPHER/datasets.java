@@ -1,8 +1,8 @@
 package COMPONENT_GRAPHER;
 /*
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2015-2016  Etienne Lord
+ *  Copyright (C) 2015-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ public class datasets extends Observable implements Serializable {
    public double max_taxa_percent=1;
    public double min_taxa=1;
    public static int maxthreads=2;
+   public static boolean node_removed=false; //flag to indicate if nodes were removed using filter...
    
    //--p-value min (see compute_nodes()
     public double p05=1.0;
@@ -114,6 +115,8 @@ public class datasets extends Observable implements Serializable {
    public String tree_newick="";
    public double tree_k=2.0; 
    public String tree_filename="";
+   
+   public String filter=""; //--remove names matching this filter frome the network
    
    public String commandline="";
    public int maxiter=1;
@@ -286,7 +289,7 @@ public class datasets extends Observable implements Serializable {
        this.tree=d.tree;
        this.edges_selection_mode=d.edges_selection_mode;
        this.perm_mode=d.perm_mode;
-        
+        this.filter=d.filter;
         this.title=d.title;
        this.filename=d.filename;      
        this.serial_file=d.serial_file;
@@ -351,7 +354,8 @@ public class datasets extends Observable implements Serializable {
            this.index_label.put(k, d.index_label.get(k));
        }
        this.node_id_type.clear();
-        //System.out.println(d.node_id_type);
+        //System.out.println(d.node_id_type.size());
+       if (d.node_id_type.size()>0)
       try {
         for (int i=0; i<=4; i++) {
          HashMap<Integer,Integer> ni=d.node_id_type.get(i);
@@ -363,6 +367,7 @@ public class datasets extends Observable implements Serializable {
        }
       } catch(Exception ea) {
         //--This might failed?
+        ea.printStackTrace();
     }
        
        this.undefined_column.addAll(d.undefined_column);
@@ -1236,6 +1241,7 @@ void print_state_label() {
            case 5: str.append("probabilistic- only undefined states\n");break;         
        }
        str.append("Seed                                 : "+this.seed+"\n");   
+       str.append("Filter nodes                         : "+(this.filter.isEmpty()?"none":this.filter)+"\n");
        str.append("PhyloPermute k                       : "+this.tree_k+"\n");   
        str.append("Number of threads                    : "+this.maxthreads+"\n");  
        str.append("===============================================================================\n");       
@@ -1351,6 +1357,21 @@ void print_state_label() {
   }
   
   /**
+   * Return if we must filter out this node
+   * @param nodename
+   * @return false, if everything is ok
+   */
+  public boolean filter(String nodename) {
+      if (this.filter.isEmpty()) return false;
+      String[] f=this.filter.split(",");
+      for (String fil:f) {
+          //--Note, lowercase for easier use...
+          if (nodename.toLowerCase().matches(fil.toLowerCase())) return true;
+      }
+      return false;
+  }
+  
+  /**
    * Create the name for the node.
    * Note, the assignation of Bitvector is not done here!
    */
@@ -1385,6 +1406,7 @@ void print_state_label() {
             st=this.statelabels.get(i);
           } catch(Exception e) {}
           //-- Iterate over possible states s (see get_states_column)
+          //-- TO DO: Find a way to remove node with 'absent state'
           for (String s:d) {            
              //--Skip undefined state
               if (!s.equals("?")&&!s.equals("-")&&!s.equals("*")) {
@@ -1408,7 +1430,12 @@ void print_state_label() {
                     n.state_matrix=s;     
                     n.column=(i+1);
                     n.multistate=get_node_multistate(n);                   
-                    nodes.add(n);                    
+                    if (!filter(state)) {
+                        nodes.add(n);                        
+                    } else {
+                        datasets.node_removed=true;
+                        //System.out.println("Removed node: "+n.complete_name+" due to filter option.");
+                    }                    
                     identification.put(n.name,n.id);
                     inv_identification.put(n.id, n.name);
                 }                
@@ -2008,30 +2035,33 @@ void print_state_label() {
        try {            
             //-Type 0
             PrintWriter pw=new PrintWriter(new FileWriter(new File(filename+"_complete.txt")));                                       
-            pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa");
+            //pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa");
+            pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
             for (int i=0; i<this.current_total_edge;i++) {               
-                    if (type_edge[i]!=-1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                     
+                    //if (type_edge[i]!=-1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                     
+                    if (type_edge[i]!=-1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                     
                 }    
             pw.close();   
             //-Type 1
             pw=new PrintWriter(new FileWriter(new File(filename+"_1.txt")));                       
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa"); 
+                //pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa"); 
+                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa"); 
                 for (int i=0; i<current_total_edge;i++) {               
-                   if (type_edge[i]==1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                     
+                   if (type_edge[i]==1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                     
                 }  
             pw.close();            
             //--Type 2
             pw=new PrintWriter(new FileWriter(new File(filename+"_2.txt")));                       
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa");
+                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
                 for (int i=0; i<current_total_edge;i++) {               
-                  if (type_edge[i]==2) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                                        
+                  if (type_edge[i]==2) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                                        
                 }  
             pw.close();                
 //            //-Type 3
             pw=new PrintWriter(new FileWriter(new File(filename+"_3.txt")));                       
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa");
+                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
                 for (int i=0; i<current_total_edge;i++) {               
-                   if (type_edge[i]==3) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                                 
+                   if (type_edge[i]==3) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                                 
                 }  
             pw.close();
             //-Type 4
@@ -2048,7 +2078,7 @@ void print_state_label() {
                 for (node n:nodes) pw.println(n.id+"\t"+n.complete_name+"\t"+n.char_label+"\t"+n.state_label+"\t"+n.state_matrix+"\t"+n.edgecount+"\t"+n.in_edgecount+"\t"+n.out_edgecount+"\t"+n.identification.size()+"\t"+get_taxa(n.identification));
             pw.close();
 
-        } catch(Exception ex) {ex.printStackTrace();}
+        } catch(Exception ex) {}
         
     }
    
@@ -2253,7 +2283,7 @@ void print_state_label() {
                pw.println("</graph>");
                pw.println("</graphml>");
                pw.close();
-           } catch(Exception e) {e.printStackTrace();}
+           } catch(Exception e) {}
    }
    
     @Override
@@ -2699,58 +2729,6 @@ void print_state_label() {
         if (str.length()>1) str=str.substring(0,str.length()-1);
         return str;
     }
-    
-    //-- TO DO: only generate the node once
-    //--WARNING: in development, NOT functionnal!
-//    public int estimate_link_likelyhood(node node1, node node2) {
-//        int total=0;
-//        int len=node1.partition.size();
-//        //1. Take the possible sate
-//        if (node1.multistate==1&&node2.multistate==1) return 0;
-//        // 2. compute each bitvector to estimate the number of time a link can be done.
-//        // ... we don't care now what kind of link...
-//        ArrayList<BitVector>node1_bit= new  ArrayList<BitVector>();
-//        ArrayList<BitVector>node2_bit= new  ArrayList<BitVector>();
-//        if (node1.multistate==1) {
-//            node1_bit.add(node1.partition);
-//        } else {             
-//            
-//              ArrayList<String> s1=util.combinations(get_column(node1.column-1));
-//              for (String p:s1) {
-//                BitVector tmp= new BitVector(len);
-//                 for (int j=0; j<len;j++) {
-//                   String p2=""+p.charAt(j);
-//                   if (p2.equals(node1.state_matrix)) {                      
-//                      tmp.setBool(j, true);
-//                  }
-//                }
-//                node1_bit.add(tmp);
-//              }
-//        }
-//        
-//         if (node2.multistate==1) {
-//        node2_bit.add(node2.partition);
-//        } else {
-//            ArrayList<String> s2=util.combinations(get_column(node2.column-1));
-//              for (String p:s2) {
-//                BitVector tmp= new BitVector(len);
-//                 for (int j=0; j<len;j++) {
-//                   String p2=""+p.charAt(j);
-//                   if (p2.equals(node2.state_matrix)) {                      
-//                      tmp.setBool(j, true);
-//                  }
-//                }
-//                node2_bit.add(tmp);
-//              }              
-//        }
-//       ///--Now, calculate the correspondance
-//       int total_possible=(node1_bit.size()*node2_bit.size());
-////         for (BitVector b1:node1_bit) 
-////           for (BitVector b2:node2_bit) 
-////            if (util.intersectBitResult(b1,b2).size()>0) total++;
-////            total=(100*total)/total_possible; //--compute the score
-//        return total;
-//    }
     
     /**
      * Given a node with a state s, evaluate the number of bitvector state

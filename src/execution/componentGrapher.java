@@ -1,12 +1,5 @@
 package execution;
 
-//////////////////////////////////////////////////////////////////////////////////////////////33
-///
-/// Create a Thread to run dnaml
-///
-/// Etienne Lord 2009
-
-
 import config.Config;
 import java.io.*;
 import java.lang.Thread;

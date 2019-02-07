@@ -520,7 +520,7 @@ public class summary_statistics implements Serializable {
                       global_articulation_point[g.id_to_old_id.get(i)]=g.is_global_articulation_point(i);
                       graph.results r=g.findLoops(i,false);
                       path_len4_type3[g.id_to_old_id.get(i)]=r.total_len4;
-                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop3+r.total_loop4;                                    
+                      path_loop_len4_type3[g.id_to_old_id.get(i)]=r.total_loop4; //r.total_loop3+ (2019)                                   
                       //Triplets[3][g.id_to_old_id.get(i)]=g.find_triplet(i, false); //--Normal Triplet
                       Float[] tri=g.find_triplet(i,false,networks);
                       Triplets[3][g.id_to_old_id.get(i)]=tri[0]; //--Type A
@@ -742,7 +742,7 @@ public class summary_statistics implements Serializable {
                     convergence+=(path_loop_len4_type3[n.id]==null||path_len4_type3[n.id]==null||path_len4_type3[n.id]==Float.POSITIVE_INFINITY||path_loop_len4_type3[n.id]==0?0.0f:path_loop_len4_type3[n.id]/path_len4_type3[n.id]);
                     //System.out.println(path_loop_len4_type3[n.id]+" "+path_len4_type3[n.id]);
                     loop4_type3+=(path_loop_len4_type3[n.id]==null?0.0:path_loop_len4_type3[n.id]);
-                    len4_type3+=(path_loop_len4_type3[n.id]==null?0.0:path_loop_len4_type3[n.id]);
+                    len4_type3+=(path_len4_type3[n.id]==null?0.0:path_len4_type3[n.id]);
                     //total_convergence+= n.stats.getDouble("progressive_transition");
                     n.stats.put("progressive_transition",Progressive_transition[n.id].size());
                     total_progressive+= n.stats.getFloat("progressive_transition");
@@ -756,9 +756,10 @@ public class summary_statistics implements Serializable {
              //--Update node info
               data.nodes.set(i, n);
             }
-         per_loop4_type3=loop4_type3/(1.0*data.nodes.size());
-         per_len4_type3=len4_type3/(1.0*data.nodes.size());
-         convergence=convergence/(1.0*data.nodes.size());
+         per_loop4_type3=(loop4_type3);
+         per_len4_type3=(len4_type3);
+         convergence=(1.0*convergence)/(1.0*data.nodes.size());
+              
               //--Summary
           this.total_edges_type1=+data.total_type1;
           this.total_edges_type2=+data.total_type2;
@@ -955,7 +956,7 @@ public class summary_statistics implements Serializable {
         this.total_time=su.total_time;
        
         //--Total for the different columns
-      // System.out.println("Total\t"+total_taxa+"\t"+data.node_id_type.get(1).size()+"\t"+data.node_id_type.get(2).size()+"\t"+data.node_id_type.get(3).size()+"\t"+data.node_id_type.get(0).size()+"\tNA\tNA\tNA\t"+total_CC_type1+"\t"+total_CC_complete+"\t"+total_ap_local_type3+"\t"+total_ap_global_type3+"\t"+total_ap_local_complete+"\t"+total_ap_global_complete+"\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t"+total_progressive+"\t\t"+total_taxa);
+         //System.out.println("Total\t"+total_taxa+"\t"+data.node_id_type.get(1).size()+"\t"+data.node_id_type.get(2).size()+"\t"+data.node_id_type.get(3).size()+"\t"+data.node_id_type.get(0).size()+"\tNA\tNA\tNA\t"+total_CC_type1+"\t"+total_CC_complete+"\t"+total_ap_local_type3+"\t"+total_ap_global_type3+"\t"+total_ap_local_complete+"\t"+total_ap_global_complete+"\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t"+total_progressive+"\t\t"+total_taxa);
          this.total_taxa=su.total_taxa;
          this.total_node=su.total_node;         
          this.total_node_type1=su.total_node_type1;
@@ -989,7 +990,7 @@ public class summary_statistics implements Serializable {
          this.total_triangle=su.total_triangle;
          this.prop_triangle=su.prop_triangle;
          this.total_possible_triangle=su.total_possible_triangle;        
-         
+        
          
     }
     
@@ -1028,10 +1029,11 @@ public class summary_statistics implements Serializable {
          try {   
             Gson gson = new Gson();
             summary_statistics su=gson.fromJson(gson.newJsonReader(new FileReader(new File(filename))),summary_statistics.class);            
+             //System.out.println(su);
             copy(su);
            
         } catch(Exception e) {
-           // e.printStackTrace();
+            //e.printStackTrace();
             Config.log("Error in deserialize "+filename+":" + e.getMessage());
              return false;
          }
@@ -1045,7 +1047,8 @@ public class summary_statistics implements Serializable {
      public static void main(String[] args) {
            Locale.setDefault(new Locale("en", "US"));
            summary_statistics su=new summary_statistics();
-           su.deserialize("C:\\Users\\Etienne\\Dropbox\\COMPOSITEGRAPHER\\results\\sample_4_nex\\reference.json");
+           System.out.println(su.deserialize("results/matrix_txt/randomization_2.json"));
+           System.out.println(su);
 //         datasets data=new datasets();
 //         data.replicate=5;
 //         data.load_morphobank_nexus("sample\\Smith_Caron_wo_absent_trait.nex");

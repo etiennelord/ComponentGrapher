@@ -28,7 +28,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Collection of util command
- * @author Etienne Lord, Mickael Leclercq
+ * @author Etienne Lord, Mickael Leclercq, 2015-2019
  */
 public class util {
     //Util string

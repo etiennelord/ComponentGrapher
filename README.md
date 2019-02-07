@@ -17,7 +17,7 @@ ComponentGrapher is a graphical (GUI) tool programmed in Java.
 A) Start the software from the command-line with some minimum and maximum memory requirements.  
 
 ```
-java -Xms=2g -Xmx=4g -jar COMPONENT-GRAPHER.jar
+java -Xms=2g -Xmx=4g -jar COMPONENT-GRAPHER.jar sample/matrix.txt
 ```
 
 B) To perform several permuation (higher than 1000) for the estimation of the _p_-value, it is recommended to run the analysis from the command-line. 
@@ -39,13 +39,13 @@ Full command-line options are*:
 | ---------------- | ---------------------------------------------------------------------- |
 |	-tree=file     | Specify the phylogenetic tree if the permutation mode is phylogenetic. |
 |	-perm=100      | Specify the number permutation to performed.                           |
-|       -permmode=0    | Specify the permutation mode.                                          |                  
-|                 0    | Equiprobable permutation (default)                                     |
+|   -permmode=0    | Specify the permutation mode.                                          |                  
+|             0    | Equiprobable permutation (default)                                     |
 |	          1    | Probabilistic permutation                                              |
 |	          2    | Phylogeny (default if -tree option is used)                            |
 |	          3    | Equiprobable- only permute undefined states                            |
 |	          4    | Probabilistic- only permute undefined states                           |
-|       -edges=0       | Specify edge's inference mode                                          |
+|       -edges=0   | Specify edge's inference mode                                          |
 |	          0    | Treat all edges (default)                                              |
 |	          1    | Absolute Majority                                                      |
 |	          2    | Majority Rule                                                          |
@@ -57,8 +57,8 @@ Full command-line options are*:
 |	-bipartite     | Output bipartite network files.                                        |
 |	-graphml       | Output graphml network files (Gephi, Cytoscape compatibles).           |
 |	-nodeid=file   | Provide a node identification file when importing the matrix.          |
-|	-variation=X   | Specify the variation string to use if polymorphic states are presents.|
 |	-triplets      | Output triplets file (triplets.txt)                                    |
+|	-filter        | Remove nodes matching this state (e.g. absent) from the network        | 
 
 Generated results files in the ouput directory are:   
 
@@ -74,9 +74,9 @@ Generated results files in the ouput directory are:
 |	reference.json                        | serialized results for original dataset.               |
 |	randomization_XX.json                 | serialized results for each permuation.                |
 |	matrixfile_summary.txt                | statistics and parameters for this run.                |
-|	matrixfile_summary_statistics         | nodes summary statistics                               |
-|	matrixfile_network_statistics.csv     | network statistics and _p_-value.                      |
-|	matrixfile_nodes_statistics.csv       | nodes statistics and _p_-value.                        |
+|	matrixfile_summary_statistics.tsv     | nodes summary statistics                               |
+|	matrixfile_network_statistics.tsv     | network statistics and _p_-value.                      |
+|	matrixfile_nodes_statistics.tsv       | nodes statistics and _p_-value.                        |
 
 If the [-bipartite] option is use, the following files will also be produced:  
 
@@ -106,13 +106,12 @@ If the [-triplets] option is used, the following file will also be produced:
 
 ### Binary releases
 
-ComponentGrapher is compatible with Java SE5 (JDK 5) and later versions of Java. The latest
-Java platform is available at
-[Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+ComponentGrapher is compatible with Java SE8 (JDK 8) and later versions of Java. The latest
+Java platform is available at [Oracle](https://www.java.com/fr/download/).
 
 ## Compilation
 
-The source code is distributed as  Netbeans project format. 
+The source code is distributed as [Netbeans](https://netbeans.apache.org/download/index.html) project format. 
 
 ## Dependencies
 
@@ -129,3 +128,7 @@ The `commons-math3-3.6.1.jar` archive is included in the COMPONENT-GRAPHER distr
 ##### [Google gson](https://github.com/google/gson)
 The Google gson library is used for serialization/deserialization of the datasets.  
 The `gson-2.6.2.jar` archive is included in the COMPONENT-GRAPHER distribution and it must be in the CLASSPATH environment variable. 
+
+##### [Forester](https://sites.google.com/site/cmzmasek/home/software/forester)
+Forester is a collection of open source libraries for phylogenomics and evolutionary biology research created by Christian Zmasek.
+The `forester.jar` archive is included in the COMPONENT-GRAPHER distribution and it must be in the CLASSPATH environment variable. 

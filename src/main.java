@@ -1,7 +1,7 @@
 /*
- *  COMPOSITE-GRAPHER v1.0.7
+ *  COMPOSITE-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2016-2017  Etienne Lord
+ *  Copyright (C) 2016-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class main {
 
-     public static String version="1.0.9";
+     public static String version="1.0.11";
      public static String authors="Etienne Lord, Jananan Pathmanathan, Vladimir Makarenkov,\nFrançois-Joseph Lapointe, Éric Bapteste";
     /**
      * @param args the command line arguments
@@ -84,6 +84,9 @@ public class main {
         // Read command line option
         for (String st:args) {
             String s=st.toLowerCase();    
+            if (s.indexOf("-filter=")>-1) {
+                d.filter=st.substring(8);
+            }            
             if (s.indexOf("-und")>-1) {
                 analyse1=false;
                 analyse2=true;
@@ -195,7 +198,7 @@ public class main {
          }
            //--Load phylogeny
          if (perm_mode==2&&d.tree_filename.isEmpty()) {
-             System.out.println("Error. No phylogenetic tree pass to the -tree= option with phylogenetic permutations.");
+             System.out.println("Error. No phylogenetic tree passed to the -tree= option with phylogenetic permutations.");
              System.exit(-1);
          }
          if (!d.tree_filename.isEmpty()) {             
@@ -257,7 +260,7 @@ public class main {
         
          //--We analyse a dataset in the command-line
          if (analyse1) {             
-                          
+             //--This is only if we keep all edges             
              System.out.println(d.get_info());                          
              System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
              System.out.println("===============================================================================");
@@ -265,21 +268,12 @@ public class main {
              stat.generate_statistics_new();                                   
              stat.output_csv(d.result_directory+File.separator+util.getFilename(d.filename));
              if (save_triplets) stat.reference.export_triplets(d.result_directory+File.separator+"triplets.txt","\t");
-             System.out.println("===============================================================================================");              
-             //stat.output_stats(stat.calculate_stat());                      
-//             System.out.println("==============================================================================="); 
-//             System.out.println("Nodes statistics");
-//             System.out.println("==============================================================================="); 
-//             for (int i=0; i<stat.reference_data.nodes.size();i++) {
-//                 System.out.println(i+"\t"+stat.reference_data.nodes.get(i)+"\t");
-//                 stat.output_stats(stat.calculate_stats_for_node(i));
-//             }
-//             
-//              System.out.println("===============================================================================");
+             System.out.println("===============================================================================================");                       
              System.out.println("done.");
              System.exit(0);
          }
          if (analyse2) {             
+             //--This is if we select some edge e.g. 10%...
              System.out.println(d.get_info());                          
              System.out.println("Creating logfile(log.txt) in:\n"+d.result_directory);
              System.out.println("===============================================================================");
@@ -306,7 +300,7 @@ public class main {
                 public void run() {
                     try {                      
                         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");           
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {        }
+                    } catch (Exception ex) {}
                     MainJFrame frame = new MainJFrame();
                     Locale.setDefault(new Locale("en", "US")); 
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);              
@@ -319,7 +313,7 @@ public class main {
           }
       }
     }
-    //http://docs.oracle.com/javafx/2/charts/bar-chart.htm
+
       
      public static void help() {
          System.out.println("COMPONENT-GRAPHER v"+version+"\n"+authors); 
@@ -334,7 +328,7 @@ public class main {
           System.out.println("Options :");
           //System.out.println("\t-taxa=list   : Specify some taxas tagged in the summary file\n\t\t\t(list separated by comma e.g. A,B,C).");
           System.out.println("\t-tree=file   : Specify phylogenetic tree in newick format.");
-          System.out.println("\t-perm=100    : Specify the number permutation to performed.");  
+          System.out.println("\t-perm=100    : Specify the number permutation to be performed.");  
           System.out.println("\t-permmode=0  : Specify the permutation mode");
            System.out.println("\t          0  : Equiprobable permutation (default)");
            System.out.println("\t          1  : Probabilistic permutation");
@@ -359,8 +353,9 @@ public class main {
           System.out.println("\t-graphml     : Output graphml files (Gephi,Cytoscape compatibles).");
           System.out.println("\t-nodeid=file : Provide a node identification file.");
           System.out.println("\t-output=dir  : Specify output directory.");
-          System.out.println("\t-variation=X : Specify the variation string to use.");
+          //System.out.println("\t-variation=X : Specify the variation string to use.");
           System.out.println("\t-triplets    : Output triplets file (triplets.txt).");
+          System.out.println("\t-filter=grep : Remove nodes matching this state (e.g. absent) from the network");
           //System.out.println("\t-summary     : Compute summary statistic such as degrees, betweenness.");
          
           System.out.println("================================= OUTPUTS =====================================");          
@@ -371,9 +366,9 @@ public class main {
           System.out.println("matrixfile_4.txt                      : edge list of the type 4 connections.");
           System.out.println("matrixfile_id.txt                     : identification for each node.");
           System.out.println("matrixfile_summary.txt                : statistics and parameters for this run.");
-          System.out.println("matrixfile_summary_statistics.csv     : nodes informations.");
-          System.out.println("matrixfile_network_statistics.csv     : network statistics and p-value.");
-          System.out.println("matrixfile_nodes_statistics.csv       : nodes statistics and p-value.");
+          System.out.println("matrixfile_summary_statistics.tsv     : nodes informations.");
+          System.out.println("matrixfile_network_statistics.tsv     : network statistics and p-value.");
+          System.out.println("matrixfile_nodes_statistics.tsv       : nodes statistics and p-value.");
                    
           System.out.println("log.txt                               : logfile");
           System.out.println("reference.json                        : serialized results for original dataset.");

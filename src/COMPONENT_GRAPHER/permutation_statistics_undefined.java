@@ -1,7 +1,7 @@
 /*
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2015-2016  Etienne Lord
+ *  Copyright (C) 2015-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ public class permutation_statistics_undefined implements Serializable {
                "total_ap_local_complete",
                "triplet_type3",
                "convergence",
-               "per_loop4_type3",
-               "per_len4_type3",
+               "loop4_type3",
+               "len4_type3",
                "density_complete",
                "density_type1",
                "density_type2",
@@ -329,7 +329,8 @@ public class permutation_statistics_undefined implements Serializable {
                           switch (t.perm_mode) {
                               case 0:p.generate_permutation(); break; 
                               case 1:p.generate_probpermutation(); break;
-                              case 3:p.generate_bootstrap(); break;                              
+                              default:p.generate_permutation(); break;
+                              //case 3:p.generate_bootstrap(); break;                              
                           }                  
                        }      
                    }
@@ -936,8 +937,8 @@ public class permutation_statistics_undefined implements Serializable {
                "total_ap_local_complete",
                "triplet_type3",
                "convergence",
-               "per_loop4_type3",
-               "per_len4_type3",
+               "loop4_type3",
+               "len4_type3",
                "density_complete",
                "density_type1",
                "density_type2",
@@ -1000,7 +1001,7 @@ public class permutation_statistics_undefined implements Serializable {
          u.close();
          
         
-          u.open(filename+"_summary_statistics.csv");        
+          u.open(filename+"_summary_statistics.tsv");        
        
           //--Summary statistic per node     -ok    
         for (String s:qualifier) u.print(s+",");
@@ -1020,7 +1021,7 @@ public class permutation_statistics_undefined implements Serializable {
        // if (datas.size()>0) {
             //--Permutation statistics global network
             
-            u.open(filename+"_network_statistics.csv");    
+            u.open(filename+"_network_statistics.tsv");    
             //--This is what whe need            
              u.println("Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
              u.println(this.output_stats_full(this.Network_stats,",",""));
@@ -1029,7 +1030,7 @@ public class permutation_statistics_undefined implements Serializable {
             
             //--Export node statistics
             
-             u.open(filename+"_nodes_statistics.csv");    
+             u.open(filename+"_nodes_statistics.tsv");    
             //--This is what whe need            
              u.println("NodeID,Name,Statistics,Reference value,p-value,sign.,N,Mean,STD,Min,Max,5% quantile,95% quantile");
               for (int i=0; i<this.reference_data.nodes.size();i++) {
@@ -1192,8 +1193,8 @@ public class permutation_statistics_undefined implements Serializable {
                 case "total_ap_local_complete": values[i]=replicates.get(i).total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
                 case "triplet_type3": values[i]=replicates.get(i).triplet_type3; refvalue=reference.triplet_type3;break;
                 case "convergence": values[i]=replicates.get(i).convergence; refvalue=reference.convergence;break;
-                case "per_loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                case "len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;      
                 case "density_complete": values[i]=replicates.get(i).density[0]; refvalue=reference.density[0];break;      
                 case "density_type1": values[i]=replicates.get(i).density[1]; refvalue=reference.density[1];break;      
                 case "density_type2": values[i]=replicates.get(i).density[2]; refvalue=reference.density[2];break;      
@@ -1249,8 +1250,8 @@ public class permutation_statistics_undefined implements Serializable {
                 case "total_ap_local_complete": values=su.total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
                 case "triplet_type3": values=su.triplet_type3; refvalue=reference.triplet_type3;break;
                 case "convergence": values=su.convergence; refvalue=reference.convergence;break;
-                case "per_loop4_type3": values=su.per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values=su.per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "loop4_type3": values=su.per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                case "len4_type3": values=su.per_len4_type3; refvalue=reference.per_len4_type3;break;      
                 case "density_complete": values=su.density[0]; refvalue=reference.density[0];break;      
                 case "density_type1": values=su.density[1]; refvalue=reference.density[1];break;      
                 case "density_type2": values=su.density[2]; refvalue=reference.density[2];break;      
@@ -1675,15 +1676,17 @@ public class permutation_statistics_undefined implements Serializable {
      */
      public void calculate_from_directory_new_ref(String directory) {
         System.out.println("Analysing :"+directory);
+         this.reference_data.st_results.append("Analysing :"+directory+"\n");
         //--1. list all the files
         ArrayList<String> files=util.listDirWithFullPath(directory);
         //       ArrayList<stats> datas=new ArrayList<stats>();       
 //       if (!data.permutation) return datas; //--No pvalue_fieldsplicate
-        
+        data.MessageOption(data.get_info());
         //--1.1 
         replicates.clear();        
         replicates=new ArrayList(files.size());        
-        System.out.println("===============================================================================");      
+        System.out.println("===============================================================================");   
+        this.reference_data.st_results.append("===============================================================================\n");
         Collections.sort(files);
         //--get reference first
         // Calculate the reference datesets
@@ -1740,6 +1743,8 @@ public class permutation_statistics_undefined implements Serializable {
                         edges[src][dest][4]++;
                     }
                     
+                } else {
+                    System.out.println("Error: unable to read result file: "+f);
                 }
             }
         } //--End files
@@ -1859,9 +1864,8 @@ public class permutation_statistics_undefined implements Serializable {
             }
         }
          
-        
-        
-        System.out.println("Total randomization processed:" + Network_stats.get(0).values.size());                
+        System.out.println("Total randomization processed:" + Network_stats.get(0).values.size());  
+        if (datasets.node_removed) System.out.println("*Note: some nodes were removed from this analysis using the filter option"); 
         this.replicate=replicates.size();
         if (replicates.size()>0) data.permutation=true;
         //--3. Calculate statistics
@@ -1875,17 +1879,36 @@ public class permutation_statistics_undefined implements Serializable {
              System.out.println("Nodes statistics");
              System.out.println("===============================================================================================");           
              
+              //this.reference_data.st_results.append
+              this.reference_data.st_results.append("===============================================================================================\n");           
+              this.reference_data.st_results.append("Network statistics (See manual for descriptions)\n");
+              this.reference_data.st_results.append("===============================================================================================\n");           
+              this.reference_data.st_results.append(util.replaceTab("Statistics\tRef\tp-value\tsign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%\n"));
+              this.reference_data.st_results.append(util.replaceTab(output_stats(this.Network_stats))+"\n");  
+              this.reference_data.st_results.append("* Some statistic are not available for each permutations, resulting in smaller sample size (N). \n");
+              this.reference_data.st_results.append("===============================================================================================\n");           
+              this.reference_data.st_results.append("Nodes statistics\n");
+              this.reference_data.st_results.append("===============================================================================================\n");
+                      
+                      
              for (int i=0; i<this.reference_data.nodes.size();i++) {
                  //System.out.println("===============================================================================");            
                  System.out.println("-----------------------------------------------------------------------------------------------");           
-                 System.out.println("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name);
+                  System.out.println("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name);
                   //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
-                  System.out.println("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                   System.out.println("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
                  System.out.println("-----------------------------------------------------------------------------------------------");           
                   System.out.println(this.output_stats(this.Node_stats.get(i)));
+                   this.reference_data.st_results.append("-----------------------------------------------------------------------------------------------\n");           
+                 this.reference_data.st_results.append(util.replaceTab("NodeID"+"\t"+i+"\t"+reference_data.nodes.get(i).complete_name)+"\n");
+                  //System.out.println("Statistic\tReference\tp-value\tsignificance level\tN\tMean\tSTD\tMin\tMax\t5%\t95%");
+                  this.reference_data.st_results.append(util.replaceTab("Statistics\tRef\tp-value\tSign.\tN\tMean\tSTD\tMin\tMax\t5%\t95%\n"));
+                  this.reference_data.st_results.append("-----------------------------------------------------------------------------------------------\n");           
+                   this.reference_data.st_results.append(util.replaceTab(this.output_stats(this.Node_stats.get(i))));
              }
          //System.out.println("Other statistics found in summary_statistics.csv");     
-        System.out.println("===============================================================================================");           
+        System.out.println("===============================================================================================");  
+        this.reference_data.st_results.append("===============================================================================================\n");
         //--4. Enjoy
         
     }

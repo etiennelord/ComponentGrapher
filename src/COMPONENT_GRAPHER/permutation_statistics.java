@@ -1,7 +1,7 @@
 /*
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2015-2016  Etienne Lord
+ *  Copyright (C) 2015-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ public class permutation_statistics implements Serializable {
                "total_ap_local_complete",
                "triplet_type3",
                "convergence",
-               "per_loop4_type3",
-               "per_len4_type3",
+               "loop4_type3",
+               "len4_type3",
                "density_complete",
                "density_type1",
                "density_type2",
@@ -461,7 +461,8 @@ public class permutation_statistics implements Serializable {
                           switch (t.perm_mode) {
                               case 0:p.generate_permutation(); break;
                               case 1:p.generate_probpermutation(); break;
-                              case 3:p.generate_bootstrap(); break;                              
+                              //case 3:p.generate_bootstrap(); break; 
+                              default:p.generate_permutation(); break;
                           }                  
                        }                  
                   
@@ -501,8 +502,8 @@ public class permutation_statistics implements Serializable {
             }
             pool.shutdown();
             //--Done
-             System.out.println("Total results to process: "+rfile.size());
-            this.calculate_from_directory_new(directory);
+             System.out.println("Total results to process: "+rfile.size());             
+             this.calculate_from_directory_new(directory);
 
             
          } catch(Exception e){
@@ -1070,8 +1071,8 @@ public class permutation_statistics implements Serializable {
                "total_ap_local_complete",
                "triplet_type3",
                "convergence",
-               "per_loop4_type3",
-               "per_len4_type3",
+               "loop4_type3",
+               "len4_type3",
                "density_complete",
                "density_type1",
                "density_type2",
@@ -1135,7 +1136,7 @@ public class permutation_statistics implements Serializable {
          u.close();
          
         
-          u.open(filename+"_summary_statistics.csv");        
+          u.open(filename+"_summary_statistics.tsv");        
        
           //--Summary statistic per node     -ok    
         for (String s:qualifier) u.print(s+sep);
@@ -1155,7 +1156,7 @@ public class permutation_statistics implements Serializable {
        // if (datas.size()>0) {
             //--Permutation statistics global network
             
-            u.open(filename+"_network_statistics.csv");    
+            u.open(filename+"_network_statistics.tsv");    
             //--This is what whe need            
              u.println("Statistics"+sep+"Reference_value"+sep+"p-value"+sep+"sign."+sep+"N"+sep+"Mean"+sep+"STD"+sep+"Min"+sep+"Max"+sep+"5%"+sep+"95%");
              u.println(this.output_stats_full(this.Network_stats,sep,""));
@@ -1164,7 +1165,7 @@ public class permutation_statistics implements Serializable {
             
             //--Export node statistics
             
-             u.open(filename+"_nodes_statistics.csv");    
+             u.open(filename+"_nodes_statistics.tsv");    
             //--This is what whe need            
              u.println("NodeID"+sep+"Name"+sep+"Statistics"+sep+"Reference_value"+sep+"p-value"+sep+"sign."+sep+"N"+sep+"Mean"+sep+"STD"+sep+"Min"+sep+"Max"+sep+"5%"+sep+"95%");
               for (int i=0; i<this.reference_data.nodes.size();i++) {
@@ -1327,8 +1328,8 @@ public class permutation_statistics implements Serializable {
                 case "total_ap_local_complete": values[i]=replicates.get(i).total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
                 case "triplet_type3": values[i]=replicates.get(i).triplet_type3; refvalue=reference.triplet_type3;break;
                 case "convergence": values[i]=replicates.get(i).convergence; refvalue=reference.convergence;break;
-                case "per_loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "loop4_type3": values[i]=replicates.get(i).per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                case "len4_type3": values[i]=replicates.get(i).per_len4_type3; refvalue=reference.per_len4_type3;break;      
                 case "density_complete": values[i]=replicates.get(i).density[0]; refvalue=reference.density[0];break;      
                 case "density_type1": values[i]=replicates.get(i).density[1]; refvalue=reference.density[1];break;      
                 case "density_type2": values[i]=replicates.get(i).density[2]; refvalue=reference.density[2];break;      
@@ -1384,8 +1385,8 @@ public class permutation_statistics implements Serializable {
                 case "total_ap_local_complete": values=su.total_ap_local_complete; refvalue=reference.total_ap_local_complete;break;
                 case "triplet_type3": values=su.triplet_type3; refvalue=reference.triplet_type3;break;
                 case "convergence": values=su.convergence; refvalue=reference.convergence;break;
-                case "per_loop4_type3": values=su.per_loop4_type3; refvalue=reference.per_loop4_type3;break;
-                case "per_len4_type3": values=su.per_len4_type3; refvalue=reference.per_len4_type3;break;      
+                case "loop4_type3": values=su.per_loop4_type3; refvalue=reference.per_loop4_type3;break;
+                case "len4_type3": values=su.per_len4_type3; refvalue=reference.per_len4_type3;break;      
                 case "density_complete": values=su.density[0]; refvalue=reference.density[0];break;      
                 case "density_type1": values=su.density[1]; refvalue=reference.density[1];break;      
                 case "density_type2": values=su.density[2]; refvalue=reference.density[2];break;      
@@ -1815,7 +1816,7 @@ public class permutation_statistics implements Serializable {
             if (f.contains("randomization_")&&f.endsWith(".json")) {
                 
                 summary_statistics su=new summary_statistics();
-                boolean b=su.deserialize(f);                
+                boolean b=su.deserialize(f);    
                 if (b) {
                     //--Add to network statistics
                     this.calculate_network_stat_wo_array(su);
@@ -1831,7 +1832,8 @@ public class permutation_statistics implements Serializable {
 
         
         
-        System.out.println("Total randomization processed:" + Network_stats.get(0).values.size());                
+        System.out.println("Total randomization processed:" + Network_stats.get(0).values.size()); 
+        if (datasets.node_removed) System.out.println("*Note: some nodes were removed from this analysis using the filter option"); 
         this.replicate=replicates.size();
         if (replicates.size()>0) data.permutation=true;
         //--3. Calculate statistics

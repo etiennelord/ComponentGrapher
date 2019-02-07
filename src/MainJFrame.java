@@ -1,5 +1,5 @@
 /*
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
  *  Copyright (C) 2016-2017  Etienne Lord
  *

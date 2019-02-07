@@ -1,8 +1,8 @@
 package COMPONENT_GRAPHER;
 /*
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2015-2016  Etienne Lord
+ *  Copyright (C) 2015-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -46,7 +46,9 @@ public class graph {
    public int total_nodes=0;
    public int total_edges=0;
    public boolean directed=false;
-
+   public boolean apfound=false;
+   public boolean[] ap=null;
+   
    public static int infinity=9997999;
    /////////////////////////////////////////////////////////////////////////////
    /// Epath
@@ -851,6 +853,53 @@ public class graph {
        return tmp;
    }
    
+   public void AP(int u, boolean visited[], int disc[], int low[], int parent[], boolean ap[], int time) {
+       int children=0;
+       visited[u]=true;
+       time++;
+       disc[u]=time;
+       low[u]=time;
+       HashMap<Integer,Boolean> adj=this.adjlist.get(u);
+       for (int v:adj.keySet()) {
+           if (!visited[v]) {
+               children++;
+               parent[v]=u;
+               AP(v,visited,disc,low,parent, ap, time);
+               low[u]=Math.min(low[u],low[v]);
+               if (parent[u]==-1&&children>1) ap[u]=true;
+               if (parent[u]!=-1&&low[v]>=disc[u]) ap[u]=true;
+               
+           } else if (v != parent[u]) {
+               low[u]=Math.min(low[u],disc[v]);
+           }
+       }       
+   }
+   
+   public boolean[] findAP() {
+       
+       boolean visited[]=new boolean[this.total_nodes];
+       int disc[] = new int[this.total_nodes];
+       int low[] = new int[this.total_nodes];
+       int parent[] = new int[this.total_nodes];
+       boolean ap[]=new boolean[this.total_nodes];
+       int time=0;
+       for (int i=0; i< this.total_nodes;i++) {
+           parent[i]=-1;
+           visited[i]=false;
+           ap[i]=false;           
+       }
+       for (int i=0; i< this.total_nodes;i++) {
+           if (!visited[i]) AP(i, visited, disc, low, parent, ap, time);
+       }
+//       for (int i=0;i<this.total_nodes;i++) {
+//           System.out.println(this.id_to_node.get(i)+" "+ap[i]);
+//       }
+       
+       //System.out.println(ap);
+       return ap;
+   }
+   
+   
    // Special DFS to find if s is and articulation point
    public boolean is_global_articulation_point(int s) {
        // Take any node != s
@@ -862,6 +911,16 @@ public class graph {
    }
    
     // Special DFS to find if s is and articulation point
+   public boolean is_global_articulation_point2(int s) {
+       // Take any node != s
+       if (!apfound) {
+           ap=findAP();
+           apfound=true;
+       }
+       return ap[s];
+   }
+   
+    // Special DFS to find if s is and articulation point
    public boolean is_local_articulation_point(int s) {
        // Construct local graph for s
        subgraph sub=new subgraph(this,s);
@@ -870,6 +929,7 @@ public class graph {
        return tmp[sub.total_nodes]>1;
      
    }
+  
    
    /**
     * Get the connected component for this graeph
@@ -1283,6 +1343,89 @@ public class graph {
 //  }
 //  
   
+  /**
+     * Create a graph from a string
+     * e.g. 1-2,2-3,1-3,1-4,
+     * @param st 
+     */
+    public void createGraph(String st){
+        
+        
+        this.directed=false;
+       this.adjlist.clear();
+       this.node_to_id.clear();
+       this.id_to_node.clear();
+       total_nodes=0; 
+      
+       if (st.contains("->")||st.contains("<-")) this.directed=true;
+       st=st.replaceAll("--", "-");
+       
+       this.total_nodes=node_to_id.size();
+        
+        String[] couples=st.split(",");
+        for (String s:couples) {
+                String striA[]=s.split("->");
+                String striB[]=s.split("<-");
+                
+                s=s.replaceAll("->", ""); //remove direction if any
+                s=s.replaceAll("<-", "");
+                String striC[]=s.split("-");
+                //for (String as:striA) System.out.println(as);
+                //for (String as:striB) System.out.println(as);
+                //for (String as:striC) System.out.println(as);
+                //Add all couple 
+                if (striA.length>1) for (String as:striA) getNode(as.trim());
+                if (striB.length>1) for (String as:striB) getNode(as.trim());
+                if (striC.length>1) for (String as:striC) getNode(as.trim());
+                
+                //Now add the edges
+
+                if (this.directed) {
+                    if (striA.length>1) {
+                        //->
+                        int[] ids=new int[striA.length];
+                        System.out.println(striA);
+                        for (int i=0;i<striA.length;i++) ids[i]=getNode(striA[i]);
+                        for (int i=0; i<striA.length-1;i++) {
+                            addEdge(ids[i], ids[i+1]);
+                            total_edges++;
+                        }
+                    }
+                    if (striB.length>1) {
+                        //<-
+                        int[] ids=new int[striB.length];
+                        for (int i=0;i<striB.length;i++) ids[i]=getNode(striB[i]);
+                        for (int i=0; i<striB.length-1;i++) {
+                            addEdge(ids[i+1], ids[i]);
+                            total_edges++;
+                        }
+                    }
+                    if (striC.length>1) {
+                        //-- ou -
+                        int[] ids=new int[striC.length];
+                        for (int i=0;i<striC.length;i++) ids[i]=getNode(striC[i]);
+                        for (int i=0; i<striC.length-1;i++) {
+                            addEdge(ids[i+1], ids[i]);
+                            addEdge(ids[i], ids[i+1]);
+                            total_edges+=2;
+                    }
+                    }
+                } else {
+                    if (striC.length>1) {
+                        //-- ou -
+                        int[] ids=new int[striC.length];
+                        for (int i=0;i<striC.length;i++) ids[i]=getNode(striC[i]);
+                        for (int i=0; i<striC.length-1;i++) {
+                            addEdge(ids[i+1], ids[i]);
+                            addEdge(ids[i], ids[i+1]);
+                            total_edges+=2;
+                        }
+                }
+            }
+        } //--End couple
+        this.total_nodes=node_to_id.size();
+    }
+  
     @Override
     public String toString() {        
         String str=(directed?"Directed ":"Undirected ")+"Nodes:"+total_nodes+" Edges:"+total_edges+"\n";
@@ -1296,12 +1439,23 @@ public class graph {
    * @param args 
    */
    public static void main(String[] args) {
+         graph g=new graph();
+        g.createGraph("1-2,2-3,3-1,5-8,4-5,3-4");
         
-        for (int k=4; k<5;k++) {
-            graph g=new graph();
-            g.complete_graph(k,false);
-            System.out.println(k+"\t"+g.get_triangles_fast());
-    }
+        
+        for (int i=0; i<g.total_nodes;i++) {
+            System.out.println(g.id_to_node.get(i)+" *"+g.is_global_articulation_point(i));
+        }
+        //g.findAP();
+        System.out.println(g);
+        g.density();
+       // g.findAP();
+        System.out.println(g.density());
+//         for (int k=4; k<5;k++) {
+//            graph g=new graph();
+//            g.complete_graph(k,false);
+//            System.out.println(k+"\t"+g.get_triangles_fast());
+//    }
         
         
 //        float total=0;

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *  COMPONENT-GRAPHER v1.0
+ *  COMPONENT-GRAPHER v1.0.11
  *  
- *  Copyright (C) 2015-2016  Etienne Lord
+ *  Copyright (C) 2015-2019  Etienne Lord
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
