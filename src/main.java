@@ -234,6 +234,10 @@ public class main {
          if (perm_n==0) {
              perm_n=(int)(d.info_total_possible_nodes/0.05);
          }
+         if (perm_n<5) {
+             perm_n=5;
+             System.out.println("Warning. Minimum number of permuation is set to 5.");
+         }
          d.perm_mode=perm_mode;
          d.nooutput=nooutput;
          d.edges_selection_mode=edges_selection_mode;

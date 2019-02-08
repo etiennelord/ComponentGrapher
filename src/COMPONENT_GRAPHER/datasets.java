@@ -1173,7 +1173,7 @@ void print_state_label() {
        }
          if (this.maxiter>total_states&&total_states<1000) this.maxiter=(int)total_states;
       
-         // Compute possible nodes
+         // Compute possible nodes - note, this is not valid if there is a filter
        this.info_total_valid_column=0;
        ConcurrentHashMap<String,Integer> dummy_identification=new ConcurrentHashMap<String,Integer>();
       for (int i=0; i<this.nchar;i++) {         
@@ -1223,7 +1223,7 @@ void print_state_label() {
        str.append("Total treated column                 : "+info_total_valid_column+"\n");
        str.append("Total undefined char                 : "+info_total_undefined+"\n");
        str.append("Total multiple char                  : "+info_total_multiple+"\n");              
-       str.append("Total possible nodes                 : "+info_total_possible_nodes+"\n");   
+       str.append("Total possible nodes***              : "+info_total_possible_nodes+"\n");   
        str.append("Edges selection mode                 : ");
        switch(this.edges_selection_mode) {
            case 0: str.append("treat all edges (default)\n");break;
@@ -1245,8 +1245,9 @@ void print_state_label() {
        str.append("PhyloPermute k                       : "+this.tree_k+"\n");   
        str.append("Number of threads                    : "+this.maxthreads+"\n");  
        str.append("===============================================================================\n");       
-       str.append("*  Indicate the number of state variation for polymorphic characters.\n");       
-       str.append("** Indicate the minimum number of permutations for significant p-values.\n");       
+       str.append("*   Indicate the number of state variation for polymorphic characters.\n");       
+       str.append("**  Indicate the minimum number of permutations for significant p-values.\n");       
+       str.append("*** Indicate the possible nodes number before any filtering step.\n");       
         if (this.min_taxa<1) {
           //System.out.print("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
           str.append("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
@@ -1626,7 +1627,7 @@ void print_state_label() {
             ///////////////////////////////
             // Bipartition
             String solution2=""+(state_id+1);
-            if (solution.isEmpty()) solution2="";
+            //if (solution.isEmpty()) solution2="";
             String f=result_directory+File.separator+util.getFilename(filename)+".bipartite";
             String f2=result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_complete.txt";
             String f_complete=f+"_"+solution2+"_complete.txt";
@@ -1657,18 +1658,7 @@ void print_state_label() {
                  output_biparition_2.close();
                 output_biparition_3.close();     
              }
-                if (!nooutput) export_edgelist(result_directory+File.separator+util.getFilename(filename)+"_"+solution2);   
-                if (save_graphml) {           
-                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_complete",0);
-                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_1",1);
-                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_2",2);
-                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_3",3);
-                     export_graphml(result_directory+File.separator+util.getFilename(filename)+"_"+solution2+"_4",4);
-                }
-                
-                //--This save to file
-                
-               // display_result(filename+"_"+solution2);
+             
                 if (this.bipartite) { 
                    MessageResult("=============================== BIPARTITION ===================================");                
                     MessageResult("Saving bipartition files to : "+f_complete);
@@ -2082,6 +2072,12 @@ void print_state_label() {
         
     }
    
+   /**
+    * Test to export cytoscape js graph
+    * @param filename
+    * @param type
+    * @return 
+    */
    public boolean export_cytoscapejs(String filename, int type) {
          try {      
              // for (String s:this.charlabels) System.out.println(s);
@@ -2191,6 +2187,27 @@ void print_state_label() {
          return true;
    }
    
+   
+   /**
+    * New function to return the number of taxa (or score ) for this specific edge.
+    * @param edgeid
+    * @return 
+    */
+   public int get_taxa_edge(int edgeid) {
+       int total=0;
+       int n1=this.src_edge[edgeid];
+       int n2=this.dest_edge[edgeid];
+//       System.out.println(nodes.get(n1).partition);
+//       System.out.println(nodes.get(n2).partition);
+       
+//       Pour type 1: nombre de taxa porteurs des traits présents simultanément.
+//Pour type 2: nombre de taxa inclus (et éventuellement nombre de taxa incluant) . Si nombre de taxa inclus >1, c est forcément que la relation concerne plusieurs especes.
+//Pour type 3: nombre de taxa chevauchant = porteurs des deux traits
+//Pour type 4=nombre de taxa porteurs des traits disjoints.
+       
+       return total;
+   }
+   
    /**
     * Export graphml
     * @param filename
@@ -2256,7 +2273,8 @@ void print_state_label() {
                    }
                }      
                if (type!=4) {
-                for (int i=0; i<current_total_edge;i++) {                  
+                for (int i=0; i<current_total_edge;i++) {   
+                    get_taxa_edge(i);
                    if (type==type_edge[i]||type==0) {
                     if (type==1||type==3) {
                         pw.println("<edge directed='false' source='"+inv_identification.get(src_edge[i])+"' target='"+inv_identification.get(dest_edge[i])+"'>");
@@ -2561,22 +2579,27 @@ void print_state_label() {
                         if (total==0) {
                             type=4;
                         } else if (total==node1.total_taxa&&total==node2.total_taxa) {
-                            type=1;                            
+                            type=1;   
+                            //overlap total =
                         } else 
                         if (total<node2.total_taxa&&total==node1.total_taxa) {
-                            type=2;
+                            type=2;     
+                            //total=node2.total_taxa;
                         } else 
                         if (total<node1.total_taxa&&total==node2.total_taxa) {
                             type=5;
+                            //total=node1.total_taxa;
                         } else 
                         if (total>0) {
                             type=3;
+                            //Overlap total
                         }
                        
                         if (type!=4&&total>=this.min_taxa) {
                             //--Type 1,2,3
                             int source_index=node1.id;
                             int dest_index=node2.id;
+                            total=node1.total_taxa+node2.total_taxa; //2019
                             if (type==5) {
                                 type=2;
                                 int tt=source_index;
@@ -2921,7 +2944,7 @@ void print_state_label() {
          
          try {
             
-         Phylogeny[] p=readPhylogenies("sample/tree_test_26juin2017.txt");
+           Phylogeny[] p=readPhylogenies("sample/tree_test_26juin2017.txt");
             //forester.tree.Tree tr=new forester.tree.Tree("(A,(B,(C,D)));"); 
             d1.tree=p[0];
                      

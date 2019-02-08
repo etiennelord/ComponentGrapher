@@ -221,6 +221,15 @@ public class permutation_statistics implements Serializable {
         System.out.println("===============================================================================");
         reference.serialize(serial);
         
+          if (!reference.data.nooutput) reference.data.export_edgelist(directory+File.separator+util.getFilename(reference.data.filename));   
+          if (reference.data.save_graphml) {           
+                     reference.data.export_graphml(directory+File.separator+util.getFilename(reference.data.filename)+"__complete",0);
+                     reference.data.export_graphml(directory+File.separator+util.getFilename(reference.data.filename)+"__1",1);
+                     reference.data.export_graphml(directory+File.separator+util.getFilename(reference.data.filename)+"__2",2);
+                     reference.data.export_graphml(directory+File.separator+util.getFilename(reference.data.filename)+"__3",3);
+                     reference.data.export_graphml(directory+File.separator+util.getFilename(reference.data.filename)+"__4",4);
+           }
+        
         // 2. Export summary statistics ...
         
         // 3. Save the matrix 

@@ -44,6 +44,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import umontreal.iro.lecuyer.charts.CustomHistogramDataset;
 import umontreal.iro.lecuyer.rng.LFSR258;
+import umontreal.iro.lecuyer.util.BitVector;
 
 /**
  * Implement the permutation or permutation permutation_statistics
@@ -1703,18 +1704,13 @@ public class permutation_statistics_undefined implements Serializable {
                 summary_statistics su=new summary_statistics();
                 boolean b=su.deserialize(f);                
                 if (b) {
-                    if (reference_data.nodes.isEmpty()) {
-                       //copie the node
-                        //reference_data=new datasets(su.data); //be sure to copy nodes data
+                    if (reference_data.nodes.isEmpty()) {                       
                         reference_data.nodes.clear();
                         for (node n:su.data.nodes) {
                             reference_data.nodes.add(new node(n));                            
                             reference_data.identification.put(n.name,n.id);
                             reference_data.inv_identification.put(n.id, n.name);
                         }
-                        //-- Also need the nodeid 
-                        
-                        //--Copy state
                         reference_data.total_states=su.data.total_states;
                         reference_data.total_edges=su.data.total_edges;
                     
@@ -1790,7 +1786,14 @@ public class permutation_statistics_undefined implements Serializable {
                     if (type>0&&type<4) {
                           reference_data.src_edge[reference_data.total_edges]=i;
                           reference_data.dest_edge[reference_data.total_edges]=j;
-                          reference_data.type_edge[reference_data.total_edges]=type;                          
+                          reference_data.type_edge[reference_data.total_edges]=type;   
+                          //--Since those are new edges, we need to recalculate the taxa : 2019
+                          node node1=reference_data.nodes.get(i);
+                          node node2=reference_data.nodes.get(j);
+                          ArrayList<Integer> tmp=util.intersectBitResult(node1.partition,node2.partition);
+                          reference_data.taxa_edge[reference_data.total_edges]=tmp.size(); //--Number of total taxa
+                          
+                          
                           reference_data.total_edges++;
                           reference_data.current_total_edge++;
                            reference_data.total_type0++;
@@ -1808,19 +1811,16 @@ public class permutation_statistics_undefined implements Serializable {
                           reference_data.type4_src_edge[reference_data.type4_total_edge]=i;
                           reference_data.type4_dest_edge[reference_data.type4_total_edge]=j;
                           reference_data.type4_total_edge++;                                                          
-                            reference_data.node_id_type.get(4).put(i, 4);
-                            reference_data.node_id_type.get(4).put(j, 4);
-
+                          reference_data.node_id_type.get(4).put(i, 4);
+                          reference_data.node_id_type.get(4).put(j, 4);
                     }                  
                 } 
             }
         }
-        //--Special export here 
-
-        //--Force the export of a new graph here
         
-        if (reference_data.save_graphml) {            
-               reference_data.export_edgelist(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"_");   
+        //--Force the export of a new graph here, this will replace the reference ones
+        
+               reference_data.export_edgelist(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename));   
                 if (reference_data.save_graphml) {           
                      reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__complete",0);
                      reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__1",1);
@@ -1828,9 +1828,8 @@ public class permutation_statistics_undefined implements Serializable {
                      reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__3",3);
                      reference_data.export_graphml(reference_data.result_directory+File.separator+util.getFilename(reference_data.filename)+"__4",4);
                 }
-        }         
-                //compute the new statistics for this network 
-         //System.out.println(reference_data);
+              
+         //compute the new statistics for this network          
          reference=new summary_statistics(reference_data);
         reference.calculate_network_statistics();
         saveReferenceStatistics();
