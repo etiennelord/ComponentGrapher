@@ -320,6 +320,20 @@ public class util {
             if (b3.getBool(i)) tmp.add(i+1);
         return tmp;
     }
+     
+     /**
+     * Return the intersecting values of two BitVector
+     * @param b1
+     * @param b2
+     * @return the position with index starting at 1
+     */
+     public static ArrayList<Integer> orBitResult(BitVector b1, BitVector b2) {
+        ArrayList<Integer> tmp=new ArrayList<Integer>();        
+        BitVector b3=b1.or(b2);
+        for (int i=0;i<b3.size();i++) 
+            if (b3.getBool(i)) tmp.add(i+1);
+        return tmp;
+    }
     
      /**
       * Return the number of set (true) bit in a BitVector

@@ -2026,7 +2026,7 @@ void print_state_label() {
             //-Type 0
             PrintWriter pw=new PrintWriter(new FileWriter(new File(filename+"_complete.txt")));                                       
             //pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa");
-            pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
+            pw.println("#src_id\tdest_id\tedge_type\tassociated_taxa");
             for (int i=0; i<this.current_total_edge;i++) {               
                     //if (type_edge[i]!=-1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]+"\t"+(taxa_edge[i]/this.ntax));                     
                     if (type_edge[i]!=-1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                     
@@ -2035,21 +2035,21 @@ void print_state_label() {
             //-Type 1
             pw=new PrintWriter(new FileWriter(new File(filename+"_1.txt")));                       
                 //pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa\tpercent_common_taxa"); 
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa"); 
+                pw.println("#src_id\tdest_id\tedge_type\tassociated_taxa"); 
                 for (int i=0; i<current_total_edge;i++) {               
                    if (type_edge[i]==1) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                     
                 }  
             pw.close();            
             //--Type 2
             pw=new PrintWriter(new FileWriter(new File(filename+"_2.txt")));                       
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
+                pw.println("#src_id\tdest_id\tedge_type\tassociated_taxa");
                 for (int i=0; i<current_total_edge;i++) {               
                   if (type_edge[i]==2) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                                        
                 }  
             pw.close();                
 //            //-Type 3
             pw=new PrintWriter(new FileWriter(new File(filename+"_3.txt")));                       
-                pw.println("#src_id\tdest_id\tedge_type\tnumber_common_taxa");
+                pw.println("#src_id\tdest_id\tedge_type\tassociated_taxa");
                 for (int i=0; i<current_total_edge;i++) {               
                    if (type_edge[i]==3) pw.println(""+src_edge[i]+"\t"+dest_edge[i]+"\t"+type_edge[i]+"\t"+taxa_edge[i]);                                 
                 }  
@@ -2239,7 +2239,7 @@ void print_state_label() {
                pw.println("<key id='k9' for='node' attr.name='statelabel' attr.type='string'/>");
                pw.println("<key id='k10' for='node' attr.name='statematrix' attr.type='string'/>");
                
-               pw.println("<key id='k11' for='node' attr.name='total_taxa' attr.type='double'/>");
+               pw.println("<key id='k11' for='node' attr.name='associated_taxa' attr.type='double'/>");
                pw.println("<key id='k12' for='node' attr.name='taxa_id' attr.type='string'/>");
                
                //if (type==1) {
@@ -2294,7 +2294,8 @@ void print_state_label() {
                } else {
                     for (int i=0; i<type4_total_edge;i++) {
                         pw.println("<edge directed='false' source='"+inv_identification.get(type4_src_edge[i])+"' target='"+inv_identification.get(type4_dest_edge[i])+"'>");
-                          pw.println("<data key='k13'>4</data>");
+                         pw.println("<data key='k1'>"+taxa_edge[i]+"</data>");    
+                         pw.println("<data key='k13'>4</data>");
                            pw.println("</edge>");
                     }
                }
@@ -2578,17 +2579,20 @@ void print_state_label() {
                         int type=4; //--default
                         if (total==0) {
                             type=4;
+                            //--calculate the number of taxa involved between the two
+                            total=util.orBitResult(node1.partition,node2.partition).size();
+                            
                         } else if (total==node1.total_taxa&&total==node2.total_taxa) {
                             type=1;   
-                            //overlap total =
+                            //overlap total = overlap
                         } else 
                         if (total<node2.total_taxa&&total==node1.total_taxa) {
                             type=2;     
-                            //total=node2.total_taxa;
+                            total=node2.total_taxa;
                         } else 
                         if (total<node1.total_taxa&&total==node2.total_taxa) {
                             type=5;
-                            //total=node1.total_taxa;
+                            total=node1.total_taxa; //We take the maximum
                         } else 
                         if (total>0) {
                             type=3;
@@ -2599,7 +2603,7 @@ void print_state_label() {
                             //--Type 1,2,3
                             int source_index=node1.id;
                             int dest_index=node2.id;
-                            total=node1.total_taxa+node2.total_taxa; //2019
+                            //total=node1.total_taxa+node2.total_taxa; //2019
                             if (type==5) {
                                 type=2;
                                 int tt=source_index;
