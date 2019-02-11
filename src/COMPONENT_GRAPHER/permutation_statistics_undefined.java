@@ -369,7 +369,7 @@ public class permutation_statistics_undefined implements Serializable {
             }
             pool.shutdown();
             //--Done
-             System.out.println(rfile.size());
+             //System.out.println(rfile.size());
              // This is new - May 2017
              this.calculate_from_directory_new_ref(directory);
             
@@ -1795,9 +1795,7 @@ public class permutation_statistics_undefined implements Serializable {
                               reference_data.taxa_edge[reference_data.total_edges]=tmp.size(); //--Number of total taxa
                           } else if (type==2) {
                               reference_data.taxa_edge[reference_data.total_edges]=Math.max(node1.total_taxa,node2.total_taxa);
-                          } else if (type==4) {
-                              reference_data.taxa_edge[reference_data.total_edges]=util.orBitResult(node1.partition,node2.partition).size();
-                          }
+                          } 
                           
                           reference_data.total_edges++;
                           reference_data.current_total_edge++;
@@ -1818,6 +1816,9 @@ public class permutation_statistics_undefined implements Serializable {
                           reference_data.type4_total_edge++;                                                          
                           reference_data.node_id_type.get(4).put(i, 4);
                           reference_data.node_id_type.get(4).put(j, 4);
+                           node node1=reference_data.nodes.get(i);
+                          node node2=reference_data.nodes.get(j);
+                          reference_data.taxa_edge[reference_data.total_edges]=util.orBitResult(node1.partition,node2.partition).size();
                     }                  
                 } 
             }

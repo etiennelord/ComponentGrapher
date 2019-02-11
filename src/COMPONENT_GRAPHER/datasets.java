@@ -1247,7 +1247,7 @@ void print_state_label() {
        str.append("===============================================================================\n");       
        str.append("*   Indicate the number of state variation for polymorphic characters.\n");       
        str.append("**  Indicate the minimum number of permutations for significant p-values.\n");       
-       str.append("*** Indicate the possible nodes number before any filtering step.\n");       
+       str.append("*** Indicate the possible nodes number before any filtering steps.\n");       
         if (this.min_taxa<1) {
           //System.out.print("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
           str.append("Minimum common shared taxa           : "+(int)(this.min_taxa*100)+"% ");
